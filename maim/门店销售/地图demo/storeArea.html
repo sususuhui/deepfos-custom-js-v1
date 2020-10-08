@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+		<title>Document</title>
+		<script src="../js/common/api.js?v=1.0.7.dev2.3.1.75"></script>
+
+		<script src="../js/global_assets/js/plugins/visualization/echarts/ecStat.min.js"></script>
+		<script src="../js/common/bmap.min.js"></script>
+		<script
+			type="text/javascript"
+			src="https://api.map.baidu.com/api?v=2.0&ak=OdpMlEqrR4Rj3sT9atp8jbmZebI0UhhQ"
+		></script>
+		<script src="../js/StbDemo/map/js/china.js"></script>
+		<style>
+      .newDemoMap table{
+        table-layout:fixed;
+      }
+      .newDemoMap .scrollTable{
+        overflow-y: auto;
+      }
+      .newDemoMap .customAreaHeaderBox{
+        border-top:1px solid #ddd;
+      }
+      .newDemoMap .queryCondition{
+        height:40px;
+      }
+      .newDemoMap .customAreaHeaderBox{
+        min-height:45px;
+        height:45px;
+      }
+      .newDemoMap{
+        height:calc(100% - 40px);
+      }
+      .newDemoMap .card{
+        margin-bottom:0px;
+      }
+      .newDemoMap .legitRipple{
+        position:absolute;
+        top:10px;
+        right:10px;
+        z-index: 99999;
+      }
+      .newDemoMap .echartWrap{
+        position: relative;
+      }
+      .newDemoMap .customAreaContent tr{
+        cursor: pointer;
+      }
+      .newDemoMap .customAreaHeader td{
+        text-align: center;
+      }
+      .newDemoMap  td.text_right{
+        text-align: right;
+      }
+      .newDemoMap .tableHeight{
+        width:100%;
+        overflow-x: auto;
+      }
+      .newDemoMap .tableHeight .customAreaWrap{
+        min-width:100%;
+      }
+		</style>
+	</head>
+	<body>
+		<!--#include file="/v1_5_5/common/headerNav.html"-->
+		<div class="page-content salesMap">
+			<!--#include file="/v1_5_5/common/leftMenu.html"-->
+			<div class="content-wrapper">
+				<div id="content" class="content reportContent">
+					<div class="breadcrumb-line breadcrumb-line-light header-elements-md-inline">
+						<div class="d-flex">
+							<div class="breadcrumb  breadcrumbNav"></div>
+						</div>
+					</div>
+					<!-- 中心部分 -->
+          <div class="content newDemoMap" style="padding-bottom: 0">
+            <div class="queryCondition">
+
+            </div>
+						<div class="row">
+							<div class="col-lg-6">
+								<div class="card tableHeight">
+                  <div class="customAreaWrap">
+                    <div class="customAreaHeaderBox">
+                      <table class="table  customAreaHeader">
+                        <tbody>
+                          <tr></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="scrollTable">
+                      <table class="table  customAreaContent">
+                        <thead>
+                          <tr></tr>
+                        </thead>
+                        <tbody></tbody>
+                      </table>
+                    </div>
+                  </div>
+								</div>
+							</div>
+							<div class="col-lg-6">
+                <div class="echartWrap">
+                  <button type="button" class="btn btn-primary legitRipple">后退</button>
+                  <div id="salesOverview" class="bg-white computHeight"></div>
+                  <div class="row">
+                    <div class="col-lg-6">
+                      <div id="charts1">
+
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <div id="charts2">
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+							</div>
+						</div>
+					</div>
+					<!-- loading -->
+					<div class="blockui-message bg-slate-700 text-white rounded p-2" style="display: none;">
+						<i class="icon-spinner4 spinner mt-1"></i> <span class="font-weight-semibold d-block mt-2">Loading</span>
+					</div>
+				</div>
+			</div>
+			<!--#include file="//common/rightSideBar.html"-->
+		</div>
+    <script src="../js/demo/storeArea.js"></script>
+	</body>
+</html>
