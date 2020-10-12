@@ -7,10 +7,10 @@ $(function () {
 
   let html = `
   <div class="row dataSheet" style="height:830px;">
-    <div class="col-6">
+    <div class="col-7 px-0">
       ${a}
     </div>
-    <div class="col-6">
+    <div class="col-5 px-0">
       ${e}
       ${f}
       ${g}

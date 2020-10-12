@@ -1,3 +1,34 @@
+$(function () {
+  let a = $('[data-name=5]').prop('outerHTML');
+
+  let e = $('[data-name=1]').prop('outerHTML');
+  let f = $('[data-name=2]').prop('outerHTML');
+  let g = $('[data-name=4]').prop('outerHTML');
+
+  let html = `
+  <div class="row dataSheet" style="height:950px;">
+    <div class="col-7 px-0" >
+      ${a}
+    </div>
+    <div class="col-5 px-0">
+      ${e}
+      ${f}
+      ${g}
+    </div>
+  </div>`;
+  $('.dashBoardContent').html(html);
+
+  // 左边电子表格
+  $('[data-name=5]').css({'width':'100%', 'height':'950px', 'margin-bottom':'0'});
+
+
+  // 右边图表
+  $('[data-name=1]').css({'width':'100%', 'height':'35%', 'margin-bottom':'0'});
+  $('[data-name=2]').css({'width':'100%', 'height':'31%', 'margin-bottom':'0'});
+  $('[data-name=4]').css({'width':'100%', 'height':'34%', 'margin-bottom':'0'});
+
+});
+
 $(document).ready(function () {
   // 增加跳转按钮，dashboard整个页面行为
   $('#dataHead .dataSheetCon').append('<div id="gotonext" style="position:absolute;right:20px;top:5px;" class="pr-2 d-flex searchSeleteStyle">编辑单价</div>');
