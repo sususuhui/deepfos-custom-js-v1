@@ -32,7 +32,7 @@ function ROI() {
     <span class="font-size-sm opacity-75 mr-2">2021 预算</span>
     <span style="font-size: 1.3rem">12,312,843</span>
   </div>
-  <span class="align-self-center ml-auto" style="font-size: 1.3rem">销售收入</span>
+  <span class="align-self-center ml-auto" style="font-size: 1.3rem">ROI</span>
 </div>
   </div>
     <div id="${cardName_mini}" style="width:100%;position: absolute;bottom: 0;height: 50%"></div>
@@ -69,7 +69,7 @@ function ROI() {
         type: 'bar',
         itemStyle: {
           normal: {
-            color: "rgba(255,255,255,0.5)",
+            color: 'rgba(255,255,255,0.5)',
           },
         },
         data: [10, 52, 200, 334, 390, 330, 220],
@@ -115,7 +115,7 @@ function ROE() {
       <span class="font-size-sm opacity-75 mr-2">2021 预算</span>
       <span style="font-size: 1.3rem">45,279</span>
     </div>
-    <span class="align-self-center ml-auto" style="font-size: 1.3rem">销售数量</span>
+    <span class="align-self-center ml-auto" style="font-size: 1.3rem">ROE</span>
   </div>
     </div>
     <div id="${cardName_mini}" style="width:100%;position: absolute;bottom: 0;height: 50%"></div>
@@ -152,7 +152,7 @@ function ROE() {
         type: 'bar',
         itemStyle: {
           normal: {
-            color: "rgba(255,255,255,0.5)",
+            color: 'rgba(255,255,255,0.5)',
           },
         },
         data: [10, 52, 200, 334, 390, 330, 220],
@@ -198,7 +198,7 @@ function IRR() {
     <span class="font-size-sm opacity-75 mr-2">2021 预算</span>
     <span style="font-size: 1.3rem">347.50</span>
   </div>
-  <span class="align-self-center ml-auto" style="font-size: 1.3rem">吊牌单价</span>
+  <span class="align-self-center ml-auto" style="font-size: 1.3rem">IRR</span>
 </div>
   </div>
     <div id="${cardName_mini}" style="width:100%;position: absolute;bottom: 0;height: 50%"></div>
@@ -235,7 +235,7 @@ function IRR() {
         type: 'bar',
         itemStyle: {
           normal: {
-            color: "rgba(255,255,255,0.5)",
+            color: 'rgba(255,255,255,0.5)',
           },
         },
         data: [10, 52, 200, 334, 390, 330, 220],
@@ -260,7 +260,7 @@ function Chart_R3() {
       trigger: 'axis',
     },
     legend: {
-      data: ['累计入市', '累计入住'],
+      data: ['新增入市', '累计入市', '新增入住', '累计入住'],
     },
     grid: {
       left: '3%',
@@ -282,10 +282,22 @@ function Chart_R3() {
     },
     series: [
       {
+        name: '新增入市',
+        type: 'bar',
+        stack: '总量',
+        data: [41, 39, 5, 23, 4, 22, 24, 20, 22, 19, 30],
+      },
+      {
         name: '累计入市',
         type: 'line',
         stack: '总量',
         data: [41, 80, 85, 108, 112, 134, 158, 178, 200, 219, 249],
+      },
+      {
+        name: '新增入住',
+        type: 'bar',
+        stack: '总量',
+        data: [17, 17, 40, 20, 10, 14, 18, 18, 14, 10, 11],
       },
       {
         name: '累计入住',
@@ -520,7 +532,8 @@ function Chart_R2C1_Main() {
       },
     },
     legend: {
-      data: ['华北', '华东', '华中', '华南'],
+      // data: ['华北', '华东', '华中', '华南'],
+      data: ['主营业务成本', '管理费用', '销售费用', '委托管理费', '其他费用', '净利润'],
     },
     grid: {
       left: '3%',
@@ -538,12 +551,13 @@ function Chart_R2C1_Main() {
       },
     },
     yAxis: {
+      inverse: false,
       type: 'category',
-      data: ['净利润', '其他费用', '委托管理费', '销售费用', '管理费用', '主营业务成本'],
+      data: ['华北', '华东', '华中', '华南'],
     },
     series: [
       {
-        name: '华北',
+        name: '主营业务成本',
         type: 'bar',
         stack: '总量',
         label: {
@@ -553,10 +567,10 @@ function Chart_R2C1_Main() {
             return name['data'] + '%';
           },
         },
-        data: [20, 4, 8, 16, 16, 36],
+        data: [36, 30, 45, 42],
       },
       {
-        name: '华东',
+        name: '管理费用',
         type: 'bar',
         stack: '总量',
         label: {
@@ -566,10 +580,10 @@ function Chart_R2C1_Main() {
             return name['data'] + '%';
           },
         },
-        data: [29, 2, 6, 17, 16, 30],
+        data: [16, 16, 17, 18],
       },
       {
-        name: '华中',
+        name: '销售费用',
         type: 'bar',
         stack: '总量',
         label: {
@@ -579,10 +593,10 @@ function Chart_R2C1_Main() {
             return name['data'] + '%';
           },
         },
-        data: [13, 3, 5, 17, 17, 45],
+        data: [16, 17, 17, 16],
       },
       {
-        name: '华南',
+        name: '委托管理费',
         type: 'bar',
         stack: '总量',
         label: {
@@ -592,7 +606,33 @@ function Chart_R2C1_Main() {
             return name['data'] + '%';
           },
         },
-        data: [15, 2, 7, 16, 18, 42],
+        data: [8, 6, 5, 7],
+      },
+      {
+        name: '其他费用',
+        type: 'bar',
+        stack: '总量',
+        label: {
+          show: true,
+          position: 'insideRight',
+          formatter: function (name) {
+            return name['data'] + '%';
+          },
+        },
+        data: [4, 2, 3, 2],
+      },
+      {
+        name: '净利润',
+        type: 'bar',
+        stack: '总量',
+        label: {
+          show: true,
+          position: 'insideRight',
+          formatter: function (name) {
+            return name['data'] + '%';
+          },
+        },
+        data: [20, 29, 13, 15],
       },
     ],
   };
@@ -615,17 +655,18 @@ function Chart_R2C2_Main() {
     tooltip: {},
     dataset: {
       source: [
-        ['product', '华北', '华东', '华中', '华南'],
-        ['收入', 703.0, 705.0, 580.0, 332.0],
-        ['成本', 414.77, 408.9, 319.0, 205.84],
-        ['近利润', 288.23, 296.1, 261.0, 126.16],
+        ['product', '收入', '成本', '净利润'],
+        ['华北', 703.0, 414.77, 288.23],
+        ['华东', 705.0, 408.9, 296.1],
+        ['华中', 580.0, 319.0, 261.0],
+        ['华南', 332.0, 205.84, 126.16],
       ],
     },
     xAxis: { type: 'category' },
     yAxis: {},
     // Declare several bar series, each will be mapped
     // to a column of dataset.source by default.
-    series: [{ type: 'bar' }, { type: 'bar' }, { type: 'bar' }],
+    series: [{ type: 'bar' }, { type: 'bar' }, { type: 'bar' }, { type: 'bar' }],
   };
 
   if (!Cus_echarts[cardName]) {
