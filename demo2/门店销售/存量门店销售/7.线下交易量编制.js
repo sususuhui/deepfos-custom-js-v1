@@ -1,9 +1,9 @@
 $(function () {
   let a = $('[data-name=ActualADT]').prop('outerHTML');
-  let b = $('[data-name=Market_Member]').prop('outerHTML');
-  let c = $('[data-name=ForecastADT]').prop('outerHTML');
+  // let b = $('[data-name=Market_Member]').prop('outerHTML');
+  // let c = $('[data-name=ForecastADT]').prop('outerHTML');
 
-  let d = $('[data-name=ADTBaseline]').prop('outerHTML');
+  // let d = $('[data-name=ADTBaseline]').prop('outerHTML');
   let e = $('[data-name=Seasonality]').prop('outerHTML');
   let f = $('[data-name=MarketOffline]').prop('outerHTML');
   let g = $('[data-name=ADTComp]').prop('outerHTML');
@@ -12,28 +12,27 @@ $(function () {
   <div class="row dataSheet" style="height:830px;">
     <div class="col-6">
       ${a}
-      ${b}
-      ${c}
-      ${g}
     </div>
     <div class="col-6">
-      ${d}
       ${e}
       ${f}
+      ${g}
     </div>
   </div>`;
   $('.dashBoardContent').html(html);
 
   // 左边电子表格
-  $('[data-name=ActualADT]').css({'width':'100%', 'height':'245px', 'margin-bottom':'0'});
-  $('[data-name=Market_Member]').css({'width':'100%', 'height':'160px', 'margin-bottom':'0'});
-  $('[data-name=ForecastADT]').css({'width':'100%', 'height':'125px', 'margin-bottom':'0'});
-  $('[data-name=ADTComp]').css({'width':'100%', 'height':'300px', 'margin-bottom':'0'});
+  $('[data-name=ActualADT]').css({'width':'100%', 'height':'830px', 'margin-bottom':'0'});
+  // $('[data-name=Market_Member]').css({'width':'100%', 'height':'160px', 'margin-bottom':'0'});
+  // $('[data-name=ForecastADT]').css({'width':'100%', 'height':'125px', 'margin-bottom':'0'});
+  // $('[data-name=ADTComp]').css({'width':'100%', 'height':'300px', 'margin-bottom':'0'});
 
   // 右边图表
-  $('[data-name=ADTBaseline]').css({'width':'100%', 'height':'34%', 'margin-bottom':'0'});
+  // $('[data-name=ADTBaseline]').css({'width':'100%', 'height':'34%', 'margin-bottom':'0'});
   $('[data-name=Seasonality]').css({'width':'100%', 'height':'32%', 'margin-bottom':'0'});
   $('[data-name=MarketOffline]').css({'width':'100%', 'height':'34%', 'margin-bottom':'0'});
+  $('[data-name=ADTComp]').css({'width':'100%', 'height':'34%', 'margin-bottom':'0'});
+
 });
 
 function aaa(id) {
