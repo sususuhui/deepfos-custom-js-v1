@@ -285,6 +285,7 @@ function Chart_R3() {
         name: '新增入市',
         type: 'bar',
         stack: '总量',
+        barWidth : 50,//柱图宽度
         data: [41, 39, 5, 23, 4, 22, 24, 20, 22, 19, 30],
       },
       {
@@ -297,6 +298,7 @@ function Chart_R3() {
         name: '新增入住',
         type: 'bar',
         stack: '总量',
+        barWidth : 50,//柱图宽度
         data: [17, 17, 40, 20, 10, 14, 18, 18, 14, 10, 11],
       },
       {
@@ -559,6 +561,7 @@ function Chart_R2C1_Main() {
       {
         name: '主营业务成本',
         type: 'bar',
+        barWidth : 45,//柱图宽度
         stack: '总量',
         label: {
           show: true,
@@ -572,6 +575,7 @@ function Chart_R2C1_Main() {
       {
         name: '管理费用',
         type: 'bar',
+        barWidth : 45,//柱图宽度
         stack: '总量',
         label: {
           show: true,
@@ -585,6 +589,7 @@ function Chart_R2C1_Main() {
       {
         name: '销售费用',
         type: 'bar',
+        barWidth : 45,//柱图宽度
         stack: '总量',
         label: {
           show: true,
@@ -598,6 +603,7 @@ function Chart_R2C1_Main() {
       {
         name: '委托管理费',
         type: 'bar',
+        barWidth : 45,//柱图宽度
         stack: '总量',
         label: {
           show: true,
@@ -611,6 +617,7 @@ function Chart_R2C1_Main() {
       {
         name: '其他费用',
         type: 'bar',
+        barWidth : 45,//柱图宽度
         stack: '总量',
         label: {
           show: true,
@@ -624,6 +631,7 @@ function Chart_R2C1_Main() {
       {
         name: '净利润',
         type: 'bar',
+        barWidth : 45,//柱图宽度
         stack: '总量',
         label: {
           show: true,
