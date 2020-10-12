@@ -1,3 +1,34 @@
+$(function () {
+  let a = $('[data-name=Online_ADT_Forecast]').prop('outerHTML');
+
+  let e = $('[data-name=Online_seasonality]').prop('outerHTML');
+  let f = $('[data-name=Online_Market]').prop('outerHTML');
+  let g = $('[data-name=Online_ADTComp]').prop('outerHTML');
+
+  let html = `
+  <div class="row dataSheet" style="height:830px;">
+    <div class="col-6">
+      ${a}
+    </div>
+    <div class="col-6">
+      ${e}
+      ${f}
+      ${g}
+    </div>
+  </div>`;
+  $('.dashBoardContent').html(html);
+
+  // 左边电子表格
+  $('[data-name=Online_ADT_Forecast]').css({'width':'100%', 'height':'830px', 'margin-bottom':'0'});
+
+
+  // 右边图表
+  $('[data-name=Online_seasonality]').css({'width':'100%', 'height':'32%', 'margin-bottom':'0'});
+  $('[data-name=Online_Market]').css({'width':'100%', 'height':'34%', 'margin-bottom':'0'});
+  $('[data-name=Online_ADTComp]').css({'width':'100%', 'height':'34%', 'margin-bottom':'0'});
+
+});
+
 function aaa(id) {
   var dom = $('[data-id="' + id + '"]').find('.elementIframe')[0].contentWindow;
   dom.$('.dataSheetCon').css('width', 'auto');
