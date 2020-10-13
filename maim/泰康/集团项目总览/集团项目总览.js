@@ -674,7 +674,7 @@ function Chart_R2C2_Main() {
     yAxis: {},
     // Declare several bar series, each will be mapped
     // to a column of dataset.source by default.
-    series: [{ type: 'bar' }, { type: 'bar' }, { type: 'bar' }, { type: 'bar' }],
+    series: [{ type: 'bar' }, { type: 'bar' }, { type: 'bar' }],
   };
 
   if (!Cus_echarts[cardName]) {
@@ -1468,6 +1468,332 @@ function initializeCustomLoader(dom) {
       .appendTo(dom.$("head"));
   }
 }*/
+
+function Chart_R5C1_Main() {
+  var cardName = 'Chart_R5C1';
+  var echartDom = cfs.card.body.getDom(cardName).find('.echart');
+  var headDom = cfs.card.head.getDom(cardName);
+  headDom.find('.freshBS').find('i').css('margin', 10);
+  var data = {
+    axis: ['项目B', '项目D', '项目A', '项目C', '项目F', '项目E'],
+    series: [{ name: '前十项目投资', data: [{ name: '项目金额', value: [932560.232382, 735000, 331923.574457, 312515.029877, 186905.806274, 76683.558963] }] }],
+  };
+  var yData = data.series[0].data;
+  var yDataHead = data.axis;
+  var yDataHead = yDataHead.reverse();
+  var yDataValue1 = yData[0].value;
+  var yDataValue1 = yDataValue1.reverse();
+  var option = {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        // 坐标轴指示器，坐标轴触发有效
+        type: 'shadow',
+      },
+      formatter: function (params) {
+        var html = '';
+        if (params.length > 0) {
+          for (var int = 0; int < params.length; int++) {
+            html += params[int].axisValue + '<br>' + params[int].marker + params[int].seriesName + '：' + format((params[int].data / 1000).toFixed(2)) + '<br>';
+          }
+        }
+        return html;
+      },
+},
+    grid: {
+      left: '1%',
+      right: 75,
+      top: '5%',
+      bottom: '5%',
+      containLabel: true,
+    },
+    xAxis: {
+      type: 'value',
+      name: getLanguage('money2') + '：千元',
+      // boundaryGap: [0, 0.01],
+      axisLabel: {
+        formatter: function (val) {
+          return format(val / 1000);
+        },
+        interval: 0,
+        rotate: 40,
+      },
+    },
+    yAxis: {
+      type: 'category',
+      data: yDataHead,
+      // interval:0,
+      axisLabel: {
+        interval: 0,
+        rotate: 20,
+      },
+    },
+    series: [
+      {
+        name: yData[0].name,
+        type: 'bar',
+        stack: '总量',
+        barWidth: 25,
+        label: {
+          normal: {
+            show: false,
+            position: 'insideRight',
+          },
+        },
+        data: yDataValue1,
+        itemStyle: {
+          normal: {
+            color: '#569ADA',
+          },
+        },
+      },
+    ],
+  };
+
+  // 手机端
+  if (getRequest().isView == 'mobile') {
+    // 高度调整
+    cfs.echarts.mobileHeight(cardName, 340);
+
+    // 图表配置修改
+    option = {
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          // 坐标轴指示器，坐标轴触发有效
+          type: 'shadow',
+        },
+        formatter: function (params) {
+          var html = '';
+          if (params.length > 0) {
+            for (var int = 0; int < params.length; int++) {
+              html += params[int].axisValue + '<br>' + params[int].marker + params[int].seriesName + '：' + format((params[int].data / 1000).toFixed(2)) + '<br>';
+            }
+          }
+          return html;
+        },
+      },
+      grid: {
+        left: '1%',
+        right: '1%',
+        bottom: '1%',
+        top: '1%',
+        containLabel: true,
+      },
+      xAxis: {
+        type: 'value',
+        name: getLanguage('money2') + '：千元',
+        // boundaryGap: [0, 0.01],
+        axisLabel: {
+          formatter: function (val) {
+            return format(val / 1000);
+          },
+          interval: 0,
+          rotate: 40,
+        },
+
+},
+      yAxis: {
+        type: 'category',
+        data: yDataHead,
+        // interval:0,
+        axisLabel: {
+          interval: 0,
+          rotate: 20,
+        },
+      },
+      series: [
+        {
+          name: yData[0].name,
+          type: 'bar',
+          stack: '总量',
+          barWidth: 15,
+          label: {
+            normal: {
+              show: false,
+              position: 'insideRight',
+            },
+          },
+          data: yDataValue1,
+          itemStyle: {
+            normal: {
+              color: '#569ADA',
+            },
+          },
+        },
+      ],
+    };
+  }
+if (!Cus_echarts[cardName]) {
+    Cus_echarts[cardName] = cfs.echarts.init(echartDom, Cus_theme, option);
+  } else {
+    cfs.echarts.refresh(Cus_echarts[cardName], option);
+  }
+}
+
+function Chart_R5C2_Main() {
+  var cardName = 'Chart_R5C2';
+  var echartDom = cfs.card.body.getDom(cardName).find('.echart');
+  var headDom = cfs.card.head.getDom(cardName);
+  headDom.find('.freshBS').find('i').css('margin', 10);
+  var data = {
+    series: [
+      {
+        name: 'ROI排名',
+        data: [
+          { description_1: '项目A', StaffAdjInvest: 0.211 },
+          { description_1: '项目C', StaffAdjInvest: 0.077 },
+          { description_1: '项目B', StaffAdjInvest: 0.061 },
+          { description_1: '项目F', StaffAdjInvest: 0.055 },
+          { description_1: '项目E', StaffAdjInvest: 0.025 },
+          { description_1: '项目D', StaffAdjInvest: 0.021 },
+        ],
+},
+    ],
+  };
+  let yData = data.series[0];
+  let yDataValue = [];
+  yData.data.forEach(function (v) {
+    yDataValue.push(numPro(v['StaffAdjInvest']));
+  });
+  let xDataHead = [];
+  yData.data.forEach(function (v) {
+    xDataHead.push(v['description_1']);
+  });
+  option = {
+    tooltip: {
+      trigger: 'axis',
+      formatter: function (name) {
+        return name[0].data + '%';
+      },
+    },
+    xAxis: {
+      type: 'category',
+      data: xDataHead,
+      // triggerEvent: true,
+      axisLabel: {
+        interval: 0,
+        rotate: 40,
+      },
+    },
+    grid: {
+      left: '1%',
+      right: '2%',
+      bottom: '1%',
+      top: '5%',
+      containLabel: true,
+    },
+yAxis: {
+      type: 'value',
+      axisLabel: {
+        formatter: function (value) {
+          var res = value;
+          return res + '%';
+        },
+      },
+    },
+    series: [
+      {
+        data: yDataValue,
+        type: 'bar',
+        label: {
+          normal: {
+            show: true,
+            position: 'top',
+            formatter: function (name) {
+              return name['data'] + '%';
+            },
+          },
+        },
+      },
+    ],
+  };
+
+  // 手机端
+  if (getRequest().isView == 'mobile') {
+    // 高度调整
+    cfs.echarts.mobileHeight(cardName, 340);
+
+    // 图表配置修改
+    option = {
+      tooltip: {
+trigger: 'axis',
+        formatter: function (name) {
+          return name[0].data + '%';
+        },
+      },
+      xAxis: {
+        type: 'category',
+        data: xDataHead,
+        // triggerEvent: true,
+        axisLabel: {
+          interval: 0,
+          rotate: 40,
+        },
+      },
+      grid: {
+        left: '1%',
+        right: '1%',
+        top: '5%',
+        bottom: '1%',
+        containLabel: true,
+      },
+      yAxis: {
+        type: 'value',
+        axisLabel: {
+          formatter: function (value) {
+            var res = value;
+            return res + '%';
+          },
+        },
+      },
+      series: [
+        {
+          data: yDataValue,
+          type: 'bar',
+          label: {
+            normal: {
+              show: true,
+              position: 'top',
+              formatter: function (name) {
+                return name['data'] + '%';
+              },
+            },
+          },
+        },
+      ],
+};
+  }
+
+  if (!Cus_echarts[cardName]) {
+    Cus_echarts[cardName] = cfs.echarts.init(echartDom, Cus_theme, option);
+  } else {
+    cfs.echarts.refresh(Cus_echarts[cardName], option);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //extrajs全局方法
 var cfs = {
   //请求后端数据
