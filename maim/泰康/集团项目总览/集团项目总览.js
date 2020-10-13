@@ -23,14 +23,14 @@ function ROI() {
   <div class="d-flex">
   <div>
     <span class="font-size-sm opacity-75 mr-2">2020 实际</span>
-    <span style="font-size: 1.3rem">10,424,890</span>
+    <span style="font-size: 1.3rem">18.08%</span>
   </div>
   <span class="badge bg-teal-800 badge-pill align-self-center ml-auto">18.11%</span>
 </div>
 <div class="d-flex">
   <div>
     <span class="font-size-sm opacity-75 mr-2">2021 预算</span>
-    <span style="font-size: 1.3rem">12,312,843</span>
+    <span style="font-size: 1.3rem">18.27%</span>
   </div>
   <span class="align-self-center ml-auto" style="font-size: 1.3rem">ROI</span>
 </div>
@@ -106,14 +106,14 @@ function ROE() {
     <div class="d-flex">
     <div>
       <span class="font-size-sm opacity-75 mr-2">2020 实际</span>
-      <span style="font-size: 1.3rem">45,279</span>
+      <span style="font-size: 1.3rem">5.40%</span>
     </div>
     <span class="badge bg-teal-800 badge-pill align-self-center ml-auto">+5.59%</span>
   </div>
   <div class="d-flex">
     <div>
       <span class="font-size-sm opacity-75 mr-2">2021 预算</span>
-      <span style="font-size: 1.3rem">45,279</span>
+      <span style="font-size: 1.3rem">6.10%</span>
     </div>
     <span class="align-self-center ml-auto" style="font-size: 1.3rem">ROE</span>
   </div>
@@ -189,14 +189,14 @@ function IRR() {
   <div class="d-flex">
   <div>
     <span class="font-size-sm opacity-75 mr-2">2020 实际</span>
-    <span style="font-size: 1.3rem">313</span>
+    <span style="font-size: 1.3rem">11.01%</span>
   </div>
   <span class="badge bg-teal-800 badge-pill align-self-center ml-auto">11.02%</span>
 </div>
 <div class="d-flex">
   <div>
     <span class="font-size-sm opacity-75 mr-2">2021 预算</span>
-    <span style="font-size: 1.3rem">347.50</span>
+    <span style="font-size: 1.3rem">11.06%</span>
   </div>
   <span class="align-self-center ml-auto" style="font-size: 1.3rem">IRR</span>
 </div>
