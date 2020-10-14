@@ -1,6 +1,279 @@
 var Cus_theme = 'westeros';
 var Cus_echarts = {};
-
+function renderTable1(data, params) {
+  var componentId = params.componentId;
+  var html = `<table class="table table-hover datatable-highlight dataTable no-footer table-striped" >
+                <tr>
+                    <th style="padding:0 0 0 1.2rem;width:8rem;"></th>
+                    <th>组合1</th>
+                    <th>组合2</th>
+                    <th>投决</th>
+                </tr>
+                <tr>
+                    <td style="padding:0 0 0 1.2rem;">ROA</td>
+                    <td>
+                        <span style="display: inline-block;width: 40%;height: 10px;background: #548235;"></span>
+                        <span style="float: right;">15%</span>
+                    </td>
+                    <td>
+                        <span style="display: inline-block;width: 20%;height: 10px;background: #385723;"></span>
+                        <span style="float: right;">10%</span>
+                    </td>
+                    <td>
+                        <span style="display: inline-block;width: 45%;height: 10px;background: #e2f0d9;"></span>
+                        <span style="float: right;">16%</span>
+                    </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 0 1.2rem;">ROE</td>
+                  <td>
+                      <span style="display: inline-block;width: 30%;height: 10px;background: #70ad47;"></span>
+                      <span style="float: right;">19%</span>
+                  </td>
+                  <td>
+                      <span style="display: inline-block;width: 20%;height: 10px;background: #70ad47;"></span>
+                      <span style="float: right;">15%</span>
+                  </td>
+                  <td>
+                      <span style="display: inline-block;width: 15%;height: 10px;background: #385723;"></span>
+                      <span style="float: right;">12%</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 0 1.2rem;">IRR</td>
+                  <td>
+                      <span style="display: inline-block;width: 10%;height: 10px;background: #70ad47;"></span>
+                      <span style="float: right;">5%</span>
+                  </td>
+                  <td>
+                      <span style="display: inline-block;width: 10%;height: 10px;background: #70ad47;"></span>
+                      <span style="float: right;">5%</span>
+                  </td>
+                  <td>
+                      <span style="display: inline-block;width: 10%;height: 10px;background: #70ad47;"></span>
+                      <span style="float: right;">5%</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 0 1.2rem;">户均收入</td>
+                  <td>
+                      <span style="display: inline-block;width: 60%;height: 10px;background: #c55a11;"></span>
+                      <span style="float: right;">10万</span>
+                  </td>
+                  <td>
+                      <span style="display: inline-block;width: 60%;height: 10px;background: #de5a00;"></span>
+                      <span style="float: right;">10万</span>
+                  </td>
+                  <td>
+                      <span style="display: inline-block;width: 55%;height: 10px;background: #c55a11;"></span>
+                      <span style="float: right;">8万</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 0 1.2rem;">户均成本</td>
+                  <td>
+                      <span style="display: inline-block;width: 40%;height: 10px;background: #ffc000;"></span>
+                      <span style="float: right;">6万</span>
+                  </td>
+                  <td>
+                      <span style="display: inline-block;width: 45%;height: 10px;background: #c55a11;"></span>
+                      <span style="float: right;">7万</span>
+                  </td>
+                  <td>
+                      <span style="display: inline-block;width: 40%;height: 10px;background: #ffc000;"></span>
+                      <span style="float: right;">6万</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 0 1.2rem;">预计总投</td>
+                  <td>
+                      <span style="display: inline-block;width: 70%;height: 10px;background: #c55a11;"></span>
+                      <span style="float: right;">12亿</span>
+                  </td>
+                  <td>
+                      <span style="display: inline-block;width: 65%;height: 10px;background: #ffe699;"></span>
+                      <span style="float: right;">8亿</span>
+                  </td>
+                  <td>
+                      <span style="display: inline-block;width: 40%;height: 10px;background: #ffc000;"></span>
+                      <span style="float: right;">5亿</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 0 1.2rem;">保险资金投入</td>
+                  <td>
+                      <span style="display: inline-block;width: 60%;height: 10px;background: #c55a11;"></span>
+                      <span style="float: right;">10亿</span>
+                  </td>
+                  <td>
+                      <span style="display: inline-block;width: 65%;height: 10px;background: #ffe699;"></span>
+                      <span style="float: right;">8亿</span>
+                  </td>
+                  <td>
+                      <span style="display: inline-block;width: 50%;height: 10px;background: #ffc000;"></span>
+                      <span style="float: right;">7亿</span>
+                  </td>
+                </tr>
+              </table>`;
+  $('#chart-' + componentId).html(html);
+}
+function renderTable2(data, params) {
+  var componentId = params.componentId;
+  var html = `<table class="table table-hover datatable-highlight dataTable no-footer table-striped" >
+                <tr>
+                    <th colspan="6" style="text-align: center;">ROA</th>
+                </tr>
+                <tr>
+                    <th>开业年份</th>
+                    <th>投决版</th>
+                    <th>2020年累计</th>
+                    <th>2020年预算</th>
+                    <th>投决达成率</th>
+                    <th>预算达成率</th>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">2018入市</td>
+                    <td style="text-align: center;">19%</td>
+                    <td style="text-align: center;">10%</td>
+                    <td style="text-align: center;">12%</td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">120%</span>
+                    </td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">83%</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">项目A</td>
+                    <td style="text-align: center;">15%</td>
+                    <td style="text-align: center;">17%</td>
+                    <td style="text-align: center;">20%</td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">118%</span>
+                    </td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">85%</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">项目B</td>
+                    <td style="text-align: center;">13%</td>
+                    <td style="text-align: center;">11%</td>
+                    <td style="text-align: center;">15%</td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">136%</span>
+                    </td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">73%</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">项目C</td>
+                    <td style="text-align: center;">19%</td>
+                    <td style="text-align: center;">20%</td>
+                    <td style="text-align: center;">15%</td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">75%</span>
+                    </td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">133%</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">2019入市</td>
+                    <td style="text-align: center;">15%</td>
+                    <td style="text-align: center;">19%</td>
+                    <td style="text-align: center;">11%</td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">58%</span>
+                    </td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">173%</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">项目D</td>
+                    <td style="text-align: center;">13%</td>
+                    <td style="text-align: center;">18%</td>
+                    <td style="text-align: center;">13%</td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">72%</span>
+                    </td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">138%</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">项目E</td>
+                    <td style="text-align: center;">20%</td>
+                    <td style="text-align: center;">11%</td>
+                    <td style="text-align: center;">12%</td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">109%</span>
+                    </td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">92%</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">项目F</td>
+                    <td style="text-align: center;">18%</td>
+                    <td style="text-align: center;">10%</td>
+                    <td style="text-align: center;">20%</td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">200%</span>
+                    </td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">50%</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">项目G</td>
+                    <td style="text-align: center;">10%</td>
+                    <td style="text-align: center;">17%</td>
+                    <td style="text-align: center;">19%</td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">112%</span>
+                    </td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">89%</span>
+                    </td>
+                </tr>
+              </table>`;
+  $('#chart-' + componentId).html(html);
+  $('#chart-' + componentId).css('overflow', 'auto');
+  $('.table .item').each(function (k, td) {
+    var spanText = $(td).find('span').eq(1).text();
+    if (Number(spanText.split('%')[0]) >= 100) {
+      //大于等于100
+      $(td).find('span').eq(0).css('background-color', '#76a797');
+    } else if (Number(spanText.split('%')[0]) >= 60 && Number(spanText.split('%')[0]) < 100) {
+      //大于等于60 小于100
+      $(td).find('span').eq(0).css('background-color', '#eac282');
+    } else if (Number(spanText.split('%')[0]) < 60) {
+      //小于60
+      $(td).find('span').eq(0).css('background-color', '#d86344');
+    }
+  });
+}
 function Chart_R6(data, params) {
   let Chart_R6_data = JSON.parse(data);
 
