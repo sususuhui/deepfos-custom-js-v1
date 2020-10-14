@@ -1,6 +1,59 @@
 var Cus_theme = 'westeros';
 var Cus_echarts = {};
 
+function Chart_R6(data, params) {
+  let Chart_R6_data = JSON.parse(data);
+
+  let cardName = 'Chart_R6';
+  let echartDom = cfs.card.body.getDom(cardName).find('.echart');
+  let headDom = cfs.card.head.getDom(cardName);
+
+  let sourceData = Chart_R6_data.source.map((val, i) => {
+    if (i === 0) {
+      return val;
+    } else {
+      let b = val.map((cVal, ci) => {
+        if (ci === 0) {
+          switch (cVal) {
+            case 'North':
+              return '华北';
+            case 'East':
+              return '华东';
+            case 'Central':
+              return '华中';
+            case 'South':
+              return '华南';
+            default:
+              return cVal;
+          }
+        } else {
+          return cVal;
+        }
+      });
+      return b;
+    }
+  });
+
+  let option = {
+    legend: {},
+    tooltip: {},
+    dataset: {
+      source: sourceData,
+    },
+    xAxis: { type: 'category' },
+    yAxis: {},
+    // Declare several bar series, each will be mapped
+    // to a column of dataset.source by default.
+    series: [{ type: 'bar' }, { type: 'bar' }, { type: 'bar' }],
+  };
+
+  if (!Cus_echarts[cardName]) {
+    Cus_echarts[cardName] = cfs.echarts.init(echartDom, Cus_theme, option);
+  } else {
+    cfs.echarts.refresh(Cus_echarts[cardName], option);
+  }
+}
+
 function ROI() {
   let cardName = 'ROI';
   let cardName_mini = 'ROI_mini';
@@ -285,7 +338,7 @@ function Chart_R3() {
         name: '新增入市',
         type: 'bar',
         stack: '总量',
-        barWidth : 50,//柱图宽度
+        barWidth: 50, //柱图宽度
         data: [41, 39, 5, 23, 4, 22, 24, 20, 22, 19, 30],
       },
       {
@@ -298,7 +351,7 @@ function Chart_R3() {
         name: '新增入住',
         type: 'bar',
         stack: '总量',
-        barWidth : 50,//柱图宽度
+        barWidth: 50, //柱图宽度
         data: [17, 17, 40, 20, 10, 14, 18, 18, 14, 10, 11],
       },
       {
@@ -561,7 +614,7 @@ function Chart_R2C1_Main() {
       {
         name: '主营业务成本',
         type: 'bar',
-        barWidth : 45,//柱图宽度
+        barWidth: 45, //柱图宽度
         stack: '总量',
         label: {
           show: true,
@@ -575,7 +628,7 @@ function Chart_R2C1_Main() {
       {
         name: '管理费用',
         type: 'bar',
-        barWidth : 45,//柱图宽度
+        barWidth: 45, //柱图宽度
         stack: '总量',
         label: {
           show: true,
@@ -589,7 +642,7 @@ function Chart_R2C1_Main() {
       {
         name: '销售费用',
         type: 'bar',
-        barWidth : 45,//柱图宽度
+        barWidth: 45, //柱图宽度
         stack: '总量',
         label: {
           show: true,
@@ -603,7 +656,7 @@ function Chart_R2C1_Main() {
       {
         name: '委托管理费',
         type: 'bar',
-        barWidth : 45,//柱图宽度
+        barWidth: 45, //柱图宽度
         stack: '总量',
         label: {
           show: true,
@@ -617,7 +670,7 @@ function Chart_R2C1_Main() {
       {
         name: '其他费用',
         type: 'bar',
-        barWidth : 45,//柱图宽度
+        barWidth: 45, //柱图宽度
         stack: '总量',
         label: {
           show: true,
@@ -631,7 +684,7 @@ function Chart_R2C1_Main() {
       {
         name: '净利润',
         type: 'bar',
-        barWidth : 45,//柱图宽度
+        barWidth: 45, //柱图宽度
         stack: '总量',
         label: {
           show: true,
@@ -1499,7 +1552,7 @@ function Chart_R5C1_Main() {
         }
         return html;
       },
-},
+    },
     grid: {
       left: '1%',
       right: 75,
@@ -1591,8 +1644,7 @@ function Chart_R5C1_Main() {
           interval: 0,
           rotate: 40,
         },
-
-},
+      },
       yAxis: {
         type: 'category',
         data: yDataHead,
@@ -1624,7 +1676,7 @@ function Chart_R5C1_Main() {
       ],
     };
   }
-if (!Cus_echarts[cardName]) {
+  if (!Cus_echarts[cardName]) {
     Cus_echarts[cardName] = cfs.echarts.init(echartDom, Cus_theme, option);
   } else {
     cfs.echarts.refresh(Cus_echarts[cardName], option);
@@ -1648,7 +1700,7 @@ function Chart_R5C2_Main() {
           { description_1: '项目E', StaffAdjInvest: 0.025 },
           { description_1: '项目D', StaffAdjInvest: 0.021 },
         ],
-},
+      },
     ],
   };
   let yData = data.series[0];
@@ -1683,7 +1735,7 @@ function Chart_R5C2_Main() {
       top: '5%',
       containLabel: true,
     },
-yAxis: {
+    yAxis: {
       type: 'value',
       axisLabel: {
         formatter: function (value) {
@@ -1717,7 +1769,7 @@ yAxis: {
     // 图表配置修改
     option = {
       tooltip: {
-trigger: 'axis',
+        trigger: 'axis',
         formatter: function (name) {
           return name[0].data + '%';
         },
@@ -1762,7 +1814,7 @@ trigger: 'axis',
           },
         },
       ],
-};
+    };
   }
 
   if (!Cus_echarts[cardName]) {
@@ -1771,28 +1823,6 @@ trigger: 'axis',
     cfs.echarts.refresh(Cus_echarts[cardName], option);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 //extrajs全局方法
 var cfs = {
