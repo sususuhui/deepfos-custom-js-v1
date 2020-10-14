@@ -121,28 +121,25 @@ function renderTable2(data, params) {
   var componentId = params.componentId;
   var html = `<table class="table table-hover datatable-highlight dataTable no-footer table-striped" >
                 <tr>
-                    <th colspan="6" style="text-align: center;">ROA</th>
+                    <th style="text-align: center;">开业年份</th>
+                    <th style="text-align: center;">投决版</th>
+                    <th style="text-align: center;">2020年累计</th>
+                    <th style="text-align: center;">2020年预算</th>
+                    <th style="text-align: center;">投决达成率</th>
+                    <th style="text-align: center;">预算达成率</th>
                 </tr>
                 <tr>
-                    <th>开业年份</th>
-                    <th>投决版</th>
-                    <th>2020年累计</th>
-                    <th>2020年预算</th>
-                    <th>投决达成率</th>
-                    <th>预算达成率</th>
-                </tr>
-                <tr>
-                    <td style="text-align: center;">2018入市</td>
-                    <td style="text-align: center;">19%</td>
-                    <td style="text-align: center;">10%</td>
-                    <td style="text-align: center;">12%</td>
+                    <td style="text-align: center;font-weight: bold;">2018入市</td>
+                    <td style="text-align: center;font-weight: bold;">19%</td>
+                    <td style="text-align: center;font-weight: bold;">10%</td>
+                    <td style="text-align: center;font-weight: bold;">12%</td>
                     <td class="item">
                         <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
-                        <span style="float: right;">120%</span>
+                        <span style="float: right;font-weight: bold;">120%</span>
                     </td>
                     <td class="item">
                         <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
-                        <span style="float: right;">83%</span>
+                        <span style="float: right;font-weight: bold;">83%</span>
                     </td>
                 </tr>
                 <tr>
@@ -188,17 +185,17 @@ function renderTable2(data, params) {
                     </td>
                 </tr>
                 <tr>
-                    <td style="text-align: center;">2019入市</td>
-                    <td style="text-align: center;">15%</td>
-                    <td style="text-align: center;">19%</td>
-                    <td style="text-align: center;">11%</td>
+                    <td style="text-align: center;font-weight: bold;">2019入市</td>
+                    <td style="text-align: center;font-weight: bold;">15%</td>
+                    <td style="text-align: center;font-weight: bold;">19%</td>
+                    <td style="text-align: center;font-weight: bold;">11%</td>
                     <td class="item">
                         <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
-                        <span style="float: right;">58%</span>
+                        <span style="float: right;font-weight: bold;">58%</span>
                     </td>
                     <td class="item">
                         <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
-                        <span style="float: right;">173%</span>
+                        <span style="float: right;font-weight: bold;">173%</span>
                     </td>
                 </tr>
                 <tr>
@@ -281,43 +278,23 @@ function Chart_R6(data, params) {
   let echartDom = cfs.card.body.getDom(cardName).find('.echart');
   let headDom = cfs.card.head.getDom(cardName);
 
-  let sourceData = Chart_R6_data.source.map((val, i) => {
-    if (i === 0) {
-      return val;
-    } else {
-      let b = val.map((cVal, ci) => {
-        if (ci === 0) {
-          switch (cVal) {
-            case 'North':
-              return '华北';
-            case 'East':
-              return '华东';
-            case 'Central':
-              return '华中';
-            case 'South':
-              return '华南';
-            default:
-              return cVal;
-          }
-        } else {
-          return cVal;
-        }
-      });
-      return b;
-    }
-  });
+  let barNum = Chart_R6_data.source[0].length - 1;
+  let seriesData =[]
+  for (let i = 0; i < barNum; i++) {
+    seriesData.push({ type: 'bar' })
+  }
 
   let option = {
     legend: {},
     tooltip: {},
     dataset: {
-      source: sourceData,
+      source: Chart_R6_data.source,
     },
     xAxis: { type: 'category' },
     yAxis: {},
     // Declare several bar series, each will be mapped
     // to a column of dataset.source by default.
-    series: [{ type: 'bar' }, { type: 'bar' }, { type: 'bar' }],
+    series: seriesData,
   };
 
   if (!Cus_echarts[cardName]) {
