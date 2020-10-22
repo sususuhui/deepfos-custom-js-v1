@@ -32,7 +32,7 @@ function r1c1() {
     <span class="font-size-sm opacity-75 mr-2">2021 预算</span>
     <span style="font-size: 1.3rem">18.27%</span>
   </div>
-  <span class="align-self-center ml-auto" style="font-size: 1.3rem">ROI</span>
+  <span class="align-self-center ml-auto" style="font-size: 1.3rem">销售收入</span>
 </div>
   </div>
     <div id="${cardName_mini}" style="width:100%;position: absolute;bottom: 0;height: 50%"></div>
@@ -115,7 +115,7 @@ function r1c2() {
       <span class="font-size-sm opacity-75 mr-2">2021 预算</span>
       <span style="font-size: 1.3rem">6.10%</span>
     </div>
-    <span class="align-self-center ml-auto" style="font-size: 1.3rem">ROE</span>
+    <span class="align-self-center ml-auto" style="font-size: 1.3rem">费用</span>
   </div>
     </div>
     <div id="${cardName_mini}" style="width:100%;position: absolute;bottom: 0;height: 50%"></div>
@@ -198,7 +198,7 @@ function r1c3() {
     <span class="font-size-sm opacity-75 mr-2">2021 预算</span>
     <span style="font-size: 1.3rem">11.06%</span>
   </div>
-  <span class="align-self-center ml-auto" style="font-size: 1.3rem">IRR</span>
+  <span class="align-self-center ml-auto" style="font-size: 1.3rem">利润</span>
 </div>
   </div>
     <div id="${cardName_mini}" style="width:100%;position: absolute;bottom: 0;height: 50%"></div>
@@ -273,7 +273,7 @@ function r2() {
       },
     },
     legend: {
-      data: ['历史数', '预测数', '投决版'],
+      data: ['执行数', '滚动预测数', '年初预算', '去年实际数'],
     },
     grid: {
       left: '3%',
@@ -286,10 +286,16 @@ function r2() {
         saveAsImage: {},
       },
     },
-    xAxis: {
-      type: 'category',
-      data: [2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030],
-    },
+    xAxis: [
+      {
+        type: 'category',
+        data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+      },
+      {
+        type: 'category',
+        data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+      },
+    ],
     yAxis: {
       type: 'value',
       axisLabel: {
@@ -302,24 +308,27 @@ function r2() {
     },
     series: [
       {
-        name: '历史数',
+        name: '执行数',
         type: 'bar',
         stack: '总量',
-        barWidth: 50, //柱图宽度
-        data: [17, 21, 19, 23, 18, '', '', '', '', '', ''],
+        xAxisIndex: 0,
+        barWidth: 40, //柱图宽度
+        data: [17, 21, 19, 23, 18, 20, '', '', '', '', '', '', ''],
       },
       {
-        name: '预测数',
+        name: '滚动预测数',
         type: 'bar',
         stack: '总量',
-        barWidth: 50, //柱图宽度
-        data: ['', '', '', '', '', 26, 25, 25, 20, 21, 23],
+        xAxisIndex: 0,
+        barWidth: 40, //柱图宽度
+        data: ['', '', '', '', '', '', 24, 26, 25, 25, 20, 21, 23],
       },
       {
-        name: '投决版',
+        name: '年初预算',
         type: 'bar',
-        barWidth: 60,
-        barGap: '-110%',
+        barWidth: 50,
+        // barGap: '110%',
+        xAxisIndex: 1,
         itemStyle: {
           normal: {
             color: 'rgba(129,175,239,0.3)', //柱子颜色
@@ -327,7 +336,21 @@ function r2() {
             // borderWidth: 2,
           },
         },
-        data: [24, 26, 22, 23, 22, 21, 27, 23, 25, 29, 28],
+        data: [24, 26, 22, 23, 22, 21, 27, 23, 25, 29, 28, 26, 24],
+      },
+      {
+        name: '去年实际数',
+        type: 'bar',
+        barWidth: 40,
+        xAxisIndex: 0,
+        data: [24, 26, 22, 23, 22, 21, 27, 23, 25, 29, 28, 26, 24],
+      },
+
+      {
+        type: 'bar',
+        barWidth: 37,
+        xAxisIndex: 1,
+        data: ['', '', '', '', '', '', '', '', '', '', '', ''],
       },
     ],
   };
@@ -343,114 +366,120 @@ function r3c1(data, params) {
   var componentId = params.componentId;
   var html = `<table class="table table-hover datatable-highlight dataTable no-footer table-striped" >
                 <tr>
-                    <th style="padding:0 0 0 1.2rem;width:8rem;"></th>
-                    <th>组合1</th>
-                    <th>组合2</th>
-                    <th>投决</th>
+                  <th style="padding:0 0 0 1.2rem;width:8rem;"></th>
+                  <th>当前滚动预算版本</th>
+                  <th>上月滚动预算版本</th>
+                  <th></th>
                 </tr>
                 <tr>
-                    <td style="padding:0 0 0 1.2rem;">ROA</td>
+                    <th style="padding:0 0 0 1.2rem;width:8rem;"></th>
+                    <th>滚动预算2</th>
+                    <th>滚动预算1</th>
+                    <th>年初预算</th>
+                </tr>
+                <tr>
+                    <td style="padding:0 0 0 1.2rem;">收入（万元）</td>
                     <td>
                         <span style="display: inline-block;width: 40%;height: 10px;background: #548235;"></span>
-                        <span style="float: right;">15%</span>
+                        <span style="float: right;">1232</span>
                     </td>
                     <td>
                         <span style="display: inline-block;width: 20%;height: 10px;background: #385723;"></span>
-                        <span style="float: right;">10%</span>
+                        <span style="float: right;">1245</span>
                     </td>
                     <td>
                         <span style="display: inline-block;width: 45%;height: 10px;background: #e2f0d9;"></span>
-                        <span style="float: right;">16%</span>
+                        <span style="float: right;">1231</span>
                     </td>
                 </tr>
                 <tr>
-                  <td style="padding:0 0 0 1.2rem;">ROE</td>
+                  <td style="padding:0 0 0 1.2rem;">毛利（万元）</td>
                   <td>
                       <span style="display: inline-block;width: 30%;height: 10px;background: #70ad47;"></span>
-                      <span style="float: right;">19%</span>
+                      <span style="float: right;">542</span>
                   </td>
                   <td>
                       <span style="display: inline-block;width: 20%;height: 10px;background: #70ad47;"></span>
-                      <span style="float: right;">15%</span>
+                      <span style="float: right;">548</span>
                   </td>
                   <td>
                       <span style="display: inline-block;width: 15%;height: 10px;background: #385723;"></span>
-                      <span style="float: right;">12%</span>
+                      <span style="float: right;">542</span>
                   </td>
                 </tr>
                 <tr>
-                  <td style="padding:0 0 0 1.2rem;">IRR</td>
+                  <td style="padding:0 0 0 1.2rem;">毛利率%</td>
                   <td>
                       <span style="display: inline-block;width: 10%;height: 10px;background: #70ad47;"></span>
-                      <span style="float: right;">5%</span>
+                      <span style="float: right;">44%</span>
                   </td>
                   <td>
                       <span style="display: inline-block;width: 10%;height: 10px;background: #70ad47;"></span>
-                      <span style="float: right;">5%</span>
+                      <span style="float: right;">44%</span>
                   </td>
                   <td>
                       <span style="display: inline-block;width: 10%;height: 10px;background: #70ad47;"></span>
-                      <span style="float: right;">5%</span>
+                      <span style="float: right;">44%</span>
                   </td>
                 </tr>
                 <tr>
-                  <td style="padding:0 0 0 1.2rem;">户均收入</td>
+                  <td style="padding:0 0 0 1.2rem;">费用（万元）</td>
                   <td>
                       <span style="display: inline-block;width: 60%;height: 10px;background: #c55a11;"></span>
-                      <span style="float: right;">10万</span>
+                      <span style="float: right;">478</span>
                   </td>
                   <td>
                       <span style="display: inline-block;width: 60%;height: 10px;background: #de5a00;"></span>
-                      <span style="float: right;">10万</span>
+                      <span style="float: right;">478</span>
                   </td>
                   <td>
                       <span style="display: inline-block;width: 55%;height: 10px;background: #c55a11;"></span>
-                      <span style="float: right;">8万</span>
+                      <span style="float: right;">478</span>
                   </td>
                 </tr>
                 <tr>
-                  <td style="padding:0 0 0 1.2rem;">户均成本</td>
+                  <td style="padding:0 0 0 1.2rem;">费用率%</td>
                   <td>
                       <span style="display: inline-block;width: 40%;height: 10px;background: #ffc000;"></span>
-                      <span style="float: right;">6万</span>
+                      <span style="float: right;">39%</span>
                   </td>
                   <td>
                       <span style="display: inline-block;width: 45%;height: 10px;background: #c55a11;"></span>
-                      <span style="float: right;">7万</span>
+                      <span style="float: right;">38%</span>
                   </td>
                   <td>
                       <span style="display: inline-block;width: 40%;height: 10px;background: #ffc000;"></span>
-                      <span style="float: right;">6万</span>
+                      <span style="float: right;">39%</span>
                   </td>
                 </tr>
                 <tr>
-                  <td style="padding:0 0 0 1.2rem;">预计总投</td>
+                  <td style="padding:0 0 0 1.2rem;">利润（万元）</td>
                   <td>
                       <span style="display: inline-block;width: 70%;height: 10px;background: #c55a11;"></span>
-                      <span style="float: right;">12亿</span>
+                      <span style="float: right;">64</span>
                   </td>
                   <td>
                       <span style="display: inline-block;width: 65%;height: 10px;background: #ffe699;"></span>
-                      <span style="float: right;">8亿</span>
+                      <span style="float: right;">70</span>
                   </td>
                   <td>
                       <span style="display: inline-block;width: 40%;height: 10px;background: #ffc000;"></span>
-                      <span style="float: right;">5亿</span>
+                      <span style="float: right;">64</span>
                   </td>
                 </tr>
                 <tr>
-                  <td style="padding:0 0 0 1.2rem;">保险资金投入</td>
+                  <td style="padding:0 0 0 1.2rem;">利润率%</td>
                   <td>
                       <span style="display: inline-block;width: 60%;height: 10px;background: #c55a11;"></span>
-                      <span style="float: right;">10亿</span>
+                      <span style="float: right;">5%</span>
                   </td>
                   <td>
                       <span style="display: inline-block;width: 65%;height: 10px;background: #ffe699;"></span>
-                      <span style="float: right;">8亿</span>
+                      <span style="float: right;">6%</span>
                   </td>
                   <td>
                       <span style="display: inline-block;width: 50%;height: 10px;background: #ffc000;"></span>
-                      <span style="float: right;">7亿</span>
+                      <span style="float: right;">5%</span>
                   </td>
                 </tr>
               </table>`;
@@ -458,47 +487,87 @@ function r3c1(data, params) {
 }
 
 function r3c2() {
-  var cardName = 'r3c2';
-  var headDom = cfs.card.head.getDom(cardName);
-  let buttonInfo = {
-    id: 'ProjectSelect1',
-    text: '项目',
-    list: [
-      { key: 'A', value: '项目A' },
-      { key: 'B', value: '项目B' },
-      { key: 'C', value: '项目C' },
-      { key: 'D', value: '项目D' },
-      { key: 'E', value: '项目E' },
-      { key: 'F', value: '项目F' },
-    ],
-  };
-  if ($('#' + buttonInfo.id).length == 0) {
-    headDom.find('.freshBS').find('i').css('margin', 10);
-    cfs.card.head.addSelectButton(headDom, buttonInfo);
-    $('#' + buttonInfo.id).change(function () {
-      r3c2();
-    });
-  }
-  var bodyDom = cfs.card.body.getDom(cardName).find('.echart');
-  let data = {
-    series: [
-      { name: '项目总额占比', data: [{ name: 'StaffAdjInvest', value: 0.0382541309 }] },
-      { name: '项目可投占比', data: [{ name: 'StaffAdjInvest', value: 0.5885250913 }] },
-    ],
-  };
-  let pr1 = data.series[0].data[0].value;
-  pr1 = numPro(pr1); //小数位数处理
-  let pr2 = data.series[1].data[0].value;
-  pr2 = numPro(pr2); //小数位数处理
-  let radiusDial1 = '85%';
+  let cardName = 'r3c2';
+  let headDom = cfs.card.head.getDom(cardName);
+  let echartDom = cfs.card.body.getDom(cardName).find('.echart');
+
+  let radiusDial1 = '80%';
   let radiusDial2 = '65%';
-  var option = {
+  let windowWidth = $(window).width();
+  if (windowWidth < 1400) {
+    radiusDial1 = '68%';
+    radiusDial2 = '53%';
+  }
+  let searchVal = '主营业务收入';
+  let qVal = 'Q1';
+  let ProgressData1 = {
+    Q1: {
+      销售数量: 21.98,
+      利润总额: 36.34,
+      主营业务收入: 21.22,
+      主营业务成本: 22.11,
+      管销费用: 13.81,
+    },
+    Q2: {
+      销售数量: 51.98,
+      利润总额: 66.34,
+      主营业务收入: 51.22,
+      主营业务成本: 52.11,
+      管销费用: 43.81,
+    },
+    Q3: {
+      销售数量: 81.98,
+      利润总额: 86.34,
+      主营业务收入: 81.22,
+      主营业务成本: 82.11,
+      管销费用: 73.81,
+    },
+    Q4: {
+      销售数量: 96.98,
+      利润总额: 98.34,
+      主营业务收入: 96.22,
+      主营业务成本: 97.11,
+      管销费用: 88.81,
+    },
+  };
+  var ProgressData2 = {
+    Q1: {
+      销售数量: 23.49,
+      利润总额: 44.96,
+      主营业务收入: 21.1,
+      主营业务成本: 24.3,
+      管销费用: 13.5,
+    },
+    Q2: {
+      销售数量: 53.49,
+      利润总额: 74.96,
+      主营业务收入: 51.1,
+      主营业务成本: 54.3,
+      管销费用: 43.5,
+    },
+    Q3: {
+      销售数量: 83.49,
+      利润总额: 84.96,
+      主营业务收入: 81.1,
+      主营业务成本: 84.3,
+      管销费用: 73.5,
+    },
+    Q4: {
+      销售数量: 98.49,
+      利润总额: 99.96,
+      主营业务收入: 96.1,
+      主营业务成本: 99.3,
+      管销费用: 88.5,
+    },
+  };
+
+  let option = {
     tooltip: {
       formatter: '{a} <br/>{c}%',
     },
     series: [
       {
-        name: data.series[1].name,
+        name: '2021实际进度',
         type: 'gauge',
         z: 3,
         min: 0,
@@ -577,16 +646,15 @@ function r3c2() {
           // rich: {}
           fontSize: 18,
         },
-        // data: [{value: ProgressData1[index],name:'项目可投占比'}]
-        data: [{ value: pr2, name: data.series[1].name }],
+        data: [{ value: ProgressData2[qVal][searchVal], name: '2021实际进度' }],
       },
       {
-        name: data.series[0].name,
+        name: '2021预算进度',
         type: 'gauge',
         center: ['30%', '55%'],
         radius: radiusDial2,
         min: 0,
-        max: 6.5,
+        max: 100,
         endAngle: 45,
         splitNumber: 4,
         axisLine: {
@@ -633,14 +701,13 @@ function r3c2() {
           },
           fontSize: 16,
         },
-        // data: [{value: ProgressData2[index],name:'项目总额占比'}]
-        data: [{ value: pr1, name: data.series[0].name }],
+        data: [{ value: ProgressData1[qVal][searchVal], name: '2021预算进度' }],
       },
     ],
   };
 
   if (!Cus_echarts[cardName]) {
-    Cus_echarts[cardName] = cfs.echarts.init(bodyDom, Cus_theme, option);
+    Cus_echarts[cardName] = cfs.echarts.init(echartDom, Cus_theme, option);
   } else {
     cfs.echarts.refresh(Cus_echarts[cardName], option);
   }
@@ -651,12 +718,12 @@ function r4c1() {
   let echartDom = cfs.card.body.getDom(cardName).find('.echart');
 
   let pieData = [
-    { name: '华东', value: 2565.286371 },
-    { name: '华中', value: 1886.833762 },
-    { name: '华北', value: 1886.833762 },
-    { name: '华南', value: 852.500416 },
+    { name: '配送收入', value: 2565.286371 },
+    { name: '加盟费', value: 1886.833762 },
+    { name: '事业部', value: 1886.833762 },
+    { name: '区域大客户', value: 852.500416 },
   ];
-  let nameArr = ['华东', '华中', '华北', '华南'];
+  let nameArr = ['配送收入', '加盟费', '事业部', '区域大客户'];
   let option = {
     tooltip: {
       trigger: 'item',
@@ -708,13 +775,13 @@ function r4c2() {
   let cardName = 'r4c2';
   let echartDom = cfs.card.body.getDom(cardName).find('.echart');
 
-  let yDataHead = ['北京店铺01', '北京店铺08', '绍兴店铺03', '广州店铺05', '绍兴店铺03', '广州店铺01', '成都店铺01', '成都店铺02', '奥莱店铺01', '成都店铺03'];
+  let yDataHead = ['国际事业部', '百果商业', '无人零售', '百果心享', '金融事业部', '百果品牌直营店', '大客户事业部', '果多美', '供应链设备收入'];
   yDataHead = yDataHead.reverse();
-  let yDataValue1 = [593500, 479600, 457720, 1000000, 584540, 490000, 501090, 493000, 367980, 207600];
+  let yDataValue1 = [593500, 479600, 457720, 1000000, 584540, 490000, 501090, 493000, 367980];
   yDataValue1 = yDataValue1.reverse();
-  let yDataValue2 = [290680, 258930, 310900, 0, 383820, 0, 360000, 303090, 0, 254500];
+  let yDataValue2 = [290680, 258930, 310900, 0, 383820, 0, 360000, 303090, 0];
   yDataValue2 = yDataValue2.reverse();
-  let yDataValue3 = [327600, 379000, 270900, 0, 0, 450000, 0, 0, 379600, 229830];
+  let yDataValue3 = [327600, 379000, 270900, 0, 0, 450000, 0, 0, 379600];
   yDataValue3 = yDataValue3.reverse();
   let option = {
     tooltip: {
@@ -733,12 +800,12 @@ function r4c2() {
         return html;
       },
     },
-    legend: {
-      data: ['ERDOS', 'BLUE', '1980'],
-      x: 'center',
-      y: 'bottom',
-      orient: 'horizontal',
-    },
+    // legend: {
+    //   data: ['ERDOS', 'BLUE', '1980'],
+    //   x: 'center',
+    //   y: 'bottom',
+    //   orient: 'horizontal',
+    // },
     grid: {
       left: '2%',
       right: 75,
@@ -786,42 +853,42 @@ function r4c2() {
           },
         },
       },
-      {
-        name: 'BLUE',
-        type: 'bar',
-        stack: '总量',
-        barWidth: 15,
-        label: {
-          normal: {
-            show: false,
-            position: 'insideRight',
-          },
-        },
-        data: yDataValue2,
-        itemStyle: {
-          normal: {
-            color: '#F37825',
-          },
-        },
-      },
-      {
-        name: '1980',
-        type: 'bar',
-        stack: '总量',
-        barWidth: 15,
-        label: {
-          normal: {
-            show: false,
-            position: 'insideRight',
-          },
-        },
-        data: yDataValue3,
-        itemStyle: {
-          normal: {
-            color: '#516B91',
-          },
-        },
-      },
+      // {
+      //   name: 'BLUE',
+      //   type: 'bar',
+      //   stack: '总量',
+      //   barWidth: 15,
+      //   label: {
+      //     normal: {
+      //       show: false,
+      //       position: 'insideRight',
+      //     },
+      //   },
+      //   data: yDataValue2,
+      //   itemStyle: {
+      //     normal: {
+      //       color: '#F37825',
+      //     },
+      //   },
+      // },
+      // {
+      //   name: '1980',
+      //   type: 'bar',
+      //   stack: '总量',
+      //   barWidth: 15,
+      //   label: {
+      //     normal: {
+      //       show: false,
+      //       position: 'insideRight',
+      //     },
+      //   },
+      //   data: yDataValue3,
+      //   itemStyle: {
+      //     normal: {
+      //       color: '#516B91',
+      //     },
+      //   },
+      // },
     ],
   };
 
@@ -837,11 +904,11 @@ function r5c1() {
   let echartDom = cfs.card.body.getDom(cardName).find('.echart');
 
   let renderData = [
-    { name: '奥莱', value: 4358.542203 },
-    { name: '电商', value: 5206.607964 },
-    { name: '直营', value: 10815.62552 },
+    { name: '已计划', value: 4358.542203 },
+    { name: '已核销', value: 5206.607964 },
+    { name: '结余费用', value: 10815.62552 },
   ];
-  let nameArr = ['奥莱', '电商', '直营'];
+  let nameArr = ['已计划', '已核销', '结余费用'];
   let option = {
     tooltip: {
       trigger: 'item',
