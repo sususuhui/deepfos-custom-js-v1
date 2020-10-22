@@ -320,7 +320,7 @@ function r2() {
         type: 'bar',
         stack: '总量',
         xAxisIndex: 0,
-        barWidth: 40, //柱图宽度
+        barWidth: 30, //柱图宽度
         data: [17, 21, 19, 23, 18, 20, '', '', '', '', '', '', ''],
       },
       {
@@ -328,13 +328,13 @@ function r2() {
         type: 'bar',
         stack: '总量',
         xAxisIndex: 0,
-        barWidth: 40, //柱图宽度
+        barWidth: 30, //柱图宽度
         data: ['', '', '', '', '', '', 24, 26, 25, 25, 20, 21, 23],
       },
       {
         name: '年初预算',
         type: 'bar',
-        barWidth: 50,
+        barWidth: 40,
         // barGap: '110%',
         xAxisIndex: 1,
         itemStyle: {
@@ -349,7 +349,7 @@ function r2() {
       {
         name: '去年实际数',
         type: 'bar',
-        barWidth: 40,
+        barWidth: 30,
         xAxisIndex: 0,
         data: [24, 26, 22, 23, 22, 21, 27, 23, 25, 29, 28, 26, 24],
       },
@@ -357,7 +357,7 @@ function r2() {
       {
         name: '去年实际数',
         type: 'bar',
-        barWidth: 37,
+        barWidth: 27,
         xAxisIndex: 1,
         data: ['', '', '', '', '', '', '', '', '', '', '', ''],
       },
