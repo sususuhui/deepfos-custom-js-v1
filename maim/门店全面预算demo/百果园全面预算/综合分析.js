@@ -23,14 +23,14 @@ function r1c1() {
   <div class="d-flex">
   <div>
     <span class="font-size-sm opacity-75 mr-2">2020 实际</span>
-    <span style="font-size: 1.3rem">18.08%</span>
+    <span style="font-size: 1.3rem">10,424,890</span>
   </div>
   <span class="badge bg-teal-800 badge-pill align-self-center ml-auto">18.11%</span>
 </div>
 <div class="d-flex">
   <div>
     <span class="font-size-sm opacity-75 mr-2">2021 预算</span>
-    <span style="font-size: 1.3rem">18.27%</span>
+    <span style="font-size: 1.3rem">12,312,843</span>
   </div>
   <span class="align-self-center ml-auto" style="font-size: 1.3rem">销售收入</span>
 </div>
@@ -53,7 +53,7 @@ function r1c1() {
       show: false,
       splitLine: { show: false },
       type: 'category',
-      data: [1, 2, 3, 4, 5, 6, 7],
+      data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
     },
     yAxis: {
       show: false,
@@ -66,13 +66,14 @@ function r1c1() {
     series: [
       {
         name: '直接访问',
+        barWidth: 35, //柱图宽度
         type: 'bar',
         itemStyle: {
           normal: {
             color: 'rgba(255,255,255,0.5)',
           },
         },
-        data: [10, 52, 200, 334, 390, 330, 220],
+        data: [200, 300, 200, 334, 390, 330, 220, 300, 200, 334, 390, 300],
       },
     ],
   };
@@ -106,14 +107,14 @@ function r1c2() {
     <div class="d-flex">
     <div>
       <span class="font-size-sm opacity-75 mr-2">2020 实际</span>
-      <span style="font-size: 1.3rem">5.40%</span>
+      <span style="font-size: 1.3rem">45,279</span>
     </div>
     <span class="badge bg-teal-800 badge-pill align-self-center ml-auto">+5.59%</span>
   </div>
   <div class="d-flex">
     <div>
       <span class="font-size-sm opacity-75 mr-2">2021 预算</span>
-      <span style="font-size: 1.3rem">6.10%</span>
+      <span style="font-size: 1.3rem">47,810</span>
     </div>
     <span class="align-self-center ml-auto" style="font-size: 1.3rem">费用</span>
   </div>
@@ -136,7 +137,7 @@ function r1c2() {
       show: false,
       splitLine: { show: false },
       type: 'category',
-      data: [1, 2, 3, 4, 5, 6, 7],
+      data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
     },
     yAxis: {
       show: false,
@@ -149,13 +150,17 @@ function r1c2() {
     series: [
       {
         name: '直接访问',
-        type: 'bar',
+        type: 'line',
+        smooth: true,
+        symbol: "none",
+        sampling: "average",
         itemStyle: {
-          normal: {
-            color: 'rgba(255,255,255,0.5)',
-          },
+          color: "rgba(255,255,255,0.5)",
         },
-        data: [10, 52, 200, 334, 390, 330, 220],
+        areaStyle: {
+          color: "rgba(255,255,255,0.5)",
+        },
+        data: [200, 300, 200, 334, 390, 330, 220, 300, 200, 334, 390, 300],
       },
     ],
   };
@@ -189,14 +194,14 @@ function r1c3() {
   <div class="d-flex">
   <div>
     <span class="font-size-sm opacity-75 mr-2">2020 实际</span>
-    <span style="font-size: 1.3rem">11.01%</span>
+    <span style="font-size: 1.3rem">521,344</span>
   </div>
   <span class="badge bg-teal-800 badge-pill align-self-center ml-auto">11.02%</span>
 </div>
 <div class="d-flex">
   <div>
     <span class="font-size-sm opacity-75 mr-2">2021 预算</span>
-    <span style="font-size: 1.3rem">11.06%</span>
+    <span style="font-size: 1.3rem">615,642</span>
   </div>
   <span class="align-self-center ml-auto" style="font-size: 1.3rem">利润</span>
 </div>
@@ -219,7 +224,7 @@ function r1c3() {
       show: false,
       splitLine: { show: false },
       type: 'category',
-      data: [1, 2, 3, 4, 5, 6, 7],
+      data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
     },
     yAxis: {
       show: false,
@@ -232,13 +237,13 @@ function r1c3() {
     series: [
       {
         name: '直接访问',
-        type: 'bar',
+        type: 'line',
         itemStyle: {
           normal: {
             color: 'rgba(255,255,255,0.5)',
           },
         },
-        data: [10, 52, 200, 334, 390, 330, 220],
+        data: [200, 300, 200, 334, 390, 330, 220, 300, 200, 334, 390, 300],
       },
     ],
   };
@@ -294,6 +299,9 @@ function r2() {
       {
         type: 'category',
         data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+        axisLabel: {
+          show: false,
+        },
       },
     ],
     yAxis: {
@@ -347,6 +355,7 @@ function r2() {
       },
 
       {
+        name: '去年实际数',
         type: 'bar',
         barWidth: 37,
         xAxisIndex: 1,
