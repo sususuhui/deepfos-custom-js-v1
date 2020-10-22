@@ -6,14 +6,14 @@ function r1c1() {
   let echartDom = cfs.card.body.getDom(cardName).find('.echart');
 
   let YName = [
-    '麦中门店装修项目',
-    '麦中Oracle HFM项目',
-    '浙江麦当劳信息系统运维项目',
-    '浙江麦当劳门店翻新项目',
-    '天津麦当劳门店设备升级项目',
-    '四川麦当劳网络改造项目',
-    '北京麦当劳设备更换项目',
-    '浙江麦当劳MCD Capex项目',
+    '门店装修项目',
+    'Oracle HFM项目',
+    '信息系统运维项目',
+    '门店翻新项目',
+    '门店设备升级项目',
+    '网络改造项目',
+    '设备更换项目',
+    'MCD Capex项目',
   ];
   let Xdata = [1500000, 1200000, 1200000, 612000, 600000, 600000, 500000, 120000];
   let idArr = ['CE028VB4QA64', 'CE028GC6PPP8', 'CE02KBC0DGMO', 'CE028U5GNF2D', 'CE02K4LSLD9C', 'CE02KJJ1RPES', 'CE02KM2J0TDU', 'CE02K0IJ9H6H'];
@@ -84,13 +84,14 @@ function r1c2() {
   let echartDom = cfs.card.body.getDom(cardName).find('.echart');
 
   let pieData = [
-    { name: "MCML-McDonald's China Management", value: 2882 },
-    { name: '浙江麦当劳餐厅食品有限公司', value: 980 },
-    { name: '上海麦当劳食品有限公司', value: 651 },
-    { name: '山东麦当劳（餐厅食品）有限公司', value: 374 },
-    { name: '天津麦当劳食品有限公司', value: 95 },
+    // { name: "MCML-McDonald's China Management", value: 2882 },
+    { name: '百果科技', value: 980 },
+    { name: '培训部', value: 651 },
+    { name: '营销部', value: 374 },
+    // { name: '天津麦当劳食品有限公司', value: 95 },
   ];
-  let nameArr = ["MCML-McDonald's China Management", '浙江麦当劳餐厅食品有限公司', '上海麦当劳食品有限公司', '山东麦当劳（餐厅食品）有限公司', '天津麦当劳食品有限公司'];
+  let nameArr = ['百果科技', '培训部', '营销部'];
+  // let nameArr = ["MCML-McDonald's China Management", '浙江麦当劳餐厅食品有限公司', '上海麦当劳食品有限公司', '山东麦当劳（餐厅食品）有限公司', '天津麦当劳食品有限公司'];
   let option = {
     tooltip: {
       trigger: 'item',
@@ -157,7 +158,7 @@ function r2c1() {
     grid: {
       left: '3%',
       right: '15%',
-      top:'5%',
+      top: '5%',
       containLabel: true,
     },
     xAxis: {
@@ -234,7 +235,7 @@ function r2c2() {
       left: '3%',
       right: '4%',
       bottom: '10%',
-      top:'5%',
+      top: '5%',
       containLabel: true,
     },
     xAxis: {
