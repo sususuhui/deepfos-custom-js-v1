@@ -101,7 +101,7 @@ const r1c1 = (id) => {
         data: [360, 330, 377, 324, 403, 390, 406, 450, 465, 480, 527, 561],
         itemStyle: {
           normal: {
-            color: '#004ea1',
+            // color: '#004ea1',
             lineStyle: {
               width: 3, //设置线条粗细
             },
@@ -115,7 +115,7 @@ const r1c1 = (id) => {
         data: [260, 230, 287, 224, 303, 290, 306, 350, 365, 380, 427, 461],
         itemStyle: {
           normal: {
-            color: '#498ace',
+            // color: '#498ace',
             lineStyle: {
               width: 3, //设置线条粗细
             },
@@ -129,9 +129,9 @@ const r1c1 = (id) => {
         data: [1440, 1320, 1583.4, 1296, 1652.3, 1560, 1624, 1890, 1860, 2160, 2108, 2244],
         itemStyle: {
           normal: {
-            color: '#a9cee8',
+            // color: '#a9cee8',
             lineStyle: {
-              width: 5, //设置线条粗细
+              width: 3, //设置线条粗细
             },
           },
         },
@@ -184,7 +184,7 @@ const r1c2 = (id) => {
         yAxisIndex: 0,
         data: [12000, 11000, 10400, 12000, 13000, 11700, 15400, 15000, 16500, 17920, 18700, 18700],
         itemStyle: {
-          color: '#498ace',
+          color: '#93b7e3',
         },
       },
       {
@@ -194,7 +194,7 @@ const r1c2 = (id) => {
         yAxisIndex: 1,
         data: [12, 11, 13, 12, 13, 13, 14, 15, 15, 16, 17, 17],
         itemStyle: {
-          color: '#a9cee8',
+          color: '#edafda',
         },
       },
     ],
@@ -232,11 +232,11 @@ const r1c3 = (id) => {
           },
         },
         data: [
-          { value: 0.3014, name: '产品销售收入', itemStyle: { color: '#004ea1' } },
-          { value: 0.285, name: '工程结算收入', itemStyle: { color: '#004fb6' } },
-          { value: 0.1877, name: '商品销售收入', itemStyle: { color: '#498ace' } },
-          { value: 0.2147, name: '营业收入', itemStyle: { color: '#88b9e1' } },
-          { value: 0.113, name: '房地产经营收入', itemStyle: { color: '#a9cee8' } },
+          { value: 0.3014, name: '产品销售收入' },
+          { value: 0.285, name: '工程结算收入' },
+          { value: 0.1877, name: '商品销售收入' },
+          { value: 0.2147, name: '营业收入' },
+          { value: 0.113, name: '房地产经营收入' },
         ],
       },
       {
@@ -246,9 +246,9 @@ const r1c3 = (id) => {
         center: ['75%', '50%'],
         roseType: 'area',
         data: [
-          { value: 0.4908, name: '制造费用', itemStyle: { color: '#498ace' } },
-          { value: 0.2654, name: '直接人工', itemStyle: { color: '#88b9e1' } },
-          { value: 0.244, name: '直接材料', itemStyle: { color: '#a9cee8' } },
+          { value: 0.4908, name: '制造费用' },
+          { value: 0.2654, name: '直接人工' },
+          { value: 0.244, name: '直接材料' },
         ],
       },
     ],
@@ -288,8 +288,8 @@ const r1c4 = (id) => {
           show: false,
         },
         data: [
-          { value: 62624, name: '权益', itemStyle: { color: '#004ea1' } },
-          { value: 109696, name: '负债', itemStyle: { color: '#a9cee8' } },
+          { value: 62624, name: '权益', itemStyle: { color: '#cbb0e3' } },
+          { value: 109696, name: '负债', itemStyle: { color: '#516b91' } },
         ],
       },
     ],
