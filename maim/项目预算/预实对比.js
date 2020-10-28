@@ -103,6 +103,20 @@ function R1C1(data, params) {
   };
   // initEchart(componentId, option);
 
+  // 手机端
+  if (getRequest().isView == 'mobile') {
+    option = {
+      ...option,
+      grid: {
+        left: '0',
+        right: '2%',
+        bottom: '3%',
+        top: '3%',
+        containLabel: true,
+      },
+    };
+  }
+
   chart = echarts.init(document.getElementById('chart-' + componentId));
   chart.clear();
   chart.setOption(option);
@@ -176,6 +190,34 @@ function R1C2(data, params) {
       },
     ],
   };
+
+  // 手机端
+  if (getRequest().isView == 'mobile') {
+    option = {
+      ...option,
+      grid: {
+        left: '0',
+        right: '2%',
+        bottom: '3%',
+        top: '15%',
+        containLabel: true,
+      },
+      series: [
+        {
+          name: '去年实际',
+          data: chartData.series[0],
+          type: 'bar',
+        },
+        {
+          data: chartData.series[1],
+          type: 'bar',
+          name: '当年预算',
+          barCategoryGap: '50%',
+        },
+      ],
+    };
+  }
+
   initEchart(componentId, option);
 }
 
@@ -244,30 +286,59 @@ function R1C3(data, params) {
       },
     ],
   };
+
+  // 手机端
+  if (getRequest().isView == 'mobile') {
+    option = {
+      ...option,
+      grid: {
+        left: '0',
+        right: '2%',
+        bottom: '3%',
+        top: '15%',
+        containLabel: true,
+      },
+    };
+  }
+
   initEchart(componentId, option);
 }
 
 //渲染 科目余额表
 function readList(data, params) {
   var componentId = params.componentId;
-  console.log(componentId);
+
+  // 手机端
+  if (getRequest().isView == 'mobile') {
+    let cardName = '损益表预算明细';
+    let height = 370;
+
+    let cardDom = $('#' + cardName).parent();
+    $(cardDom).height(height);
+    let echartDom = $('#' + cardName)
+      .find('.card-body')
+      .find('.echart');
+    let _height = $(echartDom).parent().height();
+    $(echartDom).height(_height);
+  }
+
   var html = `<table class='table table-bordered datatable-complex-header dataTable no-footer' style="table-layout: fixed;">
                   <thead>
                        <tr>
                             <th style="width:5rem;">科目</th>
-                            <th style="text-align:center;padding:.75rem 0;">一月</th>
-                            <th style="text-align:center;padding:.75rem 0;">二月</th>
-                            <th style="text-align:center;padding:.75rem 0;">三月</th>
-                            <th style="text-align:center;padding:.75rem 0;">四月</th>
-                            <th style="text-align:center;padding:.75rem 0;">五月</th>
-                            <th style="text-align:center;padding:.75rem 0;">六月</th>
-                            <th style="text-align:center;padding:.75rem 0;">七月</th>
-                            <th style="text-align:center;padding:.75rem 0;">八月</th>
-                            <th style="text-align:center;padding:.75rem 0;">九月</th>
-                            <th style="text-align:center;padding:.75rem 0;">十月</th>
-                            <th style="text-align:center;padding:.75rem 0;">十一月</th>
-                            <th style="text-align:center;padding:.75rem 0;">十二月</th>
-                            <th style="text-align:center;padding:.75rem 0;">全年</th>
+                            <th style="text-align:center;padding:.75rem 0;width:6rem">一月</th>
+                            <th style="text-align:center;padding:.75rem 0;width:6rem">二月</th>
+                            <th style="text-align:center;padding:.75rem 0;width:6rem">三月</th>
+                            <th style="text-align:center;padding:.75rem 0;width:6rem">四月</th>
+                            <th style="text-align:center;padding:.75rem 0;width:6rem">五月</th>
+                            <th style="text-align:center;padding:.75rem 0;width:6rem">六月</th>
+                            <th style="text-align:center;padding:.75rem 0;width:6rem">七月</th>
+                            <th style="text-align:center;padding:.75rem 0;width:6rem">八月</th>
+                            <th style="text-align:center;padding:.75rem 0;width:6rem">九月</th>
+                            <th style="text-align:center;padding:.75rem 0;width:6rem">十月</th>
+                            <th style="text-align:center;padding:.75rem 0;width:6rem">十一月</th>
+                            <th style="text-align:center;padding:.75rem 0;width:6rem">十二月</th>
+                            <th style="text-align:center;padding:.75rem 0;width:6rem">全年</th>
                         </tr>
                     </thead>
                     <tbody>
