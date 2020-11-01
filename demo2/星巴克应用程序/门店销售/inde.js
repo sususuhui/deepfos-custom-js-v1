@@ -1,3 +1,6 @@
+var Cus_theme = 'westeros';
+var Cus_echarts = {};
+
 function r1c1() {
   let cardName = 'r1c1';
   let cardName_mini = 'r1c1_mini';
@@ -38,7 +41,6 @@ function r1c1() {
   echartDom.html(Wrapper);
 
   let miniEchartDom = cfs.card.body.getDom(cardName).find(`#${cardName_mini}`);
-
   let option = {
     grid: {
       top: '0',
@@ -398,18 +400,19 @@ function r3c1() {
         radius: ['50%', '70%'],
         avoidLabelOverlap: false,
         label: {
-          show: false,
-          position: 'center',
+          show: true,
+          position: 'outside',
+          formatter: '{b}: {d}%',
         },
-        emphasis: {
-          label: {
-            show: false,
-            fontSize: '30',
-            fontWeight: 'bold',
-          },
-        },
+        // emphasis: {
+        //   label: {
+        //     show: true,
+        //     fontSize: '30',
+        //     fontWeight: 'bold',
+        //   },
+        // },
         labelLine: {
-          show: false,
+          show: true,
         },
         data: [
           { value: 34, name: '东区' },
@@ -458,18 +461,19 @@ function r3c2() {
         radius: ['50%', '70%'],
         avoidLabelOverlap: false,
         label: {
-          show: false,
-          position: 'center',
+          show: true,
+          position: 'outside',
+          formatter: '{b}: {d}%',
         },
-        emphasis: {
-          label: {
-            show: false,
-            fontSize: '30',
-            fontWeight: 'bold',
-          },
-        },
+        // emphasis: {
+        //   label: {
+        //     show: false,
+        //     fontSize: '30',
+        //     fontWeight: 'bold',
+        //   },
+        // },
         labelLine: {
-          show: false,
+          show: true,
         },
         data: [
           { value: 46, name: '线下' },
@@ -508,7 +512,7 @@ function r3c3() {
     legend: {
       orient: 'horizontal',
       y: 'bottom',
-      data: ['咖啡', '食品', '冰淇淋', '会员'],
+      data: ['咖啡', '食品', '冰淇淋', '其他'],
     },
     series: [
       {
@@ -517,24 +521,25 @@ function r3c3() {
         radius: ['50%', '70%'],
         avoidLabelOverlap: false,
         label: {
-          show: false,
-          position: 'center',
+          show: true,
+          position: 'outside',
+          formatter: '{b}: {d}%',
         },
-        emphasis: {
-          label: {
-            show: false,
-            fontSize: '30',
-            fontWeight: 'bold',
-          },
-        },
+        // emphasis: {
+        //   label: {
+        //     show: false,
+        //     fontSize: '30',
+        //     fontWeight: 'bold',
+        //   },
+        // },
         labelLine: {
-          show: false,
+          show: true,
         },
         data: [
           { value: 46, name: '咖啡' },
           { value: 25, name: '食品' },
           { value: 17, name: '冰淇淋' },
-          { value: 12, name: '会员' },
+          { value: 12, name: '其他' },
         ],
       },
     ],
@@ -577,18 +582,18 @@ function r3c4() {
         radius: ['50%', '70%'],
         avoidLabelOverlap: false,
         label: {
-          show: false,
-          position: 'center',
+          show: true,
+          position: 'outside',
+          formatter: '{b}: {d}%',
         },
-        emphasis: {
-          label: {
-            show: false,
-            fontSize: '30',
-            fontWeight: 'bold',
-          },
-        },
+        // emphasis: {
+        //   label: {
+        //     show: false,
+        //     fontSize: '30',
+        //     fontWeight: 'bold',
+        //   },
         labelLine: {
-          show: false,
+          show: true,
         },
         data: [
           { value: 72, name: '会员' },
@@ -1067,7 +1072,7 @@ function r4c4() {
       }
     }
   });
-  console.log(aaa)
+  console.log(aaa);
 
   let option = {
     title: {
@@ -1107,7 +1112,7 @@ function r4c4() {
       splitLine: {
         show: false,
       },
-      data: ['2019销售', 'Q1活动', 'Q2活动', 'Q3活动', 'Q4活动', '2020销售'],
+      data: ['2019销售', '日常活动', '节日活动', '品类活动', '非活动', '2020销售'],
     },
     yAxis: {
       type: 'value',
@@ -1590,9 +1595,6 @@ function r6c2() {
     cfs.echarts.refresh(Cus_echarts[cardName], option);
   }
 }
-
-var Cus_theme = 'westeros';
-var Cus_echarts = {};
 
 //extrajs全局方法
 var cfs = {

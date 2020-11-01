@@ -1,180 +1,167 @@
-function r1c1() {
-  let cardName = 'r1c1';
-  let echartDom = cfs.card.body.getDom(cardName).find('.echart');
-  let headDom = cfs.card.head.getDom(cardName);
+let Cus_echarts = {};
+let Cus_theme = 'westeros';
 
-  // headDom.find('.card-header').css('display', 'none');
+$(function () {
+  r1();
+  r3c1();
+  r3c2();
+  r4();
+});
 
-  // cfs.echarts.correctHeight(cardName);
+function r1() {
+  let dashboardDom = $('.dashBoardContent');
+  let html = `
+  <div class="row dataSheet mb-2 row_extra_1" style="height: 90px">
+  <div class="col-2">
+    <div class="card">
+      <div class="card-body pb-1">
+        <div class="d-flex align-items-center justify-content-left mb-2">
+          <a href="#" class="btn bg-transparent border-blue-400 text-blue-400 rounded-round border-2 btn-icon mr-3">
+            <i class="icon-stats-bars4"></i>
+          </a>
+          <div>
+            <div class="font-weight-semibold" style="font-size: medium;white-space: nowrap;">任务总数</div>
+            <div class="font-weight-semibold" style="font-size: large">25</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  let option = {
-    // title: {
-    //   text: '阶梯瀑布图',
-    //   left: 'center',
-    // },
-    // tooltip: {
-    //   trigger: 'axis',
-    //   axisPointer: {
-    //     // 坐标轴指示器，坐标轴触发有效
-    //     type: 'shadow', // 默认为直线，可选为：'line' | 'shadow'
-    //   },
-    //   formatter: function (params) {
-    //     var tar;
-    //     if (params[1].value !== '-') {
-    //       tar = params[1];
-    //     } else {
-    //       tar = params[0];
-    //     }
-    //     return tar.name + '<br/>' + tar.seriesName + ' : ' + tar.value;
-    //   },
-    // },
-    // legend: {
-    //   orient: 'horizontal',
-    //   y: 30,
-    //   data: ['增加', '减少', '汇总'],
-    // },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: '3%',
-      top: '5%',
-      containLabel: true,
-    },
-    xAxis: {
-      type: 'category',
-      splitLine: {
-        show: false,
-      },
-      data: ['项目预算', '人力成本', '采购成本', '费用', '实际发生额'],
-    },
-    yAxis: {
-      type: 'value',
-    },
-    series: [
-      {
-        name: '汇总',
-        type: 'bar',
-        barWidth: 50,
-        stack: '总量',
-        label: {
-          show: true,
-          position: 'top',
-        },
-        data: [650000, '-', '-', '-', 380000],
-      },
-      {
-        name: '辅助',
-        type: 'bar',
-        barWidth: 50,
-        stack: '总量',
-        itemStyle: {
-          barBorderColor: 'rgba(0,0,0,0)',
-          color: 'rgba(0,0,0,0)',
-        },
-        emphasis: {
-          itemStyle: {
-            barBorderColor: 'rgba(0,0,0,0)',
-            color: 'rgba(0,0,0,0)',
-          },
-        },
-        // data: [0, 97776906, 102352413, 103816575, 103242635, 0]
-        data: ['-', 550000, 400000, 380000, '-'],
-      },
-      // {
-      //   name: '增加',
-      //   type: 'bar',
-      //   stack: '总量',
-      //   label: {
-      //     show: true,
-      //     position: 'top',
-      //   },
-      //   data: ['-', '-', '-', '-', '-'],
-      // },
-      {
-        name: '减少',
-        type: 'bar',
-        barWidth: 50,
-        stack: '总量',
-        data: ['-', 100000, 150000, 20000, '-'],
-        label: {
-          show: true,
-          position: 'bottom',
-          formatter: function (params) {
-            return '-' + params.value;
-          },
-        },
-      },
-    ],
-  };
+  <div class="col-2">
+    <div class="card">
+      <div class="card-body pb-1">
+        <div class="d-flex align-items-center justify-content-left mb-2">
+          <a href="#" class="btn bg-transparent border-blue-400 text-blue-400 rounded-round border-2 btn-icon mr-3">
+            <i class="icon-stats-bars4"></i>
+          </a>
+          <div>
+            <div class="font-weight-semibold" style="font-size: medium;white-space: nowrap;">正常完成</div>
+            <div class="font-weight-semibold" style="font-size: large">5</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  if (!Cus_echarts[cardName]) {
-    Cus_echarts[cardName] = cfs.echarts.init(echartDom, Cus_theme, option);
-  } else {
-    cfs.echarts.refresh(Cus_echarts[cardName], option);
-  }
+  <div class="col-2">
+    <div class="card">
+      <div class="card-body pb-1">
+        <div class="d-flex align-items-center justify-content-left mb-2">
+          <a href="#" class="btn bg-transparent border-blue-400 text-blue-400 rounded-round border-2 btn-icon mr-3">
+            <i class="icon-stats-bars4"></i>
+          </a>
+          <div>
+            <div class="font-weight-semibold" style="font-size: medium;white-space: nowrap;">延期完成</div>
+            <div class="font-weight-semibold" style="font-size: large">1</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-2">
+    <div class="card">
+      <div class="card-body pb-1">
+        <div class="d-flex align-items-center justify-content-left mb-2">
+          <a href="#" class="btn bg-transparent border-blue-400 text-blue-400 rounded-round border-2 btn-icon mr-3">
+            <i class="icon-stats-bars4"></i>
+          </a>
+          <div>
+            <div class="font-weight-semibold" style="font-size: medium;white-space: nowrap;">进行中</div>
+            <div class="font-weight-semibold" style="font-size: large">1</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-2">
+    <div class="card">
+      <div class="card-body pb-1">
+        <div class="d-flex align-items-center justify-content-left mb-2">
+          <a href="#" class="btn bg-transparent border-blue-400 text-blue-400 rounded-round border-2 btn-icon mr-3">
+            <i class="icon-stats-bars4"></i>
+          </a>
+          <div>
+            <div class="font-weight-semibold" style="font-size: medium;white-space: nowrap;">进行中-延期</div>
+            <div class="font-weight-semibold" style="font-size: large">1</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-2">
+    <div class="card">
+      <div class="card-body pb-1">
+        <div class="d-flex align-items-center justify-content-left mb-2">
+          <a href="#" class="btn bg-transparent border-blue-400 text-blue-400 rounded-round border-2 btn-icon mr-3">
+            <i class="icon-stats-bars4"></i>
+          </a>
+          <div>
+            <div class="font-weight-semibold" style="font-size: medium;white-space: nowrap;">未开始</div>
+            <div class="font-weight-semibold" style="font-size: large">17</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  `;
+  dashboardDom.prepend(html);
 }
 
-function r1c2() {
-  let cardName = 'r1c2';
+function r3c1() {
+  let cardName = 'pie_chart';
   let echartDom = cfs.card.body.getDom(cardName).find('.echart');
 
-  let yDataHead = ['差旅费', '业务招待费', '杂项', '通信费'];
-  yDataHead = yDataHead.reverse();
-  let yDataValue1 = [15600, 2000, 1200, 560];
-  yDataValue1 = yDataValue1.reverse();
+  let cardBodyDom = cfs.card.body.getDom(cardName);
+  let _height = $(cardBodyDom).height();
+  $(echartDom).height(_height);
+
   let option = {
     tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        // 坐标轴指示器，坐标轴触发有效
-        type: 'shadow',
-      },
+      trigger: 'item',
+      formatter: '{b}: {c} ({d}%)',
     },
-    grid: {
-      left: '2%',
-      right: 75,
-      bottom: '10%',
-      top: '10',
-      containLabel: true,
+    legend: {
+      orient: 'vertical',
+      left: 10,
+      data: ['剩余额度', '已使用'],
     },
-    xAxis: {
-      type: 'value',
-      name: getLanguage('money2') + '：千元',
-      // boundaryGap: [0, 0.01],
-      axisLabel: {
-        formatter: function (val) {
-          return format(val / 1000);
+    graphic: [
+      {
+        type: 'text',
+        left: 'center',
+        top: '48%',
+        style: {
+          text: '40%',
+          textAlign: 'center',
+          fill: '#000',
+          width: 40,
+          height: 30,
+          fontSize: 18,
         },
-        interval: 0,
-        rotate: 40,
       },
-    },
-    yAxis: {
-      type: 'category',
-      data: yDataHead,
-      // interval:0,
-      axisLabel: {
-        interval: 0,
-        rotate: 20,
-      },
-    },
+    ],
     series: [
       {
-        type: 'bar',
-        stack: '总量',
-        barWidth: 35,
+        // name: '访问来源',
+        type: 'pie',
+        radius: ['50%', '70%'],
+        avoidLabelOverlap: false,
         label: {
-          normal: {
-            show: false,
-            position: 'insideRight',
-          },
+          show: false,
+          position: 'center',
         },
-        data: yDataValue1,
-        itemStyle: {
-          normal: {
-            color: '#569ADA',
-          },
+        labelLine: {
+          show: false,
         },
+        data: [
+          { value: 29880800, name: '剩余额度' },
+          { value: 19544900, name: '已使用' },
+        ],
       },
     ],
   };
@@ -186,8 +173,74 @@ function r1c2() {
   }
 }
 
-function r2() {
-  let cardName = 'r2';
+function r3c2() {
+  let cardName = 'budget_detail';
+  let echartDom = cfs.card.body.getDom(cardName).find('.echart');
+
+  let cardBodyDom = cfs.card.body.getDom(cardName);
+  let _height = $(cardBodyDom).height();
+  $(echartDom).height(_height);
+
+  let data = [
+    ['类别', '合计', '采购合同', '人力资源', '项目费用'],
+    ['剩余额度', ' 298,808.00 ', ' 160,000.00 ', ' 50,000.00 ', ' 88,808.00 '],
+    ['实际金额', ' 195,449.00 ', ' 140,000.00 ', ' 50,000.00 ', ' 5,449.00 '],
+    ['预算金额', ' 494,257.00 ', ' 300,000.00 ', ' 100,000.00 ', ' 94,257.00 '],
+  ];
+
+  let tableHtml = renderTable(data);
+
+  $(echartDom).html(tableHtml);
+}
+
+const renderTable = (data) => {
+  let theadHtmlStart = `<thead>`;
+  let theadHtmlEnd = `</thead>`;
+  let tbodyHtmlStart = `<tbody>`;
+  let tbodyHtmlEnd = `</tbody>`;
+  data.forEach((val, i) => {
+    if (i <= 0) {
+      let trHtmlStart = `<tr>`;
+      let trHtmlEnd = `</tr>`;
+      val.forEach((cVal, j) => {
+        if (cVal === '-') {
+          trHtmlStart += `<th></th>`;
+        } else {
+          trHtmlStart += `<th class="text-center">${cVal}</th>`;
+        }
+      });
+      trHtmlStart += trHtmlEnd;
+      theadHtmlStart += trHtmlStart;
+    } else {
+      let trHtmlStart = `<tr>`;
+      let trHtmlEnd = `</tr>`;
+      val.forEach((cVal, j) => {
+        if (cVal === '-') {
+          trHtmlStart += `<td></td>`;
+        } else {
+          if (['资产合计', '负债合计', '权益合计', '总费用', '净利润'].includes(cVal)) {
+            trHtmlStart += `<td class="pl-2" style="font-weight: 900;">${cVal}</td>`;
+          } else if (j === 0) {
+            trHtmlStart += `<td>${cVal}</td>`;
+          } else {
+            trHtmlStart += `<td class="text-right">${cVal}</td>`;
+          }
+        }
+      });
+      trHtmlStart += trHtmlEnd;
+      tbodyHtmlStart += trHtmlStart;
+    }
+  });
+  theadHtmlStart += theadHtmlEnd;
+  tbodyHtmlStart += tbodyHtmlEnd;
+
+  let tableHtml = `<table class="table table-xs table-bordered">${theadHtmlStart}${tbodyHtmlStart}</table>`;
+
+  return tableHtml;
+};
+
+function r4() {
+  let cardName = 'budget_vs_actual';
   let echartDom = cfs.card.body.getDom(cardName).find('.echart');
 
   let cardBodyDom = cfs.card.body.getDom(cardName);
@@ -251,21 +304,11 @@ function r2() {
       {
         name: '预算支出',
         type: 'bar',
-        barGap: '-92%',
-        barMaxWidth: 60,
         data: [8399, 20391, 28966, 90407, 58060, 9519, 50790, 48181, 40710, 38718, 97960, 2156],
-        itemStyle: {
-          normal: {
-            color: 'rgba(129,175,239,0.3)', //柱子颜色
-            // borderColor: "#000000", //边框颜色
-            // borderWidth: 2,
-          },
-        },
       },
       {
         name: '实际支出',
         type: 'bar',
-        barMaxWidth: 50,
         data: [6099, 9384, 38966, 91000, 50000, '-', '-', '-', '-', '-', '-', '-'],
       },
       {
@@ -290,274 +333,7 @@ function r2() {
   }
 }
 
-function r3() {
-  let cardName = 'r3';
-  let echartDom = cfs.card.body.getDom(cardName).find('.echart');
-  let headDom = cfs.card.head.getDom(cardName);
-
-  let data = [
-    ['-', 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, '2020/12'],
-    ['-', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 'YearEnd'],
-    ['-', 'Actual', 'Actual', 'Actual', 'Actual', 'Actual', 'Plan', 'Plan', 'Plan', 'Plan', 'Plan', 'Plan', 'Plan', 'Forecast'],
-    ['资产合计', ' 98,750.00 ', 195, -93, ' -5,860.00 ', ' -9,848.00 ', ' -9,026.00 ', ' -14,420.00 ', ' -14,218.00 ', ' -17,123.00 ', ' -17,525.00 ', ' -21,754.00 ', ' -12,345.00 ', ' -12,345.00 '],
-    [
-      '货币资金',
-      ' -   ',
-      ' -97,305.00 ',
-      ' -96,343.00 ',
-      ' -100,860.00 ',
-      ' -103,598.00 ',
-      ' -101,526.00 ',
-      ' -105,670.00 ',
-      ' -104,218.00 ',
-      ' -105,873.00 ',
-      ' -105,025.00 ',
-      ' -108,004.00 ',
-      ' -97,345.00 ',
-      ' -97,345.00 ',
-    ],
-    ['预付账款', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   '],
-    ['待摊费用', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   '],
-    ['无形资产', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   '],
-    [
-      '固定资产',
-      ' 100,000.00 ',
-      ' 100,000.00 ',
-      ' 100,000.00 ',
-      ' 100,000.00 ',
-      ' 100,000.00 ',
-      ' 100,000.00 ',
-      ' 100,000.00 ',
-      ' 100,000.00 ',
-      ' 100,000.00 ',
-      ' 100,000.00 ',
-      ' 100,000.00 ',
-      ' 100,000.00 ',
-      ' 100,000.00 ',
-    ],
-    [
-      '累计折旧',
-      ' -1,250.00 ',
-      ' -2,500.00 ',
-      ' -3,750.00 ',
-      ' -5,000.00 ',
-      ' -6,250.00 ',
-      ' -7,500.00 ',
-      ' -8,750.00 ',
-      ' -10,000.00 ',
-      ' -11,250.00 ',
-      ' -12,500.00 ',
-      ' -13,750.00 ',
-      ' -15,000.00 ',
-      ' -15,000.00 ',
-    ],
-    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-    [
-      '负债合计',
-      ' -107,312.00 ',
-      ' -12,706.00 ',
-      ' -18,284.00 ',
-      ' -21,450.00 ',
-      ' -23,790.00 ',
-      ' -29,538.00 ',
-      ' -31,425.00 ',
-      ' -35,575.00 ',
-      ' -41,664.00 ',
-      ' -46,036.00 ',
-      ' -49,948.00 ',
-      ' -329,444.00 ',
-      ' -329,444.00 ',
-    ],
-    ['应付账款', ' -100,000.00 ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   '],
-    [
-      '其他应付款',
-      ' -2,634.00 ',
-      ' -12,711.00 ',
-      ' -18,227.00 ',
-      ' -21,467.00 ',
-      ' -23,794.00 ',
-      ' -29,555.00 ',
-      ' -31,390.00 ',
-      ' -35,548.00 ',
-      ' -41,611.00 ',
-      ' -45,952.00 ',
-      ' -49,873.00 ',
-      ' -88,835.00 ',
-      ' -88,835.00 ',
-    ],
-    ['预提费用', ' -4,644.00 ', 44, -9, 54, 43, 52, -3, 10, -16, -43, -37, ' -240,570.00 ', ' -240,570.00 '],
-    ['应交税费', -34, -39, -48, -37, -39, -35, -32, -37, -37, -41, -38, -39, -39],
-    ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-    [
-      '权益合计',
-      ' 8,562.00 ',
-      ' 12,511.00 ',
-      ' 18,377.00 ',
-      ' 27,310.00 ',
-      ' 33,638.00 ',
-      ' 38,564.00 ',
-      ' 45,845.00 ',
-      ' 49,793.00 ',
-      ' 58,787.00 ',
-      ' 63,561.00 ',
-      ' 71,702.00 ',
-      ' 341,789.00 ',
-      ' 341,789.00 ',
-    ],
-    [
-      '未分配利润',
-      ' 8,562.00 ',
-      ' 12,511.00 ',
-      ' 18,377.00 ',
-      ' 27,310.00 ',
-      ' 33,638.00 ',
-      ' 38,564.00 ',
-      ' 45,845.00 ',
-      ' 49,793.00 ',
-      ' 58,787.00 ',
-      ' 63,561.00 ',
-      ' 71,702.00 ',
-      ' 341,789.00 ',
-      ' 341,789.00 ',
-    ],
-  ];
-
-  let tableHtml = renderTable(data);
-
-  $(echartDom).html(tableHtml);
-}
-
-function r4() {
-  let cardName = 'r4';
-  let echartDom = cfs.card.body.getDom(cardName).find('.echart');
-  let headDom = cfs.card.head.getDom(cardName);
-
-  let data = [
-    ['-', 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, 2020, '2020.1~12'],
-    ['-', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 'YearTotal'],
-    ['-', 'Actual', 'Actual', 'Actual', 'Actual', 'Actual', 'Plan', 'Plan', 'Plan', 'Plan', 'Plan', 'Plan', 'Plan', 'Forecast'],
-    [
-      '总费用',
-      ' -8,562.00 ',
-      ' -3,949.00 ',
-      ' -5,866.00 ',
-      ' -8,933.00 ',
-      ' -6,328.00 ',
-      ' -4,926.00 ',
-      ' -7,281.00 ',
-      ' -3,948.00 ',
-      ' -8,994.00 ',
-      ' -4,774.00 ',
-      ' -8,141.00 ',
-      ' -270,087.00 ',
-      ' -341,789.00 ',
-    ],
-    [
-      '销售费用',
-      ' -3,731.00 ',
-      ' -2,705.00 ',
-      ' -3,014.00 ',
-      ' -3,989.00 ',
-      ' -2,609.00 ',
-      ' -3,753.00 ',
-      ' -4,676.00 ',
-      ' -2,269.00 ',
-      ' -4,450.00 ',
-      ' -3,383.00 ',
-      ' -5,145.00 ',
-      ' -126,654.00 ',
-      ' -166,378.00 ',
-    ],
-    [
-      '管理费用',
-      ' -4,831.00 ',
-      ' -1,244.00 ',
-      ' -2,852.00 ',
-      ' -4,944.00 ',
-      ' -3,719.00 ',
-      ' -1,173.00 ',
-      ' -2,605.00 ',
-      ' -1,679.00 ',
-      ' -4,544.00 ',
-      ' -1,391.00 ',
-      ' -2,996.00 ',
-      ' -143,433.00 ',
-      ' -175,411.00 ',
-    ],
-    ['财务费用', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   ', ' -   '],
-    [
-      '净利润',
-      ' -8,562.00 ',
-      ' -3,949.00 ',
-      ' -5,866.00 ',
-      ' -8,933.00 ',
-      ' -6,328.00 ',
-      ' -4,926.00 ',
-      ' -7,281.00 ',
-      ' -3,948.00 ',
-      ' -8,994.00 ',
-      ' -4,774.00 ',
-      ' -8,141.00 ',
-      ' -270,087.00 ',
-      ' -341,789.00 ',
-    ],
-  ];
-
-  let tableHtml = renderTable(data);
-
-  $(echartDom).html(tableHtml);
-}
-
-const renderTable = (data) => {
-  let theadHtmlStart = `<thead>`;
-  let theadHtmlEnd = `</thead>`;
-  let tbodyHtmlStart = `<tbody>`;
-  let tbodyHtmlEnd = `</tbody>`;
-  data.forEach((val, i) => {
-    if (i <= 2) {
-      let trHtmlStart = `<tr>`;
-      let trHtmlEnd = `</tr>`;
-      val.forEach((cVal, j) => {
-        if (cVal === '-') {
-          trHtmlStart += `<th></th>`;
-        } else {
-          trHtmlStart += `<th class="text-center">${cVal}</th>`;
-        }
-      });
-      trHtmlStart += trHtmlEnd;
-      theadHtmlStart += trHtmlStart;
-    } else {
-      let trHtmlStart = `<tr>`;
-      let trHtmlEnd = `</tr>`;
-      val.forEach((cVal, j) => {
-        if (cVal === '-') {
-          trHtmlStart += `<td></td>`;
-        } else {
-          if (['资产合计', '负债合计', '权益合计', '总费用', '净利润'].includes(cVal)) {
-            trHtmlStart += `<td class="pl-2" style="font-weight: 900;">${cVal}</td>`;
-          } else if (j === 0) {
-            trHtmlStart += `<td>${cVal}</td>`;
-          } else {
-            trHtmlStart += `<td class="text-right">${cVal}</td>`;
-          }
-        }
-      });
-      trHtmlStart += trHtmlEnd;
-      tbodyHtmlStart += trHtmlStart;
-    }
-  });
-  theadHtmlStart += theadHtmlEnd;
-  tbodyHtmlStart += tbodyHtmlEnd;
-
-  let tableHtml = `<table class="table table-xs table-bordered">${theadHtmlStart}${tbodyHtmlStart}</table>`;
-
-  return tableHtml;
-};
-
-var Cus_theme = 'westeros';
-var Cus_echarts = {};
-
-//extrajs全局方法
+//extraJs全局方法
 var cfs = {
   //请求后端数据
   request: {
@@ -857,15 +633,6 @@ var cfs = {
     refresh: function (ec, option) {
       ec.clear();
       ec.setOption(option);
-    },
-    correctHeight: function (cardName) {
-      let echartDom = $('#' + cardName)
-        .find('.card-body')
-        .find('.echart');
-      let cardBodyDom = $('#' + cardName).find('.card-body');
-
-      let _height = $(cardBodyDom).height();
-      $(echartDom).height(_height);
     },
     mobileHeight: function (cardName, height) {
       let cardDom = $('#' + cardName).parent();
