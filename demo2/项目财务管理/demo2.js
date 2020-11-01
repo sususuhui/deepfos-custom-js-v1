@@ -529,19 +529,51 @@ const renderTable = (data) => {
     } else {
       let trHtmlStart = `<tr>`;
       let trHtmlEnd = `</tr>`;
-      val.forEach((cVal, j) => {
-        if (cVal === '-') {
-          trHtmlStart += `<td></td>`;
-        } else {
-          if (['资产合计', '负债合计', '权益合计', '总费用', '净利润'].includes(cVal)) {
-            trHtmlStart += `<td class="pl-2" style="font-weight: 900;">${cVal}</td>`;
-          } else if (j === 0) {
-            trHtmlStart += `<td>${cVal}</td>`;
+
+      // val.forEach((cVal, j) => {
+      //   if (cVal === '-') {
+      //     trHtmlStart += `<td></td>`;
+      //   } else {
+      //     if (['资产合计', '负债合计', '权益合计', '总费用', '净利润'].includes(cVal)) {
+      //       trHtmlStart += `<td class="pl-2" style="font-weight: 900;">${cVal}</td>`;
+      //     } else if (j === 0) {
+      //       trHtmlStart += `<td>${cVal}</td>`;
+      //     } else {
+      //       trHtmlStart += `<td class="text-right">${cVal}</td>`;
+      //     }
+      //   }
+      // });
+
+      if (['资产合计', '负债合计', '权益合计', '总费用', '净利润'].includes(val[0])) {
+        val.forEach((cVal, j) => {
+          if (cVal === '-') {
+            trHtmlStart += `<td></td>`;
           } else {
-            trHtmlStart += `<td class="text-right">${cVal}</td>`;
+            if (['资产合计', '负债合计', '权益合计', '总费用', '净利润'].includes(cVal)) {
+              trHtmlStart += `<td class="pl-2" style="font-weight: 900;">${cVal}</td>`;
+            } else if (j === 0) {
+              trHtmlStart += `<td style="font-weight: 900;">${cVal}</td>`;
+            } else {
+              trHtmlStart += `<td class="text-right" style="font-weight: 900;">${cVal}</td>`;
+            }
           }
-        }
-      });
+        });
+      } else {
+        val.forEach((cVal, j) => {
+          if (cVal === '-') {
+            trHtmlStart += `<td></td>`;
+          } else {
+            if (['资产合计', '负债合计', '权益合计', '总费用', '净利润'].includes(cVal)) {
+              trHtmlStart += `<td class="pl-2" style="font-weight: 900;">${cVal}</td>`;
+            } else if (j === 0) {
+              trHtmlStart += `<td>${cVal}</td>`;
+            } else {
+              trHtmlStart += `<td class="text-right">${cVal}</td>`;
+            }
+          }
+        });
+      }
+
       trHtmlStart += trHtmlEnd;
       tbodyHtmlStart += trHtmlStart;
     }
