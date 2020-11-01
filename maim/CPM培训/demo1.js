@@ -30,17 +30,17 @@ function r1(data, params) {
         // 坐标轴指示器，坐标轴触发有效
         type: 'shadow', // 默认为直线，可选为：'line' | 'shadow'
       },
-      // formatter: function (params) {
-      //   var html = "";
-      //   if (params.length > 0) {
-      //     html += params[0].axisValue + "<br>";
-      //     html += params[0].marker + params[0].seriesName + "：" + format(params[0].data) + "<br>";
-      //     html += params[1].marker + params[1].seriesName + "：" + format(params[1].data) + "<br>";
-      //     html += params[2].marker + params[2].seriesName + "：" + format(params[2].data) + "%" + "<br>";
-      //     html += params[3].marker + params[3].seriesName + "：" + format(params[3].data) + "<br>";
-      //   }
-      //   return html;
-      // },
+      formatter: function (params) {
+        var html = "";
+        if (params.length > 0) {
+          html += params[0].axisValue + "<br>";
+          html += params[0].marker + params[0].seriesName + "：" + format(params[0].data) + "<br>";
+          html += params[1].marker + params[1].seriesName + "：" + format(params[1].data) + "<br>";
+          html += params[2].marker + params[2].seriesName + "：" + format(params[2].data) + "%" + "<br>";
+          html += params[3].marker + params[3].seriesName + "：" + format(params[3].data) + "<br>";
+        }
+        return html;
+      },
     },
     legend: {
       data: ['Revenue_Existing', 'Revenue_New', 'Avg. Occ%', `Revenue_Yr${getCurrentYear(true)} Budget`],

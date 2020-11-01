@@ -52,61 +52,7 @@ function renderMap() {
 }
 
 const map = (params) => {
-  const publicUrl = 'https://geo.datav.aliyun.com/areas_v2/bound/';
-
   initChart();
-
-  //echarts绘图
-  const initEcharts = (geoJson, name, chart, alladcode) => {
-    echarts.registerMap(name, geoJson);
-    let option = {
-      series: [
-        {
-          type: 'map',
-          map: name,
-          itemStyle: {
-            areaColor: '#88B9E1',
-          },
-        },
-      ],
-    };
-    chart.setOption(option);
-    // 解绑click事件
-    chart.off('click');
-    //给地图添加监听事件
-    chart.on('click', (params) => {
-      let clickRegionObj = alladcode.filter((areaJson) => areaJson.name === params.name)[0];
-
-      let clickRegionCode = clickRegionObj.adcode;
-      let clickRegionLevel = clickRegionObj.level;
-      let clickRegionLng = clickRegionObj.lng;
-      let clickRegionLat = clickRegionObj.lat;
-      let clickRegionName = clickRegionObj.name;
-
-      if (clickRegionLevel === 'city') {
-        bdMap(clickRegionLng, clickRegionLat);
-        let mapCode = { Region: clickRegionCode };
-        mapTable(mapCode);
-        return;
-      }
-
-      let municipality = ['上海市', '北京市'];
-      if (municipality.includes(clickRegionName)) {
-        bdMap(clickRegionLng, clickRegionLat);
-        return;
-      }
-
-      let mapCode = { Region: clickRegionCode };
-      mapTable(mapCode);
-
-      getGeoJson(clickRegionCode + '_full.json')
-        .then((regionGeoJson) => initEcharts(regionGeoJson, params.name, chart, alladcode))
-        .catch((err) => {
-          // getGeoJson('100000_full.json').then((chinaGeoJson) => initEcharts(chinaGeoJson, '全国', chart, alladcode));
-          console.log('地图错误');
-        });
-    });
-  };
 
   async function initChart() {
     let chart = echarts.init(document.getElementById('mapDrill'));
@@ -114,17 +60,71 @@ const map = (params) => {
     let chinaGeoJson = await getGeoJson('100000_full.json');
     initEcharts(chinaGeoJson, '全国', chart, alladcode);
   }
+};
 
-  //获取地图json数据
-  async function getGeoJson(jsonName) {
-    let url = publicUrl + jsonName;
-    let config = {
-      method: 'GET',
-      url: url,
-    };
-    let res = await axios(config);
-    return res.data;
-  }
+//获取地图json数据
+async function getGeoJson(jsonName) {
+  const publicUrl = 'https://geo.datav.aliyun.com/areas_v2/bound/';
+
+  let url = publicUrl + jsonName;
+  let config = {
+    method: 'GET',
+    url: url,
+  };
+  let res = await axios(config);
+  return res.data;
+}
+
+//echarts绘图
+const initEcharts = (geoJson, name, chart, alladcode) => {
+  echarts.registerMap(name, geoJson);
+  let option = {
+    series: [
+      {
+        type: 'map',
+        map: name,
+        itemStyle: {
+          areaColor: '#88B9E1',
+        },
+      },
+    ],
+  };
+  chart.setOption(option);
+  // 解绑click事件
+  chart.off('click');
+  //给地图添加监听事件
+  chart.on('click', (params) => {
+    let clickRegionObj = alladcode.filter((areaJson) => areaJson.name === params.name)[0];
+
+    let clickRegionCode = clickRegionObj.adcode;
+    let clickRegionLevel = clickRegionObj.level;
+    let clickRegionLng = clickRegionObj.lng;
+    let clickRegionLat = clickRegionObj.lat;
+    let clickRegionName = clickRegionObj.name;
+
+    if (clickRegionLevel === 'city') {
+      bdMap(clickRegionLng, clickRegionLat);
+      let mapCode = { Region: clickRegionCode };
+      mapTable(mapCode);
+      return;
+    }
+
+    let municipality = ['上海市', '北京市'];
+    if (municipality.includes(clickRegionName)) {
+      bdMap(clickRegionLng, clickRegionLat);
+      return;
+    }
+
+    let mapCode = { Region: clickRegionCode };
+    mapTable(mapCode);
+
+    getGeoJson(clickRegionCode + '_full.json')
+      .then((regionGeoJson) => initEcharts(regionGeoJson, params.name, chart, alladcode))
+      .catch((err) => {
+        // getGeoJson('100000_full.json').then((chinaGeoJson) => initEcharts(chinaGeoJson, '全国', chart, alladcode));
+        console.log('地图错误');
+      });
+  });
 };
 
 const bdMap = (lng, lat) => {
@@ -158,10 +158,27 @@ const mapTable = async (params) => {
   // table里的每行tr点击进入对应省份下面的市地图
   $('#mapTable tbody tr').each((i, v) => {
     const trObj = $(v);
-    trObj.on('click', () => {
+    trObj.on('click', async () => {
       if (typeof trObj.attr('mapCode') == 'undefined') return;
       let mapCode = { Region: parseInt(trObj.attr('mapCode')) };
       mapTable(mapCode);
+
+      if (areaData.Level == 'Province') {
+        let alladcode = await getGeoJson('all.json');
+        let clickRegionObj = alladcode.filter((areaJson) => areaJson.adcode === parseInt(trObj.attr('mapCode')))[0];
+        let clickRegionLng = clickRegionObj.lng;
+        let clickRegionLat = clickRegionObj.lat;
+        bdMap(clickRegionLng, clickRegionLat);
+      } else {
+        let chart = echarts.init(document.getElementById('mapDrill'));
+        let alladcode = await getGeoJson('all.json');
+        getGeoJson(parseInt(trObj.attr('mapCode')) + '_full.json')
+          .then((regionGeoJson) => initEcharts(regionGeoJson, mapCode, chart, alladcode))
+          .catch((err) => {
+            // getGeoJson('100000_full.json').then((chinaGeoJson) => initEcharts(chinaGeoJson, '全国', chart, alladcode));
+            console.log('地图错误');
+          });
+      }
     });
   });
 };
