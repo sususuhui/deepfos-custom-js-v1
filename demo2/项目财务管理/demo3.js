@@ -8,13 +8,44 @@ function r1c1() {
   cfs.echarts.correctHeight(cardName);
 
   let option = {
+    color: ['#516B91', '#93B7E3', '#bdbdbd'],
     title: {
       text: 'Total',
       left: 'center',
     },
+    graphic: [
+      {
+        type: 'group',
+        right: 10,
+        top: 20,
+        children: [
+          {
+            type: 'text',
+            z: 100,
+            style: {
+              fill: '#516B91',
+              text: '项目总金额：228',
+              font: '14px Microsoft YaHei',
+            },
+          },
+        ],
+      },
+      {
+        type: 'text',
+        left: 'center',
+        top: '48%',
+        style: {
+          text: '33%',
+          textAlign: 'center',
+          fill: '#333',
+          fontSize: 14,
+          fontWeight: 400,
+        },
+      },
+    ],
     tooltip: {
       trigger: 'item',
-      formatter: '{a} <br/>{b}: {c}({d}%)',
+      formatter: '{a} <br/>{b}: {c}%',
     },
     legend: {
       orient: 'horizontal',
@@ -29,7 +60,7 @@ function r1c1() {
         avoidLabelOverlap: false,
         label: {
           show: true,
-          formatter: '{b}:{c}',
+          formatter: '{b}:{c}%',
         },
         emphasis: {
           label: {
@@ -45,7 +76,6 @@ function r1c1() {
           { value: 15, name: '已完成' },
           { value: 18, name: '在途' },
           { value: 67, name: '未完成' },
-          { value: 228, name: '项目总金额' },
         ],
       },
     ],
@@ -67,13 +97,44 @@ function r1c2() {
   cfs.echarts.correctHeight(cardName);
 
   let option = {
+    color: ['#516B91', '#93B7E3', '#bdbdbd'],
     title: {
       text: 'IT',
       left: 'center',
     },
+    graphic: [
+      {
+        type: 'group',
+        right: 10,
+        top: 20,
+        children: [
+          {
+            type: 'text',
+            z: 100,
+            style: {
+              fill: '#516B91',
+              text: '项目总金额：11',
+              font: '14px Microsoft YaHei',
+            },
+          },
+        ],
+      },
+      {
+        type: 'text',
+        left: 'center',
+        top: '48%',
+        style: {
+          text: '36%',
+          textAlign: 'center',
+          fill: '#333',
+          fontSize: 14,
+          fontWeight: 400,
+        },
+      },
+    ],
     tooltip: {
       trigger: 'item',
-      formatter: '{a} <br/>{b}: {c}({d}%)',
+      formatter: '{a} <br/>{b}: {c}%',
     },
     legend: {
       orient: 'horizontal',
@@ -88,7 +149,7 @@ function r1c2() {
         avoidLabelOverlap: false,
         label: {
           show: true,
-          formatter: '{b}:{c}',
+          formatter: '{b}:{c}%',
         },
         emphasis: {
           label: {
@@ -104,7 +165,6 @@ function r1c2() {
           { value: 16, name: '已完成' },
           { value: 20, name: '在途' },
           { value: 64, name: '未完成' },
-          { value: 11, name: '项目总金额' },
         ],
       },
     ],
@@ -126,13 +186,44 @@ function r1c3() {
   cfs.echarts.correctHeight(cardName);
 
   let option = {
+    color: ['#516B91', '#93B7E3', '#bdbdbd'],
     title: {
       text: 'HR',
       left: 'center',
     },
+    graphic: [
+      {
+        type: 'group',
+        right: 10,
+        top: 20,
+        children: [
+          {
+            type: 'text',
+            z: 100,
+            style: {
+              fill: '#516B91',
+              text: '项目总金额：49',
+              font: '14px Microsoft YaHei',
+            },
+          },
+        ],
+      },
+      {
+        type: 'text',
+        left: 'center',
+        top: '48%',
+        style: {
+          text: '21%',
+          textAlign: 'center',
+          fill: '#333',
+          fontSize: 14,
+          fontWeight: 400,
+        },
+      },
+    ],
     tooltip: {
       trigger: 'item',
-      formatter: '{a} <br/>{b}: {c}({d}%)',
+      formatter: '{a} <br/>{b}: {c}%',
     },
     legend: {
       orient: 'horizontal',
@@ -147,7 +238,7 @@ function r1c3() {
         avoidLabelOverlap: false,
         label: {
           show: true,
-          formatter: '{b}:{c}',
+          formatter: '{b}:{c}%',
         },
         emphasis: {
           label: {
@@ -163,7 +254,6 @@ function r1c3() {
           { value: 9, name: '已完成' },
           { value: 12, name: '在途' },
           { value: 79, name: '未完成' },
-          { value: 49, name: '项目总金额' },
         ],
       },
     ],
@@ -185,13 +275,44 @@ function r1c4() {
   cfs.echarts.correctHeight(cardName);
 
   let option = {
+    color: ['#516B91', '#93B7E3', '#bdbdbd'],
     title: {
       text: 'Accounting',
       left: 'center',
     },
+    graphic: [
+      {
+        type: 'group',
+        right: 10,
+        top: 20,
+        children: [
+          {
+            type: 'text',
+            z: 100,
+            style: {
+              fill: '#516B91',
+              text: '项目总金额：49',
+              font: '14px Microsoft YaHei',
+            },
+          },
+        ],
+      },
+      {
+        type: 'text',
+        left: 'center',
+        top: '48%',
+        style: {
+          text: '26%',
+          textAlign: 'center',
+          fill: '#333',
+          fontSize: 14,
+          fontWeight: 400,
+        },
+      },
+    ],
     tooltip: {
       trigger: 'item',
-      formatter: '{a} <br/>{b}: {c}({d}%)',
+      formatter: '{a} <br/>{b}: {c}%',
     },
     legend: {
       orient: 'horizontal',
@@ -206,7 +327,7 @@ function r1c4() {
         avoidLabelOverlap: false,
         label: {
           show: true,
-          formatter: '{b}:{c}',
+          formatter: '{b}:{c}%',
         },
         emphasis: {
           label: {
@@ -222,7 +343,6 @@ function r1c4() {
           { value: 17, name: '已完成' },
           { value: 9, name: '在途' },
           { value: 74, name: '未完成' },
-          { value: 49, name: '项目总金额' },
         ],
       },
     ],
@@ -244,13 +364,44 @@ function r2c1() {
   cfs.echarts.correctHeight(cardName);
 
   let option = {
+    color: ['#516B91', '#93B7E3', '#bdbdbd'],
     title: {
       text: 'FP&A',
       left: 'center',
     },
+    graphic: [
+      {
+        type: 'group',
+        right: 10,
+        top: 20,
+        children: [
+          {
+            type: 'text',
+            z: 100,
+            style: {
+              fill: '#516B91',
+              text: '项目总金额：38',
+              font: '14px Microsoft YaHei',
+            },
+          },
+        ],
+      },
+      {
+        type: 'text',
+        left: 'center',
+        top: '48%',
+        style: {
+          text: '37%',
+          textAlign: 'center',
+          fill: '#333',
+          fontSize: 14,
+          fontWeight: 400,
+        },
+      },
+    ],
     tooltip: {
       trigger: 'item',
-      formatter: '{a} <br/>{b}: {c}({d}%)',
+      formatter: '{a} <br/>{b}: {c}%',
     },
     legend: {
       orient: 'horizontal',
@@ -265,7 +416,7 @@ function r2c1() {
         avoidLabelOverlap: false,
         label: {
           show: true,
-          formatter: '{b}:{c}',
+          formatter: '{b}:{c}%',
         },
         emphasis: {
           label: {
@@ -281,7 +432,6 @@ function r2c1() {
           { value: 18, name: '已完成' },
           { value: 19, name: '在途' },
           { value: 63, name: '未完成' },
-          { value: 38, name: '项目总金额' },
         ],
       },
     ],
@@ -303,13 +453,44 @@ function r2c2() {
   cfs.echarts.correctHeight(cardName);
 
   let option = {
+    color: ['#516B91', '#93B7E3', '#bdbdbd'],
     title: {
       text: 'Sales',
       left: 'center',
     },
+    graphic: [
+      {
+        type: 'group',
+        right: 10,
+        top: 20,
+        children: [
+          {
+            type: 'text',
+            z: 100,
+            style: {
+              fill: '#516B91',
+              text: '项目总金额：36',
+              font: '14px Microsoft YaHei',
+            },
+          },
+        ],
+      },
+      {
+        type: 'text',
+        left: 'center',
+        top: '48%',
+        style: {
+          text: '33%',
+          textAlign: 'center',
+          fill: '#333',
+          fontSize: 14,
+          fontWeight: 400,
+        },
+      },
+    ],
     tooltip: {
       trigger: 'item',
-      formatter: '{a} <br/>{b}: {c}({d}%)',
+      formatter: '{a} <br/>{b}: {c}%',
     },
     legend: {
       orient: 'horizontal',
@@ -324,7 +505,7 @@ function r2c2() {
         avoidLabelOverlap: false,
         label: {
           show: true,
-          formatter: '{b}:{c}',
+          formatter: '{b}:{c}%',
         },
         emphasis: {
           label: {
@@ -340,7 +521,6 @@ function r2c2() {
           { value: 15, name: '已完成' },
           { value: 18, name: '在途' },
           { value: 67, name: '未完成' },
-          { value: 36, name: '项目总金额' },
         ],
       },
     ],
@@ -362,13 +542,44 @@ function r2c3() {
   cfs.echarts.correctHeight(cardName);
 
   let option = {
+    color: ['#516B91', '#93B7E3', '#bdbdbd'],
     title: {
       text: 'Fund_Management',
       left: 'center',
     },
+    graphic: [
+      {
+        type: 'group',
+        right: 10,
+        top: 20,
+        children: [
+          {
+            type: 'text',
+            z: 100,
+            style: {
+              fill: '#516B91',
+              text: '项目总金额：9',
+              font: '14px Microsoft YaHei',
+            },
+          },
+        ],
+      },
+      {
+        type: 'text',
+        left: 'center',
+        top: '48%',
+        style: {
+          text: '29%',
+          textAlign: 'center',
+          fill: '#333',
+          fontSize: 14,
+          fontWeight: 400,
+        },
+      },
+    ],
     tooltip: {
       trigger: 'item',
-      formatter: '{a} <br/>{b}: {c}({d}%)',
+      formatter: '{a} <br/>{b}: {c}%',
     },
     legend: {
       orient: 'horizontal',
@@ -383,7 +594,7 @@ function r2c3() {
         avoidLabelOverlap: false,
         label: {
           show: true,
-          formatter: '{b}:{c}',
+          formatter: '{b}:{c}%',
         },
         emphasis: {
           label: {
@@ -399,7 +610,6 @@ function r2c3() {
           { value: 16, name: '已完成' },
           { value: 13, name: '在途' },
           { value: 71, name: '未完成' },
-          { value: 9, name: '项目总金额' },
         ],
       },
     ],
@@ -421,13 +631,44 @@ function r2c4() {
   cfs.echarts.correctHeight(cardName);
 
   let option = {
+    color: ['#516B91', '#93B7E3', '#bdbdbd'],
     title: {
       text: 'Head_Office',
       left: 'center',
     },
+    graphic: [
+      {
+        type: 'group',
+        right: 10,
+        top: 20,
+        children: [
+          {
+            type: 'text',
+            z: 100,
+            style: {
+              fill: '#516B91',
+              text: '项目总金额：36',
+              font: '14px Microsoft YaHei',
+            },
+          },
+        ],
+      },
+      {
+        type: 'text',
+        left: 'center',
+        top: '48%',
+        style: {
+          text: '34%',
+          textAlign: 'center',
+          fill: '#333',
+          fontSize: 14,
+          fontWeight: 400,
+        },
+      },
+    ],
     tooltip: {
       trigger: 'item',
-      formatter: '{a} <br/>{b}: {c}({d}%)',
+      formatter: '{a} <br/>{b}: {c}%',
     },
     legend: {
       orient: 'horizontal',
@@ -442,7 +683,7 @@ function r2c4() {
         avoidLabelOverlap: false,
         label: {
           show: true,
-          formatter: '{b}:{c}',
+          formatter: '{b}:{c}%',
         },
         emphasis: {
           label: {
@@ -458,7 +699,6 @@ function r2c4() {
           { value: 14, name: '已完成' },
           { value: 20, name: '在途' },
           { value: 66, name: '未完成' },
-          { value: 36, name: '项目总金额' },
         ],
       },
     ],
