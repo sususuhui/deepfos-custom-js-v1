@@ -3,17 +3,29 @@ metaReferrer.setAttribute('name', 'referrer');
 metaReferrer.setAttribute('content', 'no-referrer');
 document.head.appendChild(metaReferrer);
 
-// 引入bmap
-let bmap_Script = document.createElement('script');
-bmap_Script.setAttribute('type', 'text/javascript');
-bmap_Script.setAttribute('src', 'http://api.map.baidu.com/getscript?type=webgl&v=1.0&ak=NiGaA3XdWH2IqZB0ohynxvB9yh492DY2');
-document.head.appendChild(bmap_Script);
-
-let bmap_Css = document.createElement('script');
-bmap_Css.setAttribute('rel', 'stylesheet');
-bmap_Css.setAttribute('type', 'text/css');
-bmap_Css.setAttribute('src', 'http://api.map.baidu.com/res/webgl/10/bmap.css');
-document.head.appendChild(bmap_Css);
+// 加载百度地图
+function LoadBaiduMapScript() {
+  //console.log("初始化百度地图脚本...");
+  const AK = 'OdpMlEqrR4Rj3sT9atp8jbmZebI0UhhQ';
+  const BMap_URL = 'https://api.map.baidu.com/api?v=2.0&ak=' + AK + '&s=1&callback=onBMapCallback';
+  return new Promise((resolve, reject) => {
+    // 如果已加载直接返回
+    if (typeof BMap !== 'undefined') {
+      resolve(BMap);
+      return true;
+    }
+    // 百度地图异步加载回调处理
+    window.onBMapCallback = function () {
+      console.log('百度地图脚本初始化成功...');
+      resolve(BMap);
+    };
+    // 插入script脚本
+    let scriptNode = document.createElement('script');
+    scriptNode.setAttribute('type', 'text/javascript');
+    scriptNode.setAttribute('src', BMap_URL);
+    document.body.appendChild(scriptNode);
+  });
+}
 
 let style = document.createElement('style');
 style.innerHTML = `
@@ -23,8 +35,6 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
-var Cus_theme = 'westeros';
-var Cus_echarts = {};
 function renderMap() {
   let cardName = 'Map2';
   let echartDom = cfs.card.body.getDom(cardName).find('.echart');
@@ -47,7 +57,7 @@ function renderMap() {
 
   mapTable();
   map();
-
+  LoadBaiduMapScript();
   console.log('-----------renderMap-----------');
 }
 
@@ -128,8 +138,8 @@ const initEcharts = (geoJson, name, chart, alladcode) => {
 };
 
 const bdMap = (lng, lat) => {
-  var map = new BMapGL.Map('mapDrill'); // 创建Map实例
-  map.centerAndZoom(new BMapGL.Point(lng, lat), 11); // 初始化地图,设置中心点坐标和地图级别
+  var map = new BMap.Map('mapDrill'); // 创建Map实例
+  map.centerAndZoom(new BMap.Point(lng, lat), 11); // 初始化地图,设置中心点坐标和地图级别
   map.enableScrollWheelZoom(true);
 };
 
@@ -243,6 +253,7 @@ function renderBarEchart1(data, params) {
   var chartData = dealSheetData(data);
 
   var option = {
+    color: ['#516b91', '#edafda', '#93b7e3', '#a5e7f0', '#cbb0e3', '#516b91'],
     tooltip: {
       trigger: 'axis',
       axisPointer: {
@@ -251,7 +262,7 @@ function renderBarEchart1(data, params) {
       },
     },
     // color:['#004ea1','#004fb6','#498ace','#88b9e1','#a9cee8'],
-    color: ['#004ea1', '#a9cee8'],
+    // color: ['#004ea1', '#a9cee8'],
     legend: {
       data: ['存量店', '新店'],
     },
@@ -289,6 +300,15 @@ function renderBarEchart1(data, params) {
     ],
   };
   initEchart(componentId, option);
+
+  chart = echarts.init(document.getElementById('chart-' + componentId));
+  chart.clear();
+  chart.setOption(option);
+
+  chart.off('click');
+  chart.on('click', (params) => {
+    window.location.href = 'http://demo2.seepln.com/v1_5_4/dataSheet/dataSheetMenu.html?param1=GRDE7ST0Q2HLH1&appid=54';
+  });
 }
 
 function renderBarEchart2(data, params) {
@@ -305,6 +325,7 @@ function renderBarEchart2(data, params) {
   }
 
   var option = {
+    color: ['#516b91', '#cbb0e3', '#59c4e6', '#edafda', '#93b7e3', '#a5e7f0'],
     tooltip: {
       trigger: 'axis',
       axisPointer: {
@@ -312,7 +333,7 @@ function renderBarEchart2(data, params) {
         type: 'shadow', // 默认为直线，可选为：'line' | 'shadow'
       },
     },
-    color: ['#a9cee8', '#88b9e1', '#498ace', '#004fb6', '#004ea1'],
+    // color: ['#a9cee8', '#88b9e1', '#498ace', '#004fb6', '#004ea1'],
     // color:['#004ea1','#004fb6','#498ace','#88b9e1','#a9cee8'],
     legend: {
       data: ['0-1', '1-2', '2-3', '3-4', '4年以上'],
@@ -386,6 +407,7 @@ function renderBarEchart3(data, params) {
   }
 
   var option = {
+    color: ['#cbb0e3', '#516b91', '#59c4e6', '#edafda', '#93b7e3', '#a5e7f0'],
     tooltip: {
       trigger: 'item',
       formatter: '{a} <br/>{b}: {c} ({d}%)',
@@ -396,7 +418,7 @@ function renderBarEchart3(data, params) {
       data: ['营业期', '装修期', '闭店期', '计划期', '开办期'],
     },
     // color:['#a9cee8','#88b9e1','#498ace','#004fb6','#004ea1'],
-    color: ['#004ea1', '#004fb6', '#498ace', '#88b9e1', '#a9cee8'],
+    // color: ['#004ea1', '#004fb6', '#498ace', '#88b9e1', '#a9cee8'],
     series: [
       {
         name: '访问来源',
@@ -461,7 +483,8 @@ function renderBarEchart4(data, params) {
 
   var option = {
     // color:['#a9cee8','#88b9e1','#498ace','#004fb6','#004ea1'],
-    color: ['#004ea1', '#004fb6', '#498ace', '#88b9e1', '#a9cee8'],
+    // color: ['#004ea1', '#004fb6', '#498ace', '#88b9e1', '#a9cee8'],
+    color: ['#cbb0e3', '#516b91', '#59c4e6', '#edafda', '#93b7e3', '#a5e7f0'],
     series: [
       {
         type: 'treemap',
@@ -1319,6 +1342,8 @@ function r1c2() {
   echartDom.html(table);
 }
 
+var Cus_theme = 'westeros';
+var Cus_echarts = {};
 //extrajs全局方法
 var cfs = {
   //请求后端数据
