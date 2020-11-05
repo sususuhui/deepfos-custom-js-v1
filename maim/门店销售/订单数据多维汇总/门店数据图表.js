@@ -113,15 +113,16 @@ const initEcharts = (geoJson, name, chart, alladcode) => {
     let clickRegionName = clickRegionObj.name;
 
     if (clickRegionLevel === 'city') {
-      bdMap(clickRegionLng, clickRegionLat);
       let mapCode = { Region: clickRegionCode };
+      bdMap(clickRegionLng, clickRegionLat, mapCode);
       mapTable(mapCode);
       return;
     }
 
     let municipality = ['上海市', '北京市'];
     if (municipality.includes(clickRegionName)) {
-      bdMap(clickRegionLng, clickRegionLat);
+      let mapCode = { Region: clickRegionCode };
+      bdMap(clickRegionLng, clickRegionLat, mapCode);
       return;
     }
 
@@ -137,10 +138,19 @@ const initEcharts = (geoJson, name, chart, alladcode) => {
   });
 };
 
-const bdMap = (lng, lat) => {
+const bdMap = async (lng, lat, mapCode) => {
+  const demoData = await getData(mapCode);
+  const areaData = JSON.parse(demoData.result);
+  const storeMap = areaData.StoreMap;
+
   var map = new BMap.Map('mapDrill'); // 创建Map实例
   map.centerAndZoom(new BMap.Point(lng, lat), 11); // 初始化地图,设置中心点坐标和地图级别
   map.enableScrollWheelZoom(true);
+
+  storeMap.forEach((val) => {
+    let marker = new BMap.Marker(new BMap.Point(parseInt(val.Lat), parseInt(val.Lng)));
+    map.addOverlay(marker);
+  });
 };
 
 const mapTable = async (params) => {
@@ -178,7 +188,7 @@ const mapTable = async (params) => {
         let clickRegionObj = alladcode.filter((areaJson) => areaJson.adcode === parseInt(trObj.attr('mapCode')))[0];
         let clickRegionLng = clickRegionObj.lng;
         let clickRegionLat = clickRegionObj.lat;
-        bdMap(clickRegionLng, clickRegionLat);
+        bdMap(clickRegionLng, clickRegionLat, mapCode);
       } else {
         let chart = echarts.init(document.getElementById('mapDrill'));
         let alladcode = await getGeoJson('all.json');
