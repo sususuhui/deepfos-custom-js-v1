@@ -152,13 +152,13 @@ function r1c2() {
         name: '直接访问',
         type: 'line',
         smooth: true,
-        symbol: "none",
-        sampling: "average",
+        symbol: 'none',
+        sampling: 'average',
         itemStyle: {
-          color: "rgba(255,255,255,0.5)",
+          color: 'rgba(255,255,255,0.5)',
         },
         areaStyle: {
-          color: "rgba(255,255,255,0.5)",
+          color: 'rgba(255,255,255,0.5)',
         },
         data: [200, 300, 200, 334, 390, 330, 220, 300, 200, 334, 390, 300],
       },
@@ -170,6 +170,10 @@ function r1c2() {
   } else {
     cfs.echarts.refresh(Cus_echarts[cardName_mini], option);
   }
+  $(echartDom).on('click', (params) => {
+    window.location.href = 'http://main.seepln.com/v1_5_4/dataSheet/dataSheetMenu.html?param1=GRDE7KR0TDH5UO&appid=37';
+  });
+  $(echartDom).css('cursor','pointer');
 }
 
 function r1c3() {
