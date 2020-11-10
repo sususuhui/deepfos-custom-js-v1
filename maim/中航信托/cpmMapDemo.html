@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="../js/common/api.js?v=1.0.7.dev2.3.1.75"></script>
+
+    <script src="../js/global_assets/js/plugins/visualization/echarts/ecStat.min.js"></script>
+    <script src="../js/common/bmap.min.js"></script>
+    <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=OdpMlEqrR4Rj3sT9atp8jbmZebI0UhhQ"></script>
+    <script src="../js/StbDemo/map/js/china.js"></script>
+    <style>
+      .clickTh {
+        position: relative;
+      }
+      .clickTh2 {
+        position: relative;
+      }
+      .plickTh {
+        position: relative;
+      }
+      .plickTh2 {
+        position: relative;
+      }
+      .sortDesc::after {
+        content: '\e9c2';
+        font-family: icomoon;
+        position: absolute;
+        top: 50%;
+        right: 1.25rem;
+        font-size: 0.75rem;
+        display: inline-block;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        margin-top: -9px;
+        opacity: 0.5;
+      }
+      .sortAsc::before {
+        content: '\e9c1';
+        font-family: icomoon;
+        position: absolute;
+        top: 50%;
+        right: 1.25rem;
+        font-size: 0.75rem;
+        display: inline-block;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        margin-top: 0px;
+        opacity: 0.5;
+      }
+
+      .top th:first-child {
+        width: 50%;
+      }
+      .d_top {
+        background: #ddd;
+      }
+
+      /* 空样式 */
+      .d_none {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!--#include file="/v1_5_6/common/headerNav.html"-->
+    <div class="page-content salesMap">
+      <!--#include file="/v1_5_6/common/leftMenu.html"-->
+      <div class="content-wrapper">
+        <div id="content" class="content reportContent">
+          <div class="breadcrumb-line breadcrumb-line-light header-elements-md-inline">
+            <div class="d-flex">
+              <div class="breadcrumb breadcrumbNav"></div>
+            </div>
+          </div>
+          <!-- 中心部分 -->
+          <div class="content glpMapDemo" style="padding-bottom: 0">
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="card tableHeight">
+                  <div class="card-header bg-white">
+                    <div class="mapCondition row">
+                      <h6 class="col-form-label mr-4 subject" style="font-size: 0.9375rem; margin-top: -2px">全国项目地图</h6>
+                    </div>
+                  </div>
+                  <div class="table-responsive table-scrollable" style="max-height: none; overflow: inherit">
+                    <table class="table table-bordered">
+                      <thead class="top">
+                        <tr>
+                          <th>Pipeline</th>
+                          <th class="d_top">Project</th>
+                        </tr>
+                      </thead>
+                    </table>
+                  </div>
+                  <!-- store表 -->
+                  <div class="table-responsive table-scrollable d_none store" style="max-height: none">
+                    <table class="table table-bordered t1">
+                      <thead>
+                        <tr>
+                          <th>地区</th>
+                          <th class="clickTh sortDesc sortAsc" style="cursor: pointer" onclick="sortTable()">2019</th>
+                          <th class="clickTh2 sortDesc sortAsc" style="cursor: pointer" onclick="sortTable2()">2020</th>
+                        </tr>
+                      </thead>
+                      <tbody></tbody>
+                    </table>
+                  </div>
+
+                  <!-- pipeline表 -->
+                  <div class="table-responsive table-scrollable pipeline" style="max-height: none">
+                    <table class="table table-bordered t2">
+                      <thead>
+                        <tr>
+                          <th>Progress</th>
+                          <th class="sortDesc sortAsc plickTh" onclick="sortPiple()">2019</th>
+                          <th class="sortDesc sortAsc plickTh2" onclick="sortPiple2()">2020</th>
+                        </tr>
+                      </thead>
+                      <tbody></tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="card headObj" style="margin-bottom: 0px">
+                  <div class="card-header hideSelect3 bg-white header-elements-inline">
+                    <h6 class="card-title" style="font-size: 0.9375rem; margin-top: -2px">全国项目地图</h6>
+                    <div class="header-elements">
+                      <button type="button" class="btn btn-primary legitRipple" onclick="mapBack()">后退</button>
+                    </div>
+                  </div>
+                </div>
+                <div id="salesOverview" class="bg-white computHeight" style="height: 530px; width: 100%"></div>
+              </div>
+            </div>
+          </div>
+          <!-- loading -->
+          <div class="blockui-message bg-slate-700 text-white rounded p-2" style="display: none">
+            <i class="icon-spinner4 spinner mt-1"></i> <span class="font-weight-semibold d-block mt-2">Loading</span>
+          </div>
+        </div>
+      </div>
+      <!--#include file="/v1_5_6/common/rightSideBar.html"-->
+    </div>
+
+    <script>
+      var myChart;
+      var sortFlag = true; //true:降序 false:升序
+      var sortFlag2 = true,
+        piplineFlag = true,
+        piplineFlag2 = true;
+      var data2 = [
+        { Progress: '100%', va: 1, 2020: 0 },
+        { Progress: '95%-100%', va: 137, 2020: 33 },
+        { Progress: '90%-95%', va: 68, 2020: 42 },
+        { Progress: '80%-90%', va: 168, 2020: 78 },
+        { Progress: '70%-80%', va: 301, 2020: 129 },
+        { Progress: '60%-70%', va: 356, 2020: 154 },
+        { Progress: '50%-60%', va: 238, 2020: 198 },
+        { Progress: '40%-50%', va: 46, 2020: 296 },
+        { Progress: '30%-40%', va: 59, 2020: 304 },
+        { Progress: '20-30%', va: 23, 2020: 266 },
+        { Progress: '10%-20%', va: 33, 2020: 331 },
+        { Progress: 'Total', va: 1430, 2020: 1831 },
+      ];
+      pipTable(); //渲染Pipeline
+      var chart, //echart对象
+        itemStyle = {
+          normal: {
+            borderColor: 'rgba(0, 0, 0, 0.2)',
+          },
+          emphasis: {
+            shadowOffsetX: 0,
+            shadowOffsetY: 0,
+            shadowBlur: 20,
+            borderWidth: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)',
+          },
+        },
+        dataArray = [],
+        option = {
+          tooltip: {},
+
+          grid: {
+            left: '30%',
+            containLabel: true,
+          },
+          visualMap: {
+            min: 0,
+            max: 550,
+            left: 'left',
+            top: 'bottom',
+            text: ['高', '低'], // 文本，默认为数值文本
+            calculable: true,
+          },
+          series: [
+            {
+              name: 'NLA',
+              type: 'map',
+              map: 'china',
+              itemStyle: itemStyle,
+              showLegendSymbol: false,
+              // zoom: 10,
+              // center: [90.97, 36.71],
+              roam: true,
+              label: {
+                normal: {
+                  show: false,
+                  rotate: 40,
+                  formatter: '{b}：{value|{c}}',
+                  // position: 'inside',
+                  backgroundColor: '#fff',
+                  padding: [3, 5],
+                  borderRadius: 3,
+                  borderWidth: 1,
+                  borderColor: 'rgba(0,0,0,0.5)',
+                  color: '#777',
+                  rich: {
+                    value: {
+                      color: '#019D2D',
+                      fontSize: 14,
+                      // fontWeight: 'bold'
+                      // textBorderWidth: 2,
+                      // textBorderColor: '#000'
+                    },
+                  },
+                },
+                emphasis: {
+                  show: false,
+                },
+              },
+              data: [],
+            },
+          ],
+        },
+        operationArray = ['china'];
+
+      getData({}, function (resultData) {
+        initMap(resultData);
+      });
+
+      var resultHeight = $('.reportContent').height() - 40 - 40 - $('.headObj').height();
+
+      $('.computHeight').height(resultHeight);
+      $('.tableHeight').height(resultHeight + $('.headObj').height());
+
+      //初始化echarts地图
+      function initMap(data) {
+        chart = echarts.init(document.getElementById('salesOverview'));
+
+        option.series[0].data = data;
+        chart.setOption(option);
+
+        chart.on('click', function (param) {
+          chartClick(param);
+        });
+      }
+
+      function loadScriptMap(name, province_code, id) {
+        var HEAD = document.getElementsByTagName('head')[0] || document.documentElement;
+        var scriptObj = document.createElement('script');
+        scriptObj.setAttribute('type', 'text/javascript');
+        scriptObj.setAttribute('src', `../js/StbDemo/map/js/province/${province_code}.js`);
+        scriptObj.setAttribute('name', name);
+
+        scriptObj.onload = function () {
+          getData(
+            {
+              province_id: id,
+            },
+            function (resultData) {
+              option.series[0].data = resultData;
+              option.series[0].map = name;
+              chart.setOption(option, true);
+            }
+          );
+        };
+        HEAD.appendChild(scriptObj);
+      }
+
+      /**
+       * 请求数据
+       * @param {object} paramObj 请求参数
+       * @param {object} callback 回调函数
+       * @param {boolean} cityFlag 是否是到2019级别
+       *
+       */
+      function getData(paramObj, callback, storeFlag) {
+        console.log(storeFlag, 'storeFlag');
+        $.ajax({
+          url: '/starbucksdemo/shopaddress/findShopAddressInfo',
+          type: 'post',
+          data: $.extend(
+            {
+              token: getTokenAnduserId.token,
+              tenant_code: getUserInfo.tenant_code,
+              user_id: getTokenAnduserId.user_id,
+              app_id: userinfoParamsApp.app_id,
+            },
+            paramObj
+          ),
+          success: function (res) {
+            var resultData = [];
+            var tableStr = '';
+            res.resultObj.forEach(function (v, i) {
+              var newObj = {};
+              for (var attr in v) {
+                newObj[attr] = v[attr];
+              }
+              newObj['value'] = parseInt(v.nla / 10000);
+              newObj['name'] = v.address || v.city || v.province;
+              resultData.push(newObj);
+              tableStr += '<tr>';
+              tableStr += '<td>' + (storeFlag ? v.park_code + '-' + newObj.name : newObj.name) + '</td><td>' + format(newObj.value) + '</td><td>' + format(newObj.value) + '</td>';
+              tableStr += '</tr>';
+            });
+            console.log(resultData, 'resultData');
+            dataArray = resultData;
+            $('.t1 tbody').html(tableStr);
+            callback && callback(resultData);
+          },
+        });
+      }
+
+      /**
+       * 地图后退
+       */
+      function mapBack() {
+        _modalActionShow('.pipeline');
+        console.log(operationArray, 'operationArray');
+        if (operationArray.length != 1) {
+          if (operationArray.length == 3) {
+            //如果长度是3，则后退退到省
+            recoveryState();
+            var obj = operationArray[1];
+            getData(
+              {
+                province_id: obj.province_id,
+              },
+              function (resultData) {
+                chart.dispose();
+                chart = echarts.init(document.getElementById('salesOverview'));
+                option.series[0].data = resultData;
+                option.series[0].map = obj.name;
+                chart.setOption(option, true);
+                chart.on('click', function (param) {
+                  chartClick(param);
+                });
+
+                chart.setOption(option, true);
+              }
+            );
+
+            operationArray.pop();
+          } else if (operationArray.length == 2) {
+            //如果长度是2, 则后退到中国地图
+            // chart.dispose();
+            recoveryState();
+            getData({}, function (resultData) {
+              option.series[0].data = resultData;
+              option.series[0].map = 'china';
+              chart.setOption(option, true);
+            });
+
+            operationArray.pop();
+          }
+        }
+
+        setTimeout(() => {
+          _modalActionHidden('.pipeline');
+        }, 500);
+      }
+
+      /**
+       * echarts地图点击事件
+       */
+      function chartClick(param) {
+        console.log('mmmm');
+        if (param.data && param.data.city) {
+          //如果点到是区级别则调用百度地图
+          _modalActionShow('.pipeline');
+          recoveryState();
+          operationArray.push(param.data.city); //向存储操作顺序数组里添加当前点击进入的区或者市
+          getData(
+            {
+              province_id: param.data.province_id,
+              city_id: param.data.city_id,
+            },
+            function (resultData) {
+              var newPointArray = [];
+              resultData.forEach(function (v) {
+                newPointArray.push({
+                  name: v.park_code + '-' + v.address,
+                  value: [v.longitude, v.latitude, v.nla],
+                });
+              });
+              var myGeo = new BMap.Geocoder(); //把当前点击的区或者市作地址解析
+              myGeo.getPoint(
+                param.data.city,
+                function (point) {
+                  console.log(param.data.city, point, 'point');
+                  if (point) {
+                    chart.setOption(
+                      {
+                        // 加载 bmap 组件
+                        bmap: {
+                          // 百度地图中心经纬度
+                          center: [point.lng, point.lat],
+                          // 百度地图缩放
+                          zoom: 12,
+                          // 是否开启拖拽缩放，可以只设置 'scale' 或者 'move'
+                          roam: true,
+                          // 百度地图的自定义样式，见 http://developer.baidu.com/map/jsdevelop-11.htm
+                          mapStyle: {},
+                        },
+                        series: [
+                          {
+                            type: 'scatter',
+                            // 使用百度地图坐标系
+                            name: 'city',
+                            coordinateSystem: 'bmap',
+                            // 数据格式跟在 geo 坐标系上一样，每一项都是 [经度，纬度，数值大小，其它维度...]
+                            data: newPointArray,
+                            symbolSize: function (val) {
+                              // if (val[2] > 100000) {
+
+                              // 	return val[2] / 10000
+                              // } else {
+                              // 	return val[2] / 2000
+                              // }
+                              return 15;
+                            },
+                            label: {
+                              normal: {
+                                formatter: function (data) {
+                                  return data.name + ':' + format(parseInt(data.value[2] / 10000));
+                                },
+                                position: 'right',
+                                show: false,
+                              },
+                              emphasis: {
+                                show: true,
+                              },
+                            },
+                            itemStyle: {
+                              normal: {
+                                color: 'red',
+                              },
+                            },
+                          },
+                        ],
+                      },
+                      true
+                    );
+                  } else {
+                    alert('您选择地址没有解析到结果!');
+                  }
+                },
+                param.data.city
+              );
+            },
+            true
+          );
+        } else if (param.data && param.data.province) {
+          //否则调用的是echarts矢量图
+          _modalActionShow('.pipeline');
+          console.log('nnnnn');
+          recoveryState();
+          dataArray.forEach(function (v) {
+            if (v.name == param.data.name) {
+              operationArray.push(v); //向存储操作顺序数组里添加当前点击进入的省
+              loadScriptMap(v.name, v.province_code, v.province_id);
+            }
+          });
+        }
+        setTimeout(() => {
+          _modalActionHidden('.pipeline');
+        }, 500);
+      }
+
+      /**
+       * 恢复排序的状态图标以及状态
+       */
+      function recoveryState() {
+        sortFlag = true;
+        sortFlag2 = true;
+        $('.clickTh').addClass('sortAsc sortDesc');
+        $('.clickTh2').addClass('sortAsc sortDesc');
+      }
+
+      /**
+       * table排序
+       */
+      function sortTable() {
+        sortFlag2 = true;
+        $('.clickTh2').addClass('sortAsc sortDesc');
+        var newStr = '';
+        if (sortFlag) {
+          //如果是降序
+          sortFlag = false;
+          $('.clickTh').removeClass('sortAsc');
+          $('.clickTh').addClass('sortDesc');
+          dataArray.sort(function (a, b) {
+            return b.value - a.value;
+          });
+        } else {
+          //否则如果是升序
+          sortFlag = true;
+          $('.clickTh').removeClass('sortDesc');
+          $('.clickTh').addClass('sortAsc');
+          dataArray.sort(function (a, b) {
+            return a.value - b.value;
+          });
+        }
+
+        dataArray.forEach(function (v) {
+          //如果存在park_code即2019级别则地区名称带上code
+          var areaName = v.park_code ? v.park_code + '-' + (v.address || v.city || v.province) : v.address || v.city || v.province;
+          newStr += '<tr>';
+          newStr += '<td>' + areaName + '</td><td>' + format(v.value) + '</td><td>' + format(v.value) + '</td>';
+          newStr += '</tr>';
+        });
+        $('.t1 tbody').html(newStr);
+      }
+
+      function sortTable2() {
+        sortFlag = true;
+        $('.clickTh').addClass('sortAsc sortDesc');
+        var newStr = '';
+        if (sortFlag2) {
+          //如果是降序
+          sortFlag2 = false;
+          $('.clickTh2').removeClass('sortAsc');
+          $('.clickTh2').addClass('sortDesc');
+          dataArray.sort(function (a, b) {
+            return b.value - a.value;
+          });
+        } else {
+          //否则如果是升序
+          sortFlag2 = true;
+          $('.clickTh2').removeClass('sortDesc');
+          $('.clickTh2').addClass('sortAsc');
+          dataArray.sort(function (a, b) {
+            return a.value - b.value;
+          });
+        }
+
+        dataArray.forEach(function (v) {
+          //如果存在park_code即2019级别则地区名称带上code
+          var areaName = v.park_code ? v.park_code + '-' + (v.address || v.city || v.province) : v.address || v.city || v.province;
+          newStr += '<tr>';
+          newStr += '<td>' + areaName + '</td><td>' + format(v.value) + '</td><td>' + format(v.value) + '</td>';
+          newStr += '</tr>';
+        });
+        $('.t1 tbody').html(newStr);
+      }
+
+      // pipeline排序(2019)
+      function sortPiple() {
+        piplineFlag2 = true;
+        $('.plickTh2').addClass('sortAsc sortDesc');
+        var newStr = '';
+        if (piplineFlag) {
+          //如果是降序
+          piplineFlag = false;
+          $('.plickTh').removeClass('sortAsc');
+          $('.plickTh').addClass('sortDesc');
+          data2.sort(function (a, b) {
+            return b.va - a.va;
+          });
+        } else {
+          //否则如果是升序
+          piplineFlag = true;
+          $('.plickTh').removeClass('sortDesc');
+          $('.plickTh').addClass('sortAsc');
+          data2.sort(function (a, b) {
+            return a.va - b.va;
+          });
+        }
+
+        pipTable(); //重新渲染
+      }
+
+      function sortPiple2() {
+        piplineFlag = true;
+        $('.plickTh').addClass('sortAsc sortDesc');
+        var newStr = '';
+        if (piplineFlag2) {
+          //如果是降序
+          piplineFlag2 = false;
+          $('.plickTh2').removeClass('sortAsc');
+          $('.plickTh2').addClass('sortDesc');
+          data2.sort(function (a, b) {
+            return b['2020'] - a['2020'];
+          });
+        } else {
+          //否则如果是升序
+          piplineFlag2 = true;
+          $('.plickTh2').removeClass('sortDesc');
+          $('.plickTh2').addClass('sortAsc');
+          data2.sort(function (a, b) {
+            return a['2020'] - b['2020'];
+          });
+        }
+
+        pipTable();
+      }
+      // 渲染html(Pipeline)
+      function pipTable() {
+        var newStr = '';
+        data2.forEach((v) => {
+          newStr += '<tr>';
+          newStr += `<td>${v.Progress}</td><td>${v.va}</td><td>${v['2020']}</td>`;
+          newStr += '</tr>';
+          console.log(newStr);
+        });
+        $('.t2 tbody').html(newStr);
+      }
+      $(function () {
+        $('.top th:first-child').click(function () {
+          $(this).removeClass('d_top');
+          $('.top th:last-child').addClass('d_top');
+
+          $('.store').addClass('d_none');
+          $('.pipeline').removeClass('d_none');
+        });
+        $('.top th:last-child').click(function () {
+          $(this).removeClass('d_top');
+          $('.top th:first-child').addClass('d_top');
+
+          $('.store').removeClass('d_none');
+          $('.pipeline').addClass('d_none');
+        });
+      });
+    </script>
+  </body>
+</html>
