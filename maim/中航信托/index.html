@@ -13,16 +13,12 @@
     /* Menu style */
     #timeline {
       width: 1200px;
-      height: 880px;
+      height: 800px;
       overflow: hidden;
       margin: 0 auto;
       position: relative;
     }
-    #dates {
-      width: 1200px;
-      height: 160px;
-      overflow: hidden;
-    }
+
     #dates li {
       list-style: none;
       float: left;
@@ -32,7 +28,6 @@
       text-align: center;
     }
     #dates a {
-      /* line-height: 38px; */
       padding-top: 10px;
       text-decoration: none;
       color: #424242;
@@ -42,26 +37,14 @@
       margin-top: 10px;
     }
 
-    #dates .selected {
-      font-size: 8px;
-    }
-
-    #issues {
-      width: 1200px;
-      height: 700px;
-      overflow: hidden;
-    }
     #issues li {
       width: 1200px;
-      height: 700px;
+      height: 600px;
       list-style: none;
       float: left;
       position: relative;
     }
     #issues li img {
-      /* margin-left: auto;
-      margin-right: auto;
-      display: block; */
       position: absolute;
       top: 0;
       bottom: 0;
@@ -415,7 +398,7 @@
         data.forEach((val, i) => {
           html += `
           <li id="${val.id}">
-            <img src="${val.img}" width="800"/>
+            <img src="${val.img}" width="600"/>
           </li>`;
         });
         $('#issues').html(html);

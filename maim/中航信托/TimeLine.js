@@ -1,71 +1,3 @@
-// 引入样式
-let style = document.createElement('style');
-style.innerHTML = `
-/*-核心代码-*/
-/* Menu style */
-#timeline {
-  width: 1000px;
-  height: 880px;
-  overflow: hidden;
-  margin: 0 auto;
-  position: relative;
-  /* background: url('../images/dot.gif') left 45px repeat-x; */
-}
-#dates {
-  width: 1000px;
-  height: 160px;
-  overflow: hidden;
-}
-#dates li {
-  list-style: none;
-  float: left;
-  width: 150px;
-  height: 100px;
-  font-size: 8px;
-  text-align: center;
-  /* background: url('../images/biggerdot.png') center bottom no-repeat; */
-}
-#dates a {
-  /* line-height: 38px; */
-  padding-top: 10px;
-  text-decoration: none;
-  color: #424242;
-}
-
-#dates img {
-  margin-top: 10px;
-}
-
-#dates .selected {
-  font-size: 8px;
-}
-
-#issues {
-  width: 1000px;
-  height: 700px;
-  overflow: hidden;
-}
-#issues li {
-  width: 1000px;
-  height: 700px;
-  list-style: none;
-  float: left;
-  position: relative;
-}
-#issues li img {
-  /* margin-left: auto;
-  margin-right: auto;
-  display: block; */
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
-}
-`;
-document.head.appendChild(style);
-
 // 引入 jQuery-Timelinr
 let jQuery_Timelinr_script = document.createElement('script');
 jQuery_Timelinr_script.innerHTML = `
@@ -380,6 +312,55 @@ $(function () {
   renderIssues();
 });
 
+const setHtmlStyle_Timelinr = (width) => {
+  // 引入样式
+  let style = document.createElement('style');
+  style.innerHTML = `
+#timeline {
+  width: ${width-50}px;
+  height: 800px;
+  overflow: hidden;
+  margin: 0 auto;
+  position: relative;
+}
+
+#dates li {
+  list-style: none;
+  float: left;
+  width: 150px;
+  height: 100px;
+  font-size: 8px;
+  text-align: center;
+}
+#dates a {
+  padding-top: 10px;
+  text-decoration: none;
+  color: #424242;
+}
+
+#dates img {
+  margin-top: 10px;
+}
+
+#issues li {
+  width: ${width-50}px;
+  height: 600px;
+  list-style: none;
+  float: left;
+  position: relative;
+}
+#issues li img {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+`;
+  document.head.appendChild(style);
+};
+
 const initHtml = () => {
   let cardName = 'TimelineTable';
   let echartDom = cfs.card.body.getDom(cardName).find('.echart');
@@ -394,6 +375,9 @@ const initHtml = () => {
     <ul id="dates"></ul>
   </div>
   `;
+
+  let _width = $(echartDom).width()
+  setHtmlStyle_Timelinr(_width)
 
   $(echartDom).html(html);
 };
@@ -427,7 +411,7 @@ const renderIssues = () => {
   data.forEach((val, i) => {
     html += `
     <li id="${val.id}">
-      <img src="${val.img}" width="800"/>
+      <img src="${val.img}" width="600"/>
     </li>`;
   });
   $('#issues').html(html);
