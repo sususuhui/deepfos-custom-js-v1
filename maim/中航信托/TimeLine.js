@@ -317,7 +317,7 @@ const setHtmlStyle_Timelinr = (width) => {
   let style = document.createElement('style');
   style.innerHTML = `
 #timeline {
-  width: ${width-50}px;
+  width: ${width - 50}px;
   height: 800px;
   overflow: hidden;
   margin: 0 auto;
@@ -343,7 +343,7 @@ const setHtmlStyle_Timelinr = (width) => {
 }
 
 #issues li {
-  width: ${width-50}px;
+  width: ${width - 50}px;
   height: 600px;
   list-style: none;
   float: left;
@@ -376,8 +376,8 @@ const initHtml = () => {
   </div>
   `;
 
-  let _width = $(echartDom).width()
-  setHtmlStyle_Timelinr(_width)
+  let _width = $(echartDom).width();
+  setHtmlStyle_Timelinr(_width);
 
   $(echartDom).html(html);
 };
@@ -415,6 +415,231 @@ const renderIssues = () => {
     </li>`;
   });
   $('#issues').html(html);
+};
+
+const renderTable1 = (data, params) => {
+  var componentId = params.componentId;
+  var html = `<table class="table table-hover datatable-highlight dataTable no-footer table-striped" >
+                <tr>
+                    <th style="padding:0 0 0 1.2rem;width:8rem;"></th>
+                    <th>投前版</th>
+                    <th>投决版</th>
+                    <th>实际数</th>
+                </tr>
+                <tr>
+                    <td style="padding:0 0 0 1.2rem;">ROA</td>
+                    <td>
+                        <span style="display: inline-block;width: 15%;height: 10px;background: #548235;"></span>
+                        <span style="float: right;">15%</span>
+                    </td>
+                    <td>
+                        <span style="display: inline-block;width: 10%;height: 10px;background: #e2f0d9;"></span>
+                        <span style="float: right;">10%</span>
+                    </td>
+                    <td>
+                        <span style="display: inline-block;width: 16%;height: 10px;background: #385723;"></span>
+                        <span style="float: right;">16%</span>
+                    </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 0 1.2rem;">ROE</td>
+                  <td>
+                      <span style="display: inline-block;width: 30%;height: 10px;background: #70ad47;"></span>
+                      <span style="float: right;">19%</span>
+                  </td>
+                  <td>
+                      <span style="display: inline-block;width: 20%;height: 10px;background: #70ad47;"></span>
+                      <span style="float: right;">15%</span>
+                  </td>
+                  <td>
+                      <span style="display: inline-block;width: 15%;height: 10px;background: #385723;"></span>
+                      <span style="float: right;">12%</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 0 1.2rem;">IRR</td>
+                  <td>
+                      <span style="display: inline-block;width: 10%;height: 10px;background: #70ad47;"></span>
+                      <span style="float: right;">5%</span>
+                  </td>
+                  <td>
+                      <span style="display: inline-block;width: 10%;height: 10px;background: #70ad47;"></span>
+                      <span style="float: right;">5%</span>
+                  </td>
+                  <td>
+                      <span style="display: inline-block;width: 10%;height: 10px;background: #70ad47;"></span>
+                      <span style="float: right;">5%</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 0 1.2rem;">单位面积收入</td>
+                  <td>
+                      <span style="display: inline-block;width: 60%;height: 10px;background: #c55a11;"></span>
+                      <span style="float: right;">1万</span>
+                  </td>
+                  <td>
+                      <span style="display: inline-block;width: 60%;height: 10px;background: #de5a00;"></span>
+                      <span style="float: right;">1.2万</span>
+                  </td>
+                  <td>
+                      <span style="display: inline-block;width: 55%;height: 10px;background: #c55a11;"></span>
+                      <span style="float: right;">1.1万</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 0 1.2rem;">单位面积成本</td>
+                  <td>
+                      <span style="display: inline-block;width: 40%;height: 10px;background: #ffc000;"></span>
+                      <span style="float: right;">0.6万</span>
+                  </td>
+                  <td>
+                      <span style="display: inline-block;width: 45%;height: 10px;background: #c55a11;"></span>
+                      <span style="float: right;">0.7万</span>
+                  </td>
+                  <td>
+                      <span style="display: inline-block;width: 40%;height: 10px;background: #ffc000;"></span>
+                      <span style="float: right;">0.65万</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 0 1.2rem;">项目总额</td>
+                  <td>
+                      <span style="display: inline-block;width: 70%;height: 10px;background: #ffe699;"></span>
+                      <span style="float: right;">50亿</span>
+                  </td>
+                  <td>
+                      <span style="display: inline-block;width: 65%;height: 10px;background: #c55a11;"></span>
+                      <span style="float: right;">55亿</span>
+                  </td>
+                  <td>
+                      <span style="display: inline-block;width: 40%;height: 10px;background: #ffc000;"></span>
+                      <span style="float: right;">53亿</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:0 0 0 1.2rem;">项目期限</td>
+                  <td>
+                      <span style="display: inline-block;width: 60%;height: 10px;background: #c55a11;"></span>
+                      <span style="float: right;">2年</span>
+                  </td>
+                  <td>
+                      <span style="display: inline-block;width: 65%;height: 10px;background: #ffe699;"></span>
+                      <span style="float: right;">1年</span>
+                  </td>
+                  <td>
+                      <span style="display: inline-block;width: 50%;height: 10px;background: #ffc000;"></span>
+                      <span style="float: right;">1.5年</span>
+                  </td>
+                </tr>
+              </table>`;
+  $('#chart-' + componentId).html(html);
+};
+
+const renderTable2 = (data, params) => {
+  var componentId = params.componentId;
+  var html = `<table class="table table-hover datatable-highlight dataTable no-footer table-striped" >
+                <tr>
+                    <th style="text-align: center;"></th>
+                    <th style="text-align: center;">投前</th>
+                    <th style="text-align: center;">实际</th>
+                    <th style="text-align: center;">合理区间</th>
+                    <th style="text-align: center;">投前超标率</th>
+                    <th style="text-align: center;">实际超标率</th>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">前期（工程）费</td>
+                    <td style="text-align: center;">152.19</td>
+                    <td style="text-align: center;">162.71</td>
+                    <td style="text-align: center;">150-155</td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">0%</span>
+                    </td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">5%</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">基础设施配套费</td>
+                    <td style="text-align: center;">494.33</td>
+                    <td style="text-align: center;">528.52</td>
+                    <td style="text-align: center;">480-500</td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">0%</span>
+                    </td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">10%</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">建筑安装工程费</td>
+                    <td style="text-align: center;">4148.61</td>
+                    <td style="text-align: center;">4435.51</td>
+                    <td style="text-align: center;">4400-4500</td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">-6%</span>
+                    </td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">0%</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">公共配套设施建设费</td>
+                    <td style="text-align: center;">146.89</td>
+                    <td style="text-align: center;">157.05</td>
+                    <td style="text-align: center;">140-150</td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">0%</span>
+                    </td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">5%</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">开发间接费</td>
+                    <td style="text-align: center;">130.73</td>
+                    <td style="text-align: center;">139.77</td>
+                    <td style="text-align: center;">130-140</td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">0%</span>
+                    </td>
+                    <td class="item">
+                        <span style="display: inline-block;width: 15px;height: 15px;border-radius: 50%;"></span>
+                        <span style="float: right;">0%</span>
+                    </td>
+                </tr>
+              </table>`;
+  $('#chart-' + componentId).html(html);
+  $('#chart-' + componentId).css('overflow', 'auto');
+  // $('.table .item').each(function (k, td) {
+  //   var spanText = $(td).find('span').eq(1).text();
+  //   if (Number(spanText.split('%')[0]) >= 100) {
+  //     //大于等于100
+  //     $(td).find('span').eq(0).css('background-color', '#76a797');
+  //   } else if (Number(spanText.split('%')[0]) >= 60 && Number(spanText.split('%')[0]) < 100) {
+  //     //大于等于60 小于100
+  //     $(td).find('span').eq(0).css('background-color', '#eac282');
+  //   } else if (Number(spanText.split('%')[0]) < 60) {
+  //     //小于60
+  //     $(td).find('span').eq(0).css('background-color', '#d86344');
+  //   }
+  // });
+  $('.table .item').each(function (k, td) {
+    var spanText = $(td).find('span').eq(1).text();
+    if (Number(spanText.split('%')[0]) !== 0) {
+      $(td).find('span').eq(0).css('background-color', '#d86344');
+    } else {
+      $(td).find('span').eq(0).css('background-color', '#76a797');
+    }
+  });
 };
 
 //extrajs全局方法
