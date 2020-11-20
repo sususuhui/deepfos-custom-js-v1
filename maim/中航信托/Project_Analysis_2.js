@@ -15,32 +15,89 @@ const r1 = () => {
 
   let data = [
     {
-      value: [15, 25, 100],
-      name: '数据1',
+      value: [10, 90, 70],
+      name: '卧龙',
     },
     {
-      value: [25, 15, 100],
-      name: '数据2',
+      value: [18, 89, 70],
+      name: '荣丰',
     },
     {
-      value: [45, 35, 100],
-      name: '数据3',
+      value: [18, 67, 70],
+      name: '泰禾',
     },
     {
-      value: [85, 15, 100],
-      name: '数据4',
+      value: [22, 77, 70],
+      name: '万科',
     },
     {
-      value: [35, 75, 100],
-      name: '数据5',
+      value: [28, 60, 70],
+      name: '中华',
     },
     {
-      value: [35, 75, 150],
-      name: '数据6',
+      value: [25, 15, 70],
+      name: '光大嘉宝',
     },
     {
-      value: [75, 75, 100],
-      name: '数据7',
+      value: [45, 35, 70],
+      name: '广州富力',
+    },
+    {
+      value: [85, 15, 70],
+      name: '金地',
+    },
+    {
+      value: [56, 32, 70],
+      name: '中交',
+    },
+    {
+      value: [59, 22, 70],
+      name: '上海外高桥',
+    },
+    {
+      value: [66, 28, 70],
+      name: '荣盛',
+    },
+    {
+      value: [61, 34, 70],
+      name: '荣安',
+    },
+    {
+      value: [90, 55, 70],
+      name: '南京高科',
+    },
+
+    {
+      value: [35, 90, 70],
+      name: '北京万通',
+    },
+    {
+      value: [35, 75, 70],
+      name: '首创',
+    },
+    {
+      value: [75, 71, 70],
+      name: '大悦城',
+    },
+    {
+      value: [57, 88, 70],
+      name: '新城',
+    },
+    {
+      value: [45, 90, 70],
+      name: '上海临港',
+    },
+    {
+      value: [75, 55, 70],
+      name: '中房',
+    },
+    {
+      value: [91, 66, 70],
+      name: '南国',
+    },
+    {
+      value: [61, 54, 70],
+      name: '保利',
     },
   ];
   let option = {
@@ -71,39 +128,39 @@ const r1 = () => {
       bottom: 26,
       containLabel: false,
     },
-    visualMap: [
-      {
-        show: false,
-        left: 'right',
-        top: '10%',
-        dimension: 2,
-        itemWidth: 30,
-        itemHeight: 120,
-        calculable: true,
-        precision: 0.1,
-        text: ['圆形大小'],
-        padding: [30, 0, 0, 30],
-        textGap: 20,
-        textStyle: {
-          color: '#000',
-        },
-        inRange: {
-          symbolSize: [10, 70],
-        },
-        outOfRange: {
-          symbolSize: [10, 70],
-          color: ['rgba(255, 255, 255, .2)'],
-        },
-        controller: {
-          inRange: {
-            color: ['rgba(51, 103, 214, .5)'],
-          },
-          outOfRange: {
-            color: ['#e1e1e1'],
-          },
-        },
-      },
-    ],
+    // visualMap: [
+    //   {
+    //     show: false,
+    //     left: 'right',
+    //     top: '10%',
+    //     dimension: 2,
+    //     itemWidth: 30,
+    //     itemHeight: 120,
+    //     calculable: true,
+    //     precision: 0.1,
+    //     text: ['圆形大小'],
+    //     padding: [30, 0, 0, 30],
+    //     textGap: 20,
+    //     textStyle: {
+    //       color: '#000',
+    //     },
+    //     inRange: {
+    //       symbolSize: [10, 70],
+    //     },
+    //     outOfRange: {
+    //       symbolSize: [10, 70],
+    //       color: ['rgba(255, 255, 255, .2)'],
+    //     },
+    //     controller: {
+    //       inRange: {
+    //         color: ['rgba(51, 103, 214, .5)'],
+    //       },
+    //       outOfRange: {
+    //         color: ['#e1e1e1'],
+    //       },
+    //     },
+    //   },
+    // ],
     xAxis: {
       type: 'value',
       name: '财务杠杆',
@@ -117,9 +174,9 @@ const r1 = () => {
         fontSize: 14,
         formatter: function (value) {
           if (value === 10) {
-            return '低';
-          } else if (value === 90) {
             return '高';
+          } else if (value === 90) {
+            return '低';
           }
         },
       },
@@ -183,6 +240,8 @@ const r1 = () => {
       label: {
         show: true,
         formatter: '{b}',
+        color: '#38394C',
+        position: 'right',
       },
       itemStyle: {},
       markLine: {
@@ -228,6 +287,9 @@ const r1 = () => {
               name: '高杠杆高质量',
               yAxis: 50,
               xAxis: 0,
+              itemStyle: {
+                color: 'rgba(56, 180, 139, .1)',
+              },
             },
             {
               yAxis: 100,
@@ -237,6 +299,9 @@ const r1 = () => {
           [
             {
               name: '低杠杆高质量',
+              itemStyle: {
+                color: 'rgba(68, 97, 123, .1)',
+              },
               yAxis: 50,
               xAxis: 50,
             },
@@ -248,6 +313,9 @@ const r1 = () => {
           [
             {
               name: '高杠杆低质量',
+              itemStyle: {
+                color: 'rgba(191, 120, 58, .1)',
+              },
               yAxis: 0,
               xAxis: 0,
             },
@@ -259,6 +327,9 @@ const r1 = () => {
           [
             {
               name: '低杠杆低质量',
+              itemStyle: {
+                color: 'rgba(116, 83, 153, .1)',
+              },
               yAxis: 0,
               xAxis: 50,
             },
@@ -1036,85 +1107,74 @@ function renderBarEchart4(data, params) {
   initEchart(componentId, option);
 }
 
-
-
 function Chart_X1C1_Main() {
   var cardName = '目标城市房地产投资额占比';
 
-//   if (getRequest().isView !== 'mobile') {
-//     $('#' + cardName)
-//       .parent()
-//       .css('width', '75%');
-//   }
+  //   if (getRequest().isView !== 'mobile') {
+  //     $('#' + cardName)
+  //       .parent()
+  //       .css('width', '75%');
+  //   }
 
   var echartDom = cfs.card.body.getDom(cardName).find('.echart');
   var headDom = cfs.card.head.getDom(cardName);
   headDom.find('.freshBS').find('i').css('margin', 10);
   var option = {
- "color": [
-         "#516b91",
-         "#59c4e6",
-         "#edafda",
-         "#93b7e3",
-         "#a5e7f0",
-         "#cbb0e3"
-     ],
+    color: ['#516b91', '#59c4e6', '#edafda', '#93b7e3', '#a5e7f0', '#cbb0e3'],
 
     legend: {
-        data:['GDP同比增速', '房地产投资同比增速']
+      data: ['GDP同比增速', '房地产投资同比增速'],
     },
 
     xAxis: [
-        {
-            type: 'category',
-            boundaryGap: true,
-            data: ['2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020']
-        }
+      {
+        type: 'category',
+        boundaryGap: true,
+        data: ['2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020'],
+      },
     ],
     yAxis: [
-
-        {
-            type: 'value',
-            min:0,
-            axisLabel: {  
-                            show: true,  
-                            interval: 'auto',  
-                            formatter: '{value} %'  
-                            },  
-            scale: true
-        }
+      {
+        type: 'value',
+        min: 0,
+        axisLabel: {
+          show: true,
+          interval: 'auto',
+          formatter: '{value} %',
+        },
+        scale: true,
+      },
     ],
     series: [
-        {
-            name: 'GDP同比增速',
-            type: 'line',
-            
-            data: [34.4,30.1,26.7,20.3,20.5,19.8,15.1,10.5,12.4,16,14,15]
-        },
-        {
-            name: '房地产投资同比增速',
-            type: 'line',
-             itemStyle: {  
-                normal: {  
-                    label: {  
-                        show: true,  
-                        position: 'top',  
-                        formatter: '{c}%'  
-                    }  
-                }  
-            },  
+      {
+        name: 'GDP同比增速',
+        type: 'line',
 
-            data: [33, 28,16, 20,16, 11, 17,17, 10, 10,16, 16]
-        }
-    ]
-};
+        data: [34.4, 30.1, 26.7, 20.3, 20.5, 19.8, 15.1, 10.5, 12.4, 16, 14, 15],
+      },
+      {
+        name: '房地产投资同比增速',
+        type: 'line',
+        itemStyle: {
+          normal: {
+            label: {
+              show: true,
+              position: 'top',
+              formatter: '{c}%',
+            },
+          },
+        },
+
+        data: [33, 28, 16, 20, 16, 11, 17, 17, 10, 10, 16, 16],
+      },
+    ],
+  };
   if (!Cus_echarts[cardName]) {
     Cus_echarts[cardName] = cfs.echarts.init(echartDom, Cus_theme, option);
   } else {
     cfs.echarts.refresh(Cus_echarts[cardName], option);
   }
 }
-
 
 //extrajs全局方法
 var Cus_theme = 'westeros';
