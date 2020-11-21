@@ -288,7 +288,7 @@ const r1 = () => {
               yAxis: 50,
               xAxis: 0,
               itemStyle: {
-                color: 'rgba(56, 180, 139, .1)',
+                color: 'rgba(89,196,230, .1)',
               },
             },
             {
@@ -300,7 +300,7 @@ const r1 = () => {
             {
               name: '低杠杆高质量',
               itemStyle: {
-                color: 'rgba(68, 97, 123, .1)',
+                color: 'rgba(237,175,218, .1)',
               },
               yAxis: 50,
               xAxis: 50,
@@ -314,7 +314,7 @@ const r1 = () => {
             {
               name: '高杠杆低质量',
               itemStyle: {
-                color: 'rgba(191, 120, 58, .1)',
+                color: 'rgba(147,183,227, .1)',
               },
               yAxis: 0,
               xAxis: 0,
@@ -328,7 +328,7 @@ const r1 = () => {
             {
               name: '低杠杆低质量',
               itemStyle: {
-                color: 'rgba(116, 83, 153, .1)',
+                color: 'rgba(165,231,240, .1)',
               },
               yAxis: 0,
               xAxis: 50,
