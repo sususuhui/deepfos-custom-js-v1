@@ -51,36 +51,10 @@ metaReferrer.setAttribute('name', 'referrer');
 metaReferrer.setAttribute('content', 'no-referrer');
 document.head.appendChild(metaReferrer);
 
-$(() => {
-  LoadBaiduMapScript();
-  // renderMap('Area', 'T02', '华东');
-  renderMap();
-});
-
 /**
  * 加载百度地图 API
  */
 const LoadBaiduMapScript = () => {
-  // //console.log("初始化百度地图脚本...");
-  // const AK = 'OdpMlEqrR4Rj3sT9atp8jbmZebI0UhhQ';
-  // const BMap_URL = 'https://api.map.baidu.com/api?v=2.0&ak=' + AK + '&s=1&callback=onBMapCallback';
-  // return new Promise((resolve, reject) => {
-  //   // 如果已加载直接返回
-  //   if (typeof BMap !== 'undefined') {
-  //     resolve(BMap);
-  //     return true;
-  //   }
-  //   // 百度地图异步加载回调处理
-  //   window.onBMapCallback = function () {
-  //     console.log('百度地图脚本初始化成功...');
-  //     resolve(BMap);
-  //   };
-  //   // 插入script脚本
-  //   let scriptNode = document.createElement('script');
-  //   scriptNode.setAttribute('type', 'text/javascript');
-  //   scriptNode.setAttribute('src', BMap_URL);
-  //   document.body.appendChild(scriptNode);
-  // });
   //console.log("初始化百度地图脚本...");
   const AK = 'NiGaA3XdWH2IqZB0ohynxvB9yh492DY2';
   const BMap_URL = 'https://api.map.baidu.com/api?v=3.0&ak=' + AK + '&s=1&callback=onBMapCallback';
@@ -103,7 +77,16 @@ const LoadBaiduMapScript = () => {
   });
 };
 
-const renderMap = async (level, MapCode, name) => {
+let mapChart,
+  mapOperationArray = ['china'];
+
+$(() => {
+  LoadBaiduMapScript();
+  renderMap();
+  renderTable();
+});
+
+const renderMap = async () => {
   let cardName = 'Map';
   let echartDom = cfs.card.body.getDom(cardName).find('.echart');
   let headDom = cfs.card.head.getDom(cardName);
@@ -119,38 +102,90 @@ const renderMap = async (level, MapCode, name) => {
 
   cfs.echarts.correctHeight(cardName);
 
-  // let mapChart = echarts.init(echartDom[0]);
-  // // let allAdCode = await getGeoJson('all.json');
-  // let chinaGeoJson = await getGeoJson('100000_full.json');
+  mapLevelRenderer();
+};
+const renderTable = async () => {
+  let cardName = 'Table';
+  let echartDom = cfs.card.body.getDom(cardName).find('.echart');
 
-  // let chinaJson, data;
-  // if (level === 'Area') {
-  //   chinaJson = mergeArea(chinaGeoJson, name);
-  //   data = await getData({ Region: `${MapCode}` });
-  // } else if (level === 'Province' || level === 'City') {
-  //   chinaJson = await getGeoJson(`${MapCode}_full.json`);
-  //   data = await getData({ Region: `${MapCode}` });
-  // } else {
-  //   chinaJson = mergeProvinces(chinaGeoJson);
-  //   data = await getData();
-  // }
+  cfs.card.body.getDom(cardName).css('padding', '0');
+  cfs.echarts.correctHeight(cardName);
 
-  // let resultData = JSON.parse(data.result);
+  let table = `
+  <div class="table-responsive table-scrollable d_none store" style="max-height:100%">
+    <table class="table table-bordered" id="mapTable">
+      <thead><tr></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+    `;
+  $(echartDom).html(table);
 
-  // initMapEcharts(chinaJson, name || '全国', mapChart, resultData.Form, resultData.StoreMap);
+  mapTable();
 };
 
-const mapLevelRenderer = async (level, MapCode, name) => {
+const mapTable = async (MapCode) => {
+  let data;
+  if (_.isUndefined(MapCode)) {
+    data = await getData();
+  } else {
+    data = await getData({ Region: `${MapCode}` });
+  }
+
+  let resultData = JSON.parse(data.result);
+
+  console.log(resultData);
+
+  let theadHtml = ``;
+  resultData.FormColumns.forEach((val) => {
+    theadHtml += `<th>${val.Description}</th>`;
+  });
+  $('#mapTable thead tr').html(theadHtml);
+
+  let tbodyHtml = ``;
+  resultData.Form.forEach((FormVal) => {
+    let formRowHtml = `<tr MapCode="${FormVal.MapCode}" level="${FormVal.level}" style="cursor: pointer;">`;
+    resultData.FormColumns.forEach((FormColumnsVal) => {
+      formRowHtml += `<td>${FormVal[FormColumnsVal.Column]}</td>`;
+    });
+    formRowHtml += `</tr>`;
+    tbodyHtml += formRowHtml;
+  });
+  $('#mapTable tbody').html(tbodyHtml);
+
+  // table里的每行tr点击进入对应省份下面的市地图
+  $('#mapTable tbody tr').each((i, v) => {
+    const trObj = $(v);
+    trObj.on('click', async () => {
+      if (typeof trObj.attr('MapCode') == 'undefined') return;
+      let MapCode = trObj.attr('MapCode');
+      let level = trObj.attr('level');
+      if (level === 'District') {
+        bmapRenderer(MapCode, resultData.StoreMap);
+      } else {
+        mapTable(MapCode);
+        mapLevelRenderer(level, MapCode);
+      }
+    });
+  });
+};
+
+/**
+ * 地图渲染器
+ * @param {*} level
+ * @param {*} MapCode
+ */
+const mapLevelRenderer = async (level, MapCode) => {
   let cardName = 'Map';
   let echartDom = cfs.card.body.getDom(cardName).find('.echart');
-  let mapChart = echarts.init(echartDom[0]);
+  mapChart = echarts.init(echartDom[0]);
 
   // let allAdCode = await getGeoJson('all.json');
   let chinaGeoJson = await getGeoJson('100000_full.json');
 
   let chinaJson, data;
   if (level === 'Area') {
-    chinaJson = mergeArea(chinaGeoJson, name);
+    chinaJson = mergeArea(chinaGeoJson, MapCode);
     data = await getData({ Region: `${MapCode}` });
   } else if (level === 'Province' || level === 'City') {
     chinaJson = await getGeoJson(`${MapCode}_full.json`);
@@ -162,7 +197,7 @@ const mapLevelRenderer = async (level, MapCode, name) => {
 
   let resultData = JSON.parse(data.result);
 
-  initMapEcharts(chinaJson, name || '全国', mapChart, resultData.Form, resultData.StoreMap);
+  initMapEcharts(chinaJson, MapCode || '全国', resultData.Form, resultData.StoreMap);
 };
 
 /**
@@ -298,11 +333,11 @@ const getGeoJson = async (jsonName) => {
  * @param {*} data
  * @param {*} StoreMap
  */
-const initMapEcharts = (geoJson, name, chart, data, StoreMap) => {
+const initMapEcharts = (geoJson, name, data, StoreMap) => {
   // console.log(data);
 
   let mapData = data.map((v) => {
-    return { value: v.Sales, name: v.Area || v.Province || v.City || v.District, MapData: v };
+    return { value: v.Sales, name: v.District || v.City || v.Province || v.Area, MapData: v };
   });
   console.log(mapData);
 
@@ -383,32 +418,38 @@ const initMapEcharts = (geoJson, name, chart, data, StoreMap) => {
       },
     ],
   };
-  // chart.clear()
-  chart.setOption(option, true);
+  mapChart.setOption(option, true);
   // 解绑click事件
-  chart.off('click');
+  mapChart.off('click');
   //给地图添加监听事件
-  chart.on('click', async (params) => {
+  mapChart.on('click', async (params) => {
     let MapData = params.data.MapData;
+
     if (MapData.level === 'District') {
-      let allAdCode = await getGeoJson('all.json');
-      let mapInfo = allAdCode.filter((val) => {
-        return val.adcode === parseInt(MapData.Region_datav);
-      });
-      let point = { lng: mapInfo[0].lng, lat: mapInfo[0].lat };
-
-      let newStoreMap = StoreMap.map((val) => {
-        return {
-          name: val.Name,
-          value: [val.Lng, val.Lat, 111],
-        };
-      });
-
-      initBmapEcharts(chart, point, newStoreMap);
+      mapOperationArray.push({ level: MapData.level, MapCode: MapData.MapCode });
+      bmapRenderer(MapData.MapCode, StoreMap);
     } else {
-      renderMap(MapData.level, MapData.MapCode, MapData.name);
+      mapOperationArray.push({ level: MapData.level, MapCode: MapData.MapCode });
+      mapLevelRenderer(MapData.level, MapData.MapCode);
+      mapTable(MapData.MapCode);
     }
   });
+};
+
+const bmapRenderer = async (MapCode, StoreMap) => {
+  let allAdCode = await getGeoJson('all.json');
+  let mapInfo = allAdCode.filter((val) => {
+    return val.adcode === parseInt(MapCode);
+  });
+  let point = { lng: mapInfo[0].lng, lat: mapInfo[0].lat };
+
+  let newStoreMap = StoreMap.map((val) => {
+    return {
+      name: val.Name,
+      value: [val.Lng, val.Lat, 111],
+    };
+  });
+  initBmapEcharts(point, newStoreMap);
 };
 
 /**
@@ -417,7 +458,7 @@ const initMapEcharts = (geoJson, name, chart, data, StoreMap) => {
  * @param {*} point
  * @param {*} data
  */
-const initBmapEcharts = (chart, point, data) => {
+const initBmapEcharts = (point, data) => {
   let option = {
     // 加载 bmap 组件
     bmap: {
@@ -467,8 +508,8 @@ const initBmapEcharts = (chart, point, data) => {
       },
     ],
   };
-  chart.setOption(option, true);
-  let bmap = chart.getModel().getComponent('bmap').getBMap();
+  mapChart.setOption(option, true);
+  let bmap = mapChart.getModel().getComponent('bmap').getBMap();
   bmap.setMapStyleV2({
     styleId: 'be9e79ac5f78998b25fcb5ca44bcc6f7',
   });
@@ -477,7 +518,30 @@ const initBmapEcharts = (chart, point, data) => {
 /**
  * 地图后退
  */
-const mapBack = () => {};
+const mapBack = () => {
+  _modalActionShow('#Map');
+  _modalActionShow('#Table');
+
+  mapChart.dispose();
+  if (mapOperationArray.length > 2) {
+    let { level, MapCode } = mapOperationArray[mapOperationArray.length - 2];
+    mapTable(MapCode);
+    mapLevelRenderer(level, MapCode);
+    mapOperationArray.pop();
+  } else if ((mapOperationArray.length = 2)) {
+    mapTable();
+    mapLevelRenderer();
+    mapOperationArray.pop();
+  } else {
+    mapTable();
+    mapLevelRenderer();
+  }
+
+  setTimeout(() => {
+    _modalActionHidden('#Map');
+    _modalActionHidden('#Table');
+  }, 500);
+};
 
 var Cus_theme = 'westeros';
 var Cus_echarts = {};
