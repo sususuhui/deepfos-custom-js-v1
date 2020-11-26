@@ -80,6 +80,22 @@ const LoadBaiduMapScript = () => {
 let mapChart,
   mapOperationArray = ['china'];
 
+// 市场颜色
+let MdColor = {
+  MD01: '#F08080',
+  MD02: '#F0F8FF',
+  MD03: '#1E90FF',
+  MD04: '#C0C0C0',
+  MD05: '#AFEEEE',
+};
+let MdDescription = {
+  MD01: '核心市场',
+  MD02: '潜力市场',
+  MD03: '忠实市场',
+  MD04: '边缘市场',
+  MD05: '空白区县',
+};
+
 $(() => {
   LoadBaiduMapScript();
   renderMap();
@@ -146,7 +162,11 @@ const mapTable = async (MapCode) => {
   resultData.Form.forEach((FormVal) => {
     let formRowHtml = `<tr MapCode="${FormVal.MapCode}" level="${FormVal.level}" style="cursor: pointer;">`;
     resultData.FormColumns.forEach((FormColumnsVal) => {
-      formRowHtml += `<td>${FormVal[FormColumnsVal.Column]}</td>`;
+      if (FormColumnsVal.Column === 'Md') {
+        formRowHtml += `<td style="background-color:${MdColor[FormVal[FormColumnsVal.Column]]};">${MdDescription[FormVal[FormColumnsVal.Column]]}</td>`;
+      } else {
+        formRowHtml += `<td>${FormVal[FormColumnsVal.Column]}</td>`;
+      }
     });
     formRowHtml += `</tr>`;
     tbodyHtml += formRowHtml;
@@ -334,12 +354,24 @@ const getGeoJson = async (jsonName) => {
  * @param {*} StoreMap
  */
 const initMapEcharts = (geoJson, name, data, StoreMap) => {
-  // console.log(data);
-
   let mapData = data.map((v) => {
     return { value: v.Sales, name: v.District || v.City || v.Province || v.Area, MapData: v };
   });
   console.log(mapData);
+
+  // 区县颜色分级设置
+  if (!_.isUndefined(StoreMap)) {
+    mapData = mapData.map((val) => {
+      return {
+        ...val,
+        itemStyle: {
+          normal: {
+            areaColor: MdColor[val.MapData.Md],
+          },
+        },
+      };
+    });
+  }
 
   let valueArr = [];
   mapData.forEach((val) => {
@@ -359,14 +391,16 @@ const initMapEcharts = (geoJson, name, data, StoreMap) => {
       left: '30%',
       containLabel: true,
     },
-    visualMap: {
-      min: minValue,
-      max: maxValue,
-      left: 'left',
-      top: 'bottom',
-      text: ['高', '低'], // 文本，默认为数值文本
-      calculable: true,
-    },
+    visualMap: !_.isUndefined(StoreMap)
+      ? null
+      : {
+          min: minValue,
+          max: maxValue,
+          left: 'left',
+          top: 'bottom',
+          text: ['高', '低'], // 文本，默认为数值文本
+          calculable: true,
+        },
     series: [
       {
         type: 'map',
