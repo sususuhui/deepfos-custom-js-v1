@@ -107,44 +107,6 @@ $(() => {
   renderTable();
 });
 
-const renderMap = async () => {
-  let cardName = 'Map';
-  let echartDom = cfs.card.body.getDom(cardName).find('.echart');
-  let headDom = cfs.card.head.getDom(cardName);
-
-  let buttonInfo = {
-    id: 'MapBackButton',
-    text: '后退',
-  };
-  cfs.card.head.addButton(headDom, buttonInfo);
-  $('#MapBackButton').click(function () {
-    mapBack();
-  });
-
-  cfs.card.body.getDom(cardName).css('padding', '8px');
-  cfs.echarts.correctHeight(cardName);
-
-  // 添加地图布局
-  let mapHtml = `
-  <div class="echartWrap" style="height:100%">
-    <div id="mainMapView" style="height:100%"></div>
-    <div class="row">
-      <div class="col-lg-6">
-        <div id="extraMapView_1">
-        </div>
-      </div>
-      <div class="col-lg-6">
-        <div id="extraMapView_2">
-        </div>
-      </div>
-    </div>
-  </div>
-  `;
-
-  $(echartDom).html(mapHtml);
-
-  mapLevelRenderer();
-};
 const renderTable = async () => {
   let cardName = 'Table';
   let echartDom = cfs.card.body.getDom(cardName).find('.echart');
@@ -215,6 +177,45 @@ const mapTable = async (MapCode) => {
   });
 };
 
+const renderMap = async () => {
+  let cardName = 'Map';
+  let echartDom = cfs.card.body.getDom(cardName).find('.echart');
+  let headDom = cfs.card.head.getDom(cardName);
+
+  let buttonInfo = {
+    id: 'MapBackButton',
+    text: '后退',
+  };
+  cfs.card.head.addButton(headDom, buttonInfo);
+  $('#MapBackButton').click(function () {
+    mapBack();
+  });
+
+  cfs.card.body.getDom(cardName).css('padding', '8px');
+  cfs.echarts.correctHeight(cardName);
+
+  // 添加地图布局
+  let mapHtml = `
+  <div class="echartWrap" style="height:100%">
+    <div id="mainMapView" style="height:100%"></div>
+    <div class="row">
+      <div class="col-lg-6">
+        <div id="extraMapView_1">
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div id="extraMapView_2">
+        </div>
+      </div>
+    </div>
+  </div>
+  `;
+
+  $(echartDom).html(mapHtml);
+
+  mapLevelRenderer();
+};
+
 /**
  * 地图渲染器
  * @param {*} level
@@ -258,6 +259,134 @@ const mapLevelRenderer = async (level, MapCode) => {
   }
 
   initMapEcharts(chinaJson, MapCode || '全国', resultData.Form, resultData.StoreMap);
+};
+
+/**
+ * 渲染地图 Echarts
+ * @param {*} geoJson
+ * @param {*} name
+ * @param {*} chart
+ * @param {*} data
+ * @param {*} StoreMap
+ */
+const initMapEcharts = (geoJson, name, data, StoreMap) => {
+  let mapData = data.map((v) => {
+    return { value: v.Sales, name: v.District || v.City || v.Province || v.Area, MapData: v };
+  });
+  console.log(mapData);
+
+  // 区县颜色分级设置
+  if (!_.isUndefined(StoreMap)) {
+    mapData = mapData.map((val) => {
+      return {
+        ...val,
+        itemStyle: {
+          normal: {
+            areaColor: MdColor[val.MapData.Md],
+          },
+        },
+      };
+    });
+  }
+
+  let valueArr = [];
+  mapData.forEach((val) => {
+    valueArr.push(val.value);
+  });
+  let minValue = Math.min(...valueArr);
+  let maxValue = Math.max(...valueArr);
+
+  minValue = Math.floor(minValue / Math.pow(10, minValue.toString().length - 1)) * Math.pow(10, minValue.toString().length - 1);
+  maxValue = Math.ceil(maxValue / Math.pow(10, maxValue.toString().length - 1)) * Math.pow(10, maxValue.toString().length - 1);
+
+  echarts.registerMap(name, geoJson);
+  let option = {
+    tooltip: {},
+
+    grid: {
+      left: '30%',
+      containLabel: true,
+    },
+    visualMap: !_.isUndefined(StoreMap)
+      ? null
+      : {
+          min: minValue,
+          max: maxValue,
+          left: 'left',
+          top: 'bottom',
+          text: ['高', '低'], // 文本，默认为数值文本
+          calculable: true,
+          inRange: {
+            color: ['#edf3f6', '#04a1f6'],
+          },
+        },
+    series: [
+      {
+        type: 'map',
+        map: name,
+        itemStyle: {
+          normal: {
+            borderColor: 'rgba(0, 0, 0, 0.2)',
+          },
+          emphasis: {
+            shadowOffsetX: 0,
+            shadowOffsetY: 0,
+            shadowBlur: 20,
+            borderWidth: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)',
+          },
+        },
+        showLegendSymbol: false,
+        // zoom: 10,
+        // center: [90.97, 36.71],
+        roam: true,
+        label: {
+          normal: {
+            show: false,
+            rotate: 40,
+            formatter: '{b}：{value|{c}}',
+            // position: 'inside',
+            backgroundColor: '#fff',
+            padding: [3, 5],
+            borderRadius: 3,
+            borderWidth: 1,
+            borderColor: 'rgba(0,0,0,0.5)',
+            color: '#777',
+            rich: {
+              value: {
+                color: '#019D2D',
+                fontSize: 14,
+                // fontWeight: 'bold'
+                // textBorderWidth: 2,
+                // textBorderColor: '#000'
+              },
+            },
+          },
+          emphasis: {
+            show: false,
+          },
+        },
+        // data: [],
+        data: mapData,
+      },
+    ],
+  };
+  mapChart.setOption(option, true);
+  // 解绑click事件
+  mapChart.off('click');
+  //给地图添加监听事件
+  mapChart.on('click', async (params) => {
+    let MapData = params.data.MapData;
+
+    if (MapData.level === 'District') {
+      mapOperationArray.push({ level: MapData.level, MapCode: MapData.MapCode });
+      bmapRenderer(MapData.MapCode, StoreMap);
+    } else {
+      mapOperationArray.push({ level: MapData.level, MapCode: MapData.MapCode });
+      mapLevelRenderer(MapData.level, MapData.MapCode);
+      mapTable(MapData.MapCode);
+    }
+  });
 };
 
 const extraMapView_1 = (data) => {
@@ -368,6 +497,93 @@ const extraMapView_2 = (data) => {
   extraMapView_2_chart.setOption(option, true);
 };
 
+const bmapRenderer = async (MapCode, StoreMap) => {
+  $('#extraMapView_1').css('height', '0px');
+  $('#extraMapView_2').css('height', '0px');
+  $('#mainMapView').css('height', '100%');
+  mapChart.resize();
+
+  extraMapView_1_chart.dispose();
+  extraMapView_2_chart.dispose();
+
+  let allAdCode = await getGeoJson('all.json');
+  let mapInfo = allAdCode.filter((val) => {
+    return val.adcode === parseInt(MapCode);
+  });
+  let point = { lng: mapInfo[0].lng, lat: mapInfo[0].lat };
+
+  let newStoreMap = StoreMap.map((val) => {
+    return {
+      name: val.Name,
+      value: [val.Lng, val.Lat, 111],
+    };
+  });
+  initBmapEcharts(point, newStoreMap);
+};
+
+/**
+ * 渲染 bmap
+ * @param {*} chart
+ * @param {*} point
+ * @param {*} data
+ */
+const initBmapEcharts = (point, data) => {
+  let option = {
+    // 加载 bmap 组件
+    bmap: {
+      // 百度地图中心经纬度
+      center: [point.lng, point.lat],
+      // 百度地图缩放
+      zoom: 12,
+      // 是否开启拖拽缩放，可以只设置 'scale' 或者 'move'
+      roam: true,
+      // 百度地图的自定义样式，见 http://developer.baidu.com/map/jsdevelop-11.htm
+      mapStyle: {},
+    },
+    series: [
+      {
+        type: 'scatter',
+        // 使用百度地图坐标系
+        name: 'city',
+        coordinateSystem: 'bmap',
+        // 数据格式跟在 geo 坐标系上一样，每一项都是 [经度，纬度，数值大小，其它维度...]
+        data: data,
+        symbolSize: function (val) {
+          // if (val[2] > 100000) {
+
+          // 	return val[2] / 10000
+          // } else {
+          // 	return val[2] / 2000
+          // }
+          return 15;
+        },
+        label: {
+          normal: {
+            // formatter: function (data) {
+            //   return data.name + ':' + format(parseInt(data.value[2] / 10000));
+            // },
+            position: 'right',
+            show: false,
+          },
+          emphasis: {
+            show: false,
+          },
+        },
+        itemStyle: {
+          normal: {
+            color: 'red',
+          },
+        },
+      },
+    ],
+  };
+  mapChart.setOption(option, true);
+  let bmap = mapChart.getModel().getComponent('bmap').getBMap();
+  bmap.setMapStyleV2({
+    styleId: 'be9e79ac5f78998b25fcb5ca44bcc6f7',
+  });
+};
+
 /**
  *
  * 请求数据 ， 默认：请求全国
@@ -387,6 +603,22 @@ const getData = (params) => {
       ...userinfoParams2,
     }),
   });
+};
+
+/**
+ * datav geo 接口
+ * @param {*} jsonName
+ */
+const getGeoJson = async (jsonName) => {
+  const publicUrl = 'https://geo.datav.aliyun.com/areas_v2/bound/';
+
+  let url = publicUrl + jsonName;
+  let config = {
+    method: 'GET',
+    url: url,
+  };
+  let res = await axios(config);
+  return res.data;
 };
 
 /**
@@ -475,230 +707,6 @@ const mergeArea = (chinaJson, area) => {
   });
 
   return newChinaJson;
-};
-
-/**
- * datav geo 接口
- * @param {*} jsonName
- */
-const getGeoJson = async (jsonName) => {
-  const publicUrl = 'https://geo.datav.aliyun.com/areas_v2/bound/';
-
-  let url = publicUrl + jsonName;
-  let config = {
-    method: 'GET',
-    url: url,
-  };
-  let res = await axios(config);
-  return res.data;
-};
-
-/**
- * 渲染地图 Echarts
- * @param {*} geoJson
- * @param {*} name
- * @param {*} chart
- * @param {*} data
- * @param {*} StoreMap
- */
-const initMapEcharts = (geoJson, name, data, StoreMap) => {
-  let mapData = data.map((v) => {
-    return { value: v.Sales, name: v.District || v.City || v.Province || v.Area, MapData: v };
-  });
-  console.log(mapData);
-
-  // 区县颜色分级设置
-  if (!_.isUndefined(StoreMap)) {
-    mapData = mapData.map((val) => {
-      return {
-        ...val,
-        itemStyle: {
-          normal: {
-            areaColor: MdColor[val.MapData.Md],
-          },
-        },
-      };
-    });
-  }
-
-  let valueArr = [];
-  mapData.forEach((val) => {
-    valueArr.push(val.value);
-  });
-  let minValue = Math.min(...valueArr);
-  let maxValue = Math.max(...valueArr);
-
-  minValue = Math.floor(minValue / Math.pow(10, minValue.toString().length - 1)) * Math.pow(10, minValue.toString().length - 1);
-  maxValue = Math.ceil(maxValue / Math.pow(10, maxValue.toString().length - 1)) * Math.pow(10, maxValue.toString().length - 1);
-
-  echarts.registerMap(name, geoJson);
-  let option = {
-    tooltip: {},
-
-    grid: {
-      left: '30%',
-      containLabel: true,
-    },
-    visualMap: !_.isUndefined(StoreMap)
-      ? null
-      : {
-          min: minValue,
-          max: maxValue,
-          left: 'left',
-          top: 'bottom',
-          text: ['高', '低'], // 文本，默认为数值文本
-          calculable: true,
-        },
-    series: [
-      {
-        type: 'map',
-        map: name,
-        itemStyle: {
-          normal: {
-            borderColor: 'rgba(0, 0, 0, 0.2)',
-          },
-          emphasis: {
-            shadowOffsetX: 0,
-            shadowOffsetY: 0,
-            shadowBlur: 20,
-            borderWidth: 0,
-            shadowColor: 'rgba(0, 0, 0, 0.5)',
-          },
-        },
-        showLegendSymbol: false,
-        // zoom: 10,
-        // center: [90.97, 36.71],
-        roam: true,
-        label: {
-          normal: {
-            show: false,
-            rotate: 40,
-            formatter: '{b}：{value|{c}}',
-            // position: 'inside',
-            backgroundColor: '#fff',
-            padding: [3, 5],
-            borderRadius: 3,
-            borderWidth: 1,
-            borderColor: 'rgba(0,0,0,0.5)',
-            color: '#777',
-            rich: {
-              value: {
-                color: '#019D2D',
-                fontSize: 14,
-                // fontWeight: 'bold'
-                // textBorderWidth: 2,
-                // textBorderColor: '#000'
-              },
-            },
-          },
-          emphasis: {
-            show: false,
-          },
-        },
-        // data: [],
-        data: mapData,
-      },
-    ],
-  };
-  mapChart.setOption(option, true);
-  // 解绑click事件
-  mapChart.off('click');
-  //给地图添加监听事件
-  mapChart.on('click', async (params) => {
-    let MapData = params.data.MapData;
-
-    if (MapData.level === 'District') {
-      mapOperationArray.push({ level: MapData.level, MapCode: MapData.MapCode });
-      bmapRenderer(MapData.MapCode, StoreMap);
-    } else {
-      mapOperationArray.push({ level: MapData.level, MapCode: MapData.MapCode });
-      mapLevelRenderer(MapData.level, MapData.MapCode);
-      mapTable(MapData.MapCode);
-    }
-  });
-};
-
-const bmapRenderer = async (MapCode, StoreMap) => {
-  $('#extraMapView_1').css('height', '0px');
-  $('#extraMapView_2').css('height', '0px');
-  $('#mainMapView').css('height', '100%');
-
-  let allAdCode = await getGeoJson('all.json');
-  let mapInfo = allAdCode.filter((val) => {
-    return val.adcode === parseInt(MapCode);
-  });
-  let point = { lng: mapInfo[0].lng, lat: mapInfo[0].lat };
-
-  let newStoreMap = StoreMap.map((val) => {
-    return {
-      name: val.Name,
-      value: [val.Lng, val.Lat, 111],
-    };
-  });
-  initBmapEcharts(point, newStoreMap);
-};
-
-/**
- * 渲染 bmap
- * @param {*} chart
- * @param {*} point
- * @param {*} data
- */
-const initBmapEcharts = (point, data) => {
-  let option = {
-    // 加载 bmap 组件
-    bmap: {
-      // 百度地图中心经纬度
-      center: [point.lng, point.lat],
-      // 百度地图缩放
-      zoom: 12,
-      // 是否开启拖拽缩放，可以只设置 'scale' 或者 'move'
-      roam: true,
-      // 百度地图的自定义样式，见 http://developer.baidu.com/map/jsdevelop-11.htm
-      mapStyle: {},
-    },
-    series: [
-      {
-        type: 'scatter',
-        // 使用百度地图坐标系
-        name: 'city',
-        coordinateSystem: 'bmap',
-        // 数据格式跟在 geo 坐标系上一样，每一项都是 [经度，纬度，数值大小，其它维度...]
-        data: data,
-        symbolSize: function (val) {
-          // if (val[2] > 100000) {
-
-          // 	return val[2] / 10000
-          // } else {
-          // 	return val[2] / 2000
-          // }
-          return 15;
-        },
-        label: {
-          normal: {
-            // formatter: function (data) {
-            //   return data.name + ':' + format(parseInt(data.value[2] / 10000));
-            // },
-            position: 'right',
-            show: false,
-          },
-          emphasis: {
-            show: false,
-          },
-        },
-        itemStyle: {
-          normal: {
-            color: 'red',
-          },
-        },
-      },
-    ],
-  };
-  mapChart.setOption(option, true);
-  let bmap = mapChart.getModel().getComponent('bmap').getBMap();
-  bmap.setMapStyleV2({
-    styleId: 'be9e79ac5f78998b25fcb5ca44bcc6f7',
-  });
 };
 
 /**
