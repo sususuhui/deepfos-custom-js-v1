@@ -78,8 +78,13 @@ const LoadBaiduMapScript = () => {
 };
 
 let mapChart,
+  extraMapView_1_chart,
+  extraMapView_2_chart,
   mapOperationArray = ['china'];
 
+window.onresize = function () {
+  mapChart.resize();
+};
 // 市场颜色
 let MdColor = {
   MD01: '#F08080',
@@ -116,7 +121,27 @@ const renderMap = async () => {
     mapBack();
   });
 
+  cfs.card.body.getDom(cardName).css('padding', '8px');
   cfs.echarts.correctHeight(cardName);
+
+  // 添加地图布局
+  let mapHtml = `
+  <div class="echartWrap" style="height:100%">
+    <div id="mainMapView" style="height:100%"></div>
+    <div class="row">
+      <div class="col-lg-6">
+        <div id="extraMapView_1">
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div id="extraMapView_2">
+        </div>
+      </div>
+    </div>
+  </div>
+  `;
+
+  $(echartDom).html(mapHtml);
 
   mapLevelRenderer();
 };
@@ -196,11 +221,17 @@ const mapTable = async (MapCode) => {
  * @param {*} MapCode
  */
 const mapLevelRenderer = async (level, MapCode) => {
-  let cardName = 'Map';
-  let echartDom = cfs.card.body.getDom(cardName).find('.echart');
-  mapChart = echarts.init(echartDom[0]);
+  mapChart = echarts.init(document.getElementById('mainMapView'));
+  $('#extraMapView_1').css('height', '0px');
+  $('#extraMapView_2').css('height', '0px');
+  $('#mainMapView').css('height', '100%');
+  mapChart.resize();
 
-  // let allAdCode = await getGeoJson('all.json');
+  if (!_.isUndefined(extraMapView_1_chart)) {
+    extraMapView_1_chart.dispose();
+    extraMapView_2_chart.dispose();
+  }
+
   let chinaGeoJson = await getGeoJson('100000_full.json');
 
   let chinaJson, data;
@@ -217,7 +248,124 @@ const mapLevelRenderer = async (level, MapCode) => {
 
   let resultData = JSON.parse(data.result);
 
+  if (!_.isUndefined(resultData.StoreMap)) {
+    $('#extraMapView_1').css('height', '300px');
+    $('#extraMapView_2').css('height', '300px');
+    $('#mainMapView').css('height', $('#mainMapView').height() - 300 + 'px');
+    mapChart.resize();
+    extraMapView_1(resultData.Form);
+    extraMapView_2(resultData.Form);
+  }
+
   initMapEcharts(chinaJson, MapCode || '全国', resultData.Form, resultData.StoreMap);
+};
+
+const extraMapView_1 = (data) => {
+  extraMapView_1_chart = echarts.init(document.getElementById('extraMapView_1'));
+
+  let MD01 = 0,
+    MD02 = 0,
+    MD03 = 0,
+    MD04 = 0,
+    MD05 = 0;
+  data.forEach((val) => {
+    if (val.Md === 'MD01') MD01 += parseInt(val.Sales);
+    if (val.Md === 'MD02') MD02 += parseInt(val.Sales);
+    if (val.Md === 'MD03') MD03 += parseInt(val.Sales);
+    if (val.Md === 'MD04') MD04 += parseInt(val.Sales);
+    if (val.Md === 'MD05') MD05 += parseInt(val.Sales);
+  });
+
+  let pieData = [
+    { value: MD01, name: MdDescription['MD01'] },
+    { value: MD02, name: MdDescription['MD02'] },
+    { value: MD03, name: MdDescription['MD03'] },
+    { value: MD04, name: MdDescription['MD04'] },
+    { value: MD05, name: MdDescription['MD05'] },
+  ];
+
+  let option = {
+    tooltip: {
+      trigger: 'item',
+      formatter: '{b} : {c} ({d}%)',
+    },
+    legend: {
+      // orient: 'vertical',
+      // top: 'middle',
+      bottom: 10,
+      left: 'center',
+      data: pieData,
+    },
+    color: ['#F08080', '#F0F8FF', '#1E90FF', '#C0C0C0', '#AFEEEE'],
+    series: [
+      {
+        type: 'pie',
+        radius: '65%',
+        center: ['50%', '50%'],
+        selectedMode: 'single',
+        // data: Chart1Data,
+        data: pieData,
+        emphasis: {
+          itemStyle: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)',
+          },
+        },
+      },
+    ],
+  };
+
+  extraMapView_1_chart.setOption(option, true);
+};
+
+const extraMapView_2 = (data) => {
+  extraMapView_2_chart = echarts.init(document.getElementById('extraMapView_2'));
+
+  let xAxisData = data.map((val) => {
+    return val.name;
+  });
+  let salesData = data.map((val) => {
+    return val.Sales;
+  });
+
+  let option = {
+    tooltip: {
+      trigger: 'axis',
+      axisPointer: {
+        type: 'shadow',
+      },
+    },
+    grid: {
+      left: 70,
+    },
+    xAxis: {
+      type: 'category',
+      data: xAxisData,
+      axisLabel: {
+        interval: 0,
+        rotate: 60,
+      },
+    },
+    yAxis: {
+      type: 'value',
+    },
+    series: [
+      {
+        data: salesData,
+        type: 'bar',
+        itemStyle: {
+          normal: {
+            color: function (params) {
+              return MdColor[data[params.dataIndex].Md];
+            },
+          },
+        },
+      },
+    ],
+  };
+
+  extraMapView_2_chart.setOption(option, true);
 };
 
 /**
@@ -471,6 +619,10 @@ const initMapEcharts = (geoJson, name, data, StoreMap) => {
 };
 
 const bmapRenderer = async (MapCode, StoreMap) => {
+  $('#extraMapView_1').css('height', '0px');
+  $('#extraMapView_2').css('height', '0px');
+  $('#mainMapView').css('height', '100%');
+
   let allAdCode = await getGeoJson('all.json');
   let mapInfo = allAdCode.filter((val) => {
     return val.adcode === parseInt(MapCode);
