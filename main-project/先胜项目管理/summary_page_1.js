@@ -1,4 +1,76 @@
-const r1c1 = () => {
+function dealSheetData(data) {
+  // 转换数据格式
+  var xAxis = [];
+  var yAxis = [];
+  var series = [];
+  var valObj = {};
+  var legend = [];
+  data.sheetList[0].columnList.forEach(function (item) {
+    item.m.forEach(function (v) {
+      let xVal = '';
+      v.sdd.forEach(function (s) {
+        xVal += s.n;
+      });
+      xAxis.push(xVal);
+    });
+  });
+  valObj.xAxis = xAxis;
+  data.sheetList[0].rowList.forEach(function (item) {
+    item.m.forEach(function (v) {
+      yAxis.push(v.sdd[0].d);
+    });
+  });
+
+  data.sheetList[0].dataList.forEach(function (rowVal, i) {
+    var itemArr = [];
+
+    rowVal.forEach(function (cellVal) {
+      itemArr.push(typeof cellVal.d != 'undefined' ? floatNum.accMul(cellVal.d.toFixed(2), 1) : '-');
+    });
+    series.push(itemArr);
+  });
+
+  for (var i = 0; i < series.length; i++) {
+    valObj[yAxis[i]] = series[i];
+    legend.push(yAxis[i]);
+  }
+  valObj.legend = legend;
+  return valObj;
+}
+
+function dealSheetDataPie(data) {
+  // 转换数据格式
+  debugger;
+  var yAxis = [];
+  var series = [];
+  var valObj = {};
+  var legend = [];
+  var datas = [];
+  data.sheetList[0].rowList.forEach(function (item) {
+    item.m.forEach(function (v) {
+      yAxis.push(v.sdd[0].d);
+    });
+  });
+
+  data.sheetList[0].dataList.forEach(function (rowVal, i) {
+    var itemArr = [];
+
+    rowVal.forEach(function (cellVal) {
+      itemArr.push(typeof cellVal.d != 'undefined' ? floatNum.accMul(cellVal.d.toFixed(2), 1) : '-');
+    });
+    series.push(itemArr[0]);
+  });
+
+  for (var i = 0; i < series.length; i++) {
+    datas.push({ value: series[i], name: yAxis[i] });
+    legend.push(yAxis[i]);
+  }
+  valObj.data = datas;
+  valObj.legend = legend;
+  return valObj;
+}
+
+const r1c1 = (data, params) => {
   let cardName = 'r1c1';
   let echartDom = cfs.card.body.getDom(cardName).find('.echart');
   let headDom = cfs.card.head.getDom(cardName);
@@ -6,27 +78,29 @@ const r1c1 = () => {
   headDom.find('.card-header').css('display', 'none');
   cfs.echarts.correctHeight(cardName);
 
-  let data = {
-    category: '客户数量',
-    legend: ['本期老客户数量', '本期新增客户数量'],
-    xAxis: ['2019Q1', '2019Q2', '2019Q3', '2019Q4', '2020Q1', '2020Q2', '2020Q3'],
-    本期老客户数量: [4, 8, 9, 11, 15, 22, 25],
-    本期新增客户数量: [4, 1, 2, 4, 7, 3, 25],
-  };
+  // let data = {
+  //   category: '客户数量',
+  //   legend: ['本期老客户数量', '本期新增客户数量'],
+  //   xAxis: ['2019Q1', '2019Q2', '2019Q3', '2019Q4', '2020Q1', '2020Q2', '2020Q3'],
+  //   本期老客户数量: [4, 8, 9, 11, 15, 22, 25],
+  //   本期新增客户数量: [4, 1, 2, 4, 7, 3, 25],
+  // };
+  let datas = dealSheetData(data);
+  datas.category = '客户数量';
   let seriesData = [];
-  data.legend.forEach((val, i) => {
+  datas.legend.forEach((val, i) => {
     seriesData.push({
       name: val,
       type: 'bar',
-      stack: data.category,
+      stack: datas.category,
       barWidth: 45,
-      data: data[val],
+      data: datas[val],
     });
   });
 
   let option = {
     title: {
-      text: '2019-2020Q3签约客户本期老客户数量',
+      text: '签约客户数量',
       left: 'center',
     },
     tooltip: {
@@ -39,7 +113,7 @@ const r1c1 = () => {
     legend: {
       x: 'center',
       y: 'bottom',
-      data: data.legend,
+      data: datas.legend,
     },
     grid: {
       left: '3%',
@@ -51,7 +125,7 @@ const r1c1 = () => {
     xAxis: [
       {
         type: 'category',
-        data: data.xAxis,
+        data: datas.xAxis,
       },
     ],
     yAxis: [
@@ -69,7 +143,7 @@ const r1c1 = () => {
     cfs.echarts.refresh(Cus_echarts[cardName], option);
   }
 };
-const r1c2 = () => {
+const r1c2 = (data, params) => {
   let cardName = 'r1c2';
   let echartDom = cfs.card.body.getDom(cardName).find('.echart');
   let headDom = cfs.card.head.getDom(cardName);
@@ -77,23 +151,27 @@ const r1c2 = () => {
   headDom.find('.card-header').css('display', 'none');
   cfs.echarts.correctHeight(cardName);
 
-  let data = {
-    category: '客户来源分析',
-    legend: ['直销', '渠道', '财码'],
-    data: [
-      { value: 34, name: '直销' },
-      { value: 28, name: '渠道' },
-      { value: 21, name: '财码' },
-    ],
-  };
+  // let data = {
+  //   category: '客户来源分析',
+  //   legend: ['直销', '渠道', '财码'],
+  //   data: [
+  //     { value: 34, name: '直销' },
+  //     { value: 28, name: '渠道' },
+  //     { value: 21, name: '财码' },
+  //   ],
+  // };
+  let datas = dealSheetDataPie(data);
+  debugger;
+
+  datas.category = '客户来源分析';
   let seriesData = [];
-  data.legend.forEach((val, i) => {
+  datas.legend.forEach((val, i) => {
     seriesData.push({
       name: val,
       type: 'bar',
-      stack: data.category,
+      stack: datas.category,
       barWidth: 45,
-      data: data[val],
+      data: datas[val],
     });
   });
 
@@ -109,7 +187,7 @@ const r1c2 = () => {
     legend: {
       orient: 'horizontal',
       y: 'bottom',
-      data: data.legend,
+      data: datas.legend,
     },
     series: [
       {
@@ -125,7 +203,7 @@ const r1c2 = () => {
         // labelLine: {
         //   show: true,
         // },
-        data: data.data,
+        data: datas.data,
       },
     ],
     color: ['#9a3b65', '#ca4e72', '#602A78'],
@@ -148,9 +226,11 @@ const r2c1 = () => {
 
   let data = {
     category: '签约总额',
-    legend: ['签约总额'],
+    legend: ['合并报表', '租赁核算', '全场景'],
     xAxis: ['2019Q1', '2019Q2', '2019Q3', '2019Q4', '2020Q1', '2020Q2', '2020Q3'],
-    签约总额: [4, 8, 9, 11, 15, 22, 25],
+    合并报表: [4, 8, 9, 11, 15, 22, 25],
+    租赁核算: [4, 8, 9, 11, 15, 22, 25],
+    全场景: [4, 8, 9, 11, 15, 22, 25],
   };
   let seriesData = [];
   data.legend.forEach((val, i) => {
@@ -218,9 +298,11 @@ const r2c2 = () => {
 
   let data = {
     category: '签约总合同数',
-    legend: ['签约总合同数'],
+    legend: ['合并报表', '租赁核算', '全场景'],
     xAxis: ['2019Q1', '2019Q2', '2019Q3', '2019Q4', '2020Q1', '2020Q2', '2020Q3'],
-    签约总合同数: [4, 8, 9, 11, 15, 22, 25],
+    合并报表: [4, 8, 9, 11, 15, 22, 25],
+    租赁核算: [4, 8, 9, 11, 15, 22, 25],
+    全场景: [4, 8, 9, 11, 15, 22, 25],
   };
   let seriesData = [];
   data.legend.forEach((val, i) => {
@@ -279,153 +361,6 @@ const r2c2 = () => {
   }
 };
 
-const r3c1 = () => {
-  let cardName = 'r3c1';
-  let echartDom = cfs.card.body.getDom(cardName).find('.echart');
-  let headDom = cfs.card.head.getDom(cardName);
-
-  headDom.find('.card-header').css('display', 'none');
-  cfs.echarts.correctHeight(cardName);
-
-  let data = {
-    category: '签约总额',
-    legend: ['签约总额'],
-    xAxis: ['2019Q1', '2019Q2', '2019Q3', '2019Q4', '2020Q1', '2020Q2', '2020Q3'],
-    签约总额: [4, 8, 9, 11, 15, 22, 25],
-  };
-  let seriesData = [];
-  data.legend.forEach((val, i) => {
-    seriesData.push({
-      name: val,
-      type: 'bar',
-      stack: data.category,
-      barWidth: 45,
-      data: data[val],
-    });
-  });
-
-  let option = {
-    title: {
-      text: '2019-2020Q3总合同额签约情况',
-      left: 'center',
-    },
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        // 坐标轴指示器，坐标轴触发有效
-        type: 'shadow', // 默认为直线，可选为：'line' | 'shadow'
-      },
-    },
-    legend: {
-      x: 'center',
-      y: 'bottom',
-      data: data.legend,
-    },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: 30,
-      top: 50,
-      containLabel: true,
-    },
-    xAxis: [
-      {
-        type: 'category',
-        data: data.xAxis,
-      },
-    ],
-    yAxis: [
-      {
-        type: 'value',
-      },
-    ],
-    series: seriesData,
-    color: ['#9a3b65', '#ca4e72', '#602A78'],
-  };
-
-  if (!Cus_echarts[cardName]) {
-    Cus_echarts[cardName] = cfs.echarts.init(echartDom, Cus_theme, option);
-  } else {
-    cfs.echarts.refresh(Cus_echarts[cardName], option);
-  }
-
-  Cus_echarts[cardName].on('click', function (param) {
-    console.log(111);
-  });
-};
-const r3c2 = () => {
-  let cardName = 'r3c2';
-  let echartDom = cfs.card.body.getDom(cardName).find('.echart');
-  let headDom = cfs.card.head.getDom(cardName);
-
-  headDom.find('.card-header').css('display', 'none');
-  cfs.echarts.correctHeight(cardName);
-
-  let data = {
-    category: '产品线',
-    legend: ['合并报表', '租赁核算', '全场景'],
-    xAxis: ['2019Q3', '2020Q3'],
-    合并报表: [4, 25],
-    租赁核算: [4, 25],
-    全场景: [4, 25],
-  };
-  let seriesData = [];
-  data.legend.forEach((val, i) => {
-    seriesData.push({
-      name: val,
-      type: 'bar',
-      stack: data.category,
-      barWidth: 45,
-      data: data[val],
-    });
-  });
-
-  let option = {
-    title: {
-      text: '2019-2020Q3合同额占比按产品线分布',
-      left: 'center',
-    },
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        // 坐标轴指示器，坐标轴触发有效
-        type: 'shadow', // 默认为直线，可选为：'line' | 'shadow'
-      },
-    },
-    legend: {
-      x: 'center',
-      y: 'bottom',
-      data: data.legend,
-    },
-    grid: {
-      left: '3%',
-      right: '4%',
-      bottom: 30,
-      top: 50,
-      containLabel: true,
-    },
-    xAxis: [
-      {
-        type: 'category',
-        data: data.xAxis,
-      },
-    ],
-    yAxis: [
-      {
-        type: 'value',
-      },
-    ],
-    series: seriesData,
-    color: ['#9a3b65', '#ca4e72', '#602A78'],
-  };
-
-  if (!Cus_echarts[cardName]) {
-    Cus_echarts[cardName] = cfs.echarts.init(echartDom, Cus_theme, option);
-  } else {
-    cfs.echarts.refresh(Cus_echarts[cardName], option);
-  }
-};
-
 var Cus_theme = '';
 var Cus_echarts = {};
 //extrajs全局方法
@@ -433,11 +368,11 @@ var cfs = {
   //请求后端数据
   request: {
     /*通用同步请求
-			code为200返回结果在.res内，否则结果在.err内（部分业务错误也会强制返回500或999）
-			type: POST/GET/PUT/DELETE
-			json: TRUE为application/json FALSE为application/x-www-form-urlencoded
-			returnAll：TRUE返回所有结果, FALSE返回.resultObj（有时候结果在resultList里）
-		*/
+            code为200返回结果在.res内，否则结果在.err内（部分业务错误也会强制返回500或999）
+            type: POST/GET/PUT/DELETE
+            json: TRUE为application/json FALSE为application/x-www-form-urlencoded
+            returnAll：TRUE返回所有结果, FALSE返回.resultObj（有时候结果在resultList里）
+        */
     common: {
       sendRequest: function (url, type, paramObj, json = false, returnAll = false) {
         var data = json ? JSON.stringify(paramObj) : paramObj;
@@ -559,14 +494,14 @@ var cfs = {
       },
       addSelectButton: function (carHead, buttonInfo) {
         var btn = $(`<div class="list-icons ${buttonInfo.id}">
-						<label for="" style="width: 60px;margin: 0;margin-bottom:-4px">${buttonInfo.text}</label>
-						<select
-							class="form-control select selectXm"
-							id="${buttonInfo.id}"
-							data-fouc
-						>
-						</select>
-					</div>`);
+                        <label for="" style="width: 60px;margin: 0;margin-bottom:-4px">${buttonInfo.text}</label>
+                        <select
+                            class="form-control select selectXm"
+                            id="${buttonInfo.id}"
+                            data-fouc
+                        >
+                        </select>
+                    </div>`);
         let sHtml = '';
         buttonInfo.list.forEach(function (v) {
           sHtml += "<option value='" + v.key + "'>" + v.value + '</option>';
@@ -577,13 +512,13 @@ var cfs = {
         return btn;
       },
       /*添加下拉按钮
-				buttonInfo: {
-					id: "UploadButton",
-					text: "上传数据",
-					icon: "mi-file-upload",
-					list: ["增量上传", "全量上传"]
-				},
-			*/
+                buttonInfo: {
+                    id: "UploadButton",
+                    text: "上传数据",
+                    icon: "mi-file-upload",
+                    list: ["增量上传", "全量上传"]
+                },
+            */
       addDropdownButton: function (carHead, buttonInfo) {
         var list = buttonInfo.list;
         for (var i = 0; i < list.length; i++) {
@@ -617,12 +552,12 @@ var cfs = {
         return btn;
       },
       /*添加普通按钮
-				buttonInfo: {
-					id: "UploadButton",
-					text: "上传数据",
-					icon: "mi-file-upload",
-				},
-			*/
+                buttonInfo: {
+                    id: "UploadButton",
+                    text: "上传数据",
+                    icon: "mi-file-upload",
+                },
+            */
       addButton: function (carHead, buttonInfo) {
         var btn = $(
           '<a class="breadcrumb-elements-item mr-2 cursor-pointer" id="' +
@@ -788,10 +723,10 @@ var cfs = {
   //导出文件
   export: {
     /* 导出文件到指定格式 数据大用csv
-			fileName：文件名不带格式
-			dataJson：原始数据 eg. [{Entity: "E001", Year:"2020", Period:"9"},{Entity: "E001", Year:"2020", Period:"10"}]
-			titleArr：导出的列名: eg. [Entity, Year]
-		*/
+            fileName：文件名不带格式
+            dataJson：原始数据 eg. [{Entity: "E001", Year:"2020", Period:"9"},{Entity: "E001", Year:"2020", Period:"10"}]
+            titleArr：导出的列名: eg. [Entity, Year]
+        */
     toCsv: function (fileName, dataJson, titleArr = null) {
       if (!dataJson) return;
       if (dataJson.length == 0 && titleArr == null) return;
