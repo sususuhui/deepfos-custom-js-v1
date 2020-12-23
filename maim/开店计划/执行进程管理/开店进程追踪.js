@@ -10,7 +10,7 @@ const r1 = () => {
     <div class="card">
       <div class="card-body pb-1">
         <div class="d-flex align-items-center justify-content-left mb-2">
-          <a href="#" class="btn bg-transparent border-orange-400 text-blue-400 rounded-round border-2 btn-icon mr-3">
+          <a href="#" class="btn bg-transparent border-grey-300 text-blue-400 rounded-round border-2 btn-icon mr-3">
             <i class="icon-stats-bars4"></i>
           </a>
           <div>
@@ -26,7 +26,7 @@ const r1 = () => {
     <div class="card">
       <div class="card-body pb-1">
         <div class="d-flex align-items-center justify-content-left mb-2">
-          <a href="#" class="btn bg-transparent border-orange-400 text-blue-400 rounded-round border-2 btn-icon mr-3">
+          <a href="#" class="btn bg-transparent border-grey-300 text-blue-400 rounded-round border-2 btn-icon mr-3">
             <i class="icon-stats-bars4"></i>
           </a>
           <div>
@@ -42,7 +42,7 @@ const r1 = () => {
     <div class="card">
       <div class="card-body pb-1">
         <div class="d-flex align-items-center justify-content-left mb-2">
-          <a href="#" class="btn bg-transparent border-orange-400 text-blue-400 rounded-round border-2 btn-icon mr-3">
+          <a href="#" class="btn bg-transparent border-primary-300 text-blue-400 rounded-round border-2 btn-icon mr-3">
             <i class="icon-stats-bars4"></i>
           </a>
           <div>
@@ -58,7 +58,7 @@ const r1 = () => {
     <div class="card">
       <div class="card-body pb-1">
         <div class="d-flex align-items-center justify-content-left mb-2">
-          <a href="#" class="btn bg-transparent border-orange-400 text-blue-400 rounded-round border-2 btn-icon mr-3">
+          <a href="#" class="btn bg-transparent border-green-300 text-blue-400 rounded-round border-2 btn-icon mr-3">
             <i class="icon-stats-bars4"></i>
           </a>
           <div>
@@ -74,7 +74,7 @@ const r1 = () => {
     <div class="card">
       <div class="card-body pb-1">
         <div class="d-flex align-items-center justify-content-left mb-2">
-          <a href="#" class="btn bg-transparent border-orange-400 text-blue-400 rounded-round border-2 btn-icon mr-3">
+          <a href="#" class="btn bg-transparent border-orange-300 text-blue-400 rounded-round border-2 btn-icon mr-3">
             <i class="icon-stats-bars4"></i>
           </a>
           <div>
@@ -98,52 +98,6 @@ const r2c1 = () => {
 
   cfs.echarts.correctHeight(cardName);
 
-  // let option = {
-  //   tooltip: {
-  //     trigger: "item",
-  //     formatter: "{a} <br/>{b}: {c} ({d}%)",
-  //   },
-  //   legend: {
-  //     data: ["未开始", "进程中", "已结束", "选址", "租金谈判", "装修", "已开店", "已停止"],
-  //   },
-  //   series: [
-  //     {
-  //       name: "访问来源",
-  //       type: "pie",
-  //       selectedMode: "single",
-  //       radius: [0, "30%"],
-  //       label: {
-  //         position: "inner",
-  //         fontSize: 8,
-  //       },
-  //       labelLine: {
-  //         show: false,
-  //       },
-  //       data: [
-  //         { value: 1548, name: "未开始" },
-  //         { value: 775, name: "进程中" },
-  //         { value: 679, name: "已结束" },
-  //       ],
-  //     },
-  //     {
-  //       name: "访问来源",
-  //       type: "pie",
-  //       radius: ["45%", "60%"],
-  //       labelLine: {
-  //         length: 24,
-  //       },
-  //       data: [
-  //         { value: 1048, name: "未开始" },
-  //         { value: 335, name: "选址" },
-  //         { value: 310, name: "租金谈判" },
-  //         { value: 251, name: "装修" },
-  //         { value: 234, name: "已开店" },
-  //         { value: 147, name: "已停止" },
-  //       ],
-  //     },
-  //   ],
-  // };
-
   let data = [
     {
       name: "未开始",
@@ -163,7 +117,11 @@ const r2c1 = () => {
         },
         {
           name: "装修",
-          value: 7,
+          value: 3,
+        },
+        {
+          name: "开业准备",
+          value: 4,
         },
       ],
     },
@@ -183,92 +141,36 @@ const r2c1 = () => {
     },
   ];
 
-  // let option = {
-  //   series: {
-  //     type: "sunburst",
-  //     // emphasis: {
-  //     //     focus: 'ancestor'
-  //     // },
-  //     data: data,
-  //     radius: [0, '90%'],
-  //     label: {
-  //         rotate: 'radial'
-  //     }
-  //   },
-  // };
-
-  function getLevelOption() {
-    return [
-      {
-        itemStyle: {
-          borderColor: "#777",
-          borderWidth: 0,
-          gapWidth: 1,
-        },
-        upperLabel: {
-          show: false,
-        },
-      },
-      {
-        itemStyle: {
-          borderColor: "#555",
-          borderWidth: 5,
-          gapWidth: 1,
-        },
-        emphasis: {
-          itemStyle: {
-            borderColor: "#ddd",
-          },
-        },
-      },
-      {
-        colorSaturation: [0.35, 0.5],
-        itemStyle: {
-          borderWidth: 5,
-          gapWidth: 1,
-          borderColorSaturation: 0.6,
-        },
-      },
-    ];
-  }
-
   let option = {
+    // tooltip: {
+    //   formatter: function (info) {
+    //     // console.log(info)
+    //     // var value = info.value;
+    //     // var treePathInfo = info.treePathInfo;
+    //     // var treePath = [];
+
+    //     // for (var i = 1; i < treePathInfo.length; i++) {
+    //     //   treePath.push(treePathInfo[i].name);
+    //     // }
+
+    //     return info.data.name + " : " + info.data.value;
+    //   },
+    // },
     tooltip: {
-      formatter: function (info) {
-        // console.log(info)
-        // var value = info.value;
-        // var treePathInfo = info.treePathInfo;
-        // var treePath = [];
-
-        // for (var i = 1; i < treePathInfo.length; i++) {
-        //   treePath.push(treePathInfo[i].name);
-        // }
-
-        return info.data.name + ' : ' + info.data.value;
+      trigger: "item",
+      formatter: "{b}: {c}",
+    },
+    series: {
+      type: "sunburst",
+      // emphasis: {
+      //     focus: 'ancestor'
+      // },
+      data: data,
+      radius: [0, "90%"],
+      label: {
+        rotate: "radial",
       },
     },
-    series: [
-      {
-        name: "开店进度",
-        type: "treemap",
-        roam: 'move',
-        top: 10,
-        visibleMin: 300,
-        label: {
-          show: true,
-          // formatter: "{b}",
-        },
-        upperLabel: {
-          show: true,
-          height: 30,
-        },
-        itemStyle: {
-          borderColor: "#fff",
-        },
-        levels: getLevelOption(),
-        data: data,
-      },
-    ],
   };
 
   if (!Cus_echarts[cardName]) {
@@ -304,13 +206,33 @@ const r2c2 = () => {
     },
     yAxis: {
       type: "category",
+      inverse: true,
       data: ["总预算", "已申请", "已核销"],
     },
     series: [
       {
         type: "bar",
         barWidth: 60,
-        data: [18203, 23489, 29034],
+        data: [
+          {
+            value: 200,
+            itemStyle: {
+              color: "#204E78",
+            },
+          },
+          {
+            value: 150,
+            itemStyle: {
+              color: "#4472C4",
+            },
+          },
+          {
+            value: 50,
+            itemStyle: {
+              color: "#B4C6E7",
+            },
+          },
+        ],
       },
     ],
   };
@@ -364,6 +286,19 @@ const r3c1 = () => {
   } else {
     cfs.echarts.refresh(Cus_echarts[cardName], option);
   }
+
+  Cus_echarts[cardName].off("click");
+  Cus_echarts[cardName].on("click", (params) => {
+    const pov = {
+      选址延期: '2',
+      租金谈判延期: '3',
+      装修延期: '4',
+      开店延期: '5',
+    };
+
+    let listDom = $("[data-name='r3c2']").find(`.elementIframe`)[0].contentWindow;
+    listDom.tableDataDraw("#contractList_table", { phase: pov[params.name] });
+  });
 };
 
 var Cus_theme = "westeros";
