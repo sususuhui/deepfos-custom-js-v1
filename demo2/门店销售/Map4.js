@@ -540,11 +540,17 @@ const initBmapEcharts = (point, data) => {
       // 百度地图的自定义样式，见 http://developer.baidu.com/map/jsdevelop-11.htm
       mapStyle: {},
     },
+    tooltip: {
+      trigger: 'item',
+      formatter: function (params) {
+        return params.name
+      },
+    },
     series: [
       {
         type: 'scatter',
         // 使用百度地图坐标系
-        name: 'city',
+        name: '店铺',
         coordinateSystem: 'bmap',
         // 数据格式跟在 geo 坐标系上一样，每一项都是 [经度，纬度，数值大小，其它维度...]
         data: data,
@@ -578,10 +584,54 @@ const initBmapEcharts = (point, data) => {
     ],
   };
   mapChart.setOption(option, true);
+  mapChart.off('click');
+  mapChart.on('click', function (params) {
+    showStoreDetail(params.data);
+  });
   let bmap = mapChart.getModel().getComponent('bmap').getBMap();
   bmap.setMapStyleV2({
     styleId: 'be9e79ac5f78998b25fcb5ca44bcc6f7',
   });
+};
+
+const showStoreDetail = (store) => {
+  $('#Cus_StoreTable').remove();
+
+  let height = '150px';
+  let div = $(`<div id="Cus_StoreTable" style="position: absolute; z-index: 1000; height: ${height}; bottom:0;width:100%">
+                  <div class="card" style="height: ${height};background-color:rgba(255,255,255,0.7)">
+                    <div class="card-header header-elements-inline" style="padding-top: 5px; padding-bottom: 0px">
+                    <h6 class="card-title"></h6>
+                      <div class="header-elements">
+                        <div class="list-icons"><a class="list-icons-item" data-action="remove"></a></div>
+                      </div>
+                    </div>
+                    <div class="card-body"></div>
+                  </div>
+                </div>`);
+
+  let table = `
+      <table class="table table-xs table-hover" style="">
+        <tr>
+          <th scope="col" style="width: 100px;padding: .5rem .5rem;">门店名称</th>
+        </tr>
+        <tbody>
+          <tr>
+            <td style="padding: .5rem .5rem;">${store.name}</td>
+          </tr>
+        </tbody>
+      </table>
+    `;
+
+  $('#mainMapView').css('position', 'relative');
+
+  $('#mainMapView').append(div).find('#Cus_StoreTable').find('div.card-body').append(table);
+
+  $('#Cus_StoreTable')
+    .find("[data-action='remove']")
+    .click(function () {
+      $('#Cus_StoreTable').remove();
+    });
 };
 
 /**
