@@ -1,9 +1,122 @@
-const r1c1 = (params) => {
+const dealSheetData = (data) => {
+  // 转换数据格式
+  var xAxis = [];
+  var yAxis = [];
+  var series = [];
+  var valObj = {};
+  var legend = [];
+  data.sheetList[0].columnList.forEach(function (item) {
+    item.m.forEach(function (v) {
+      let xVal = "";
+      v.sdd.forEach(function (s) {
+        xVal += s.d;
+      });
+      xAxis.push(xVal);
+    });
+  });
+  valObj.xAxis = xAxis;
+
+  data.sheetList[0].rowList.forEach(function (item) {
+    item.m.forEach(function (v) {
+      yAxis.push(v.sdd[0].d);
+    });
+  });
+
+  data.sheetList[0].dataList.forEach(function (rowVal, i) {
+    var itemArr = [];
+    rowVal.forEach(function (cellVal) {
+      itemArr.push(typeof cellVal.d != "undefined" ? floatNum.accMul(cellVal.d.toFixed(2), 1) : "-");
+    });
+    series.push(itemArr);
+  });
+
+  for (var i = 0; i < series.length; i++) {
+    valObj[yAxis[i]] = series[i];
+    legend.push(yAxis[i]);
+  }
+  valObj.legend = legend;
+  return valObj;
+};
+const dealSheetData_r1c2 = (data) => {
+  const node = data.sheetList[0].rowList[0].m.map((val) => {
+    return {
+      Entity: val.sdd[0].d,
+      Class: val.sdd[1].d,
+    };
+  });
+  const all_node = data.sheetList[0].dataList.map((val, i) => {
+    return {
+      ...node[i],
+      value: val[0].d,
+    };
+  });
+
+  let Entity = [
+    {
+      name: "东部",
+      value: 0,
+      children: [],
+    },
+    {
+      name: "西部",
+      value: 0,
+      children: [],
+    },
+    {
+      name: "南部",
+      value: 0,
+      children: [],
+    },
+    {
+      name: "北部",
+      value: 0,
+      children: [],
+    },
+  ];
+
+  all_node.forEach((val) => {
+    let temp;
+    if (val.Entity === "东部") temp = Entity[0];
+    if (val.Entity === "西部") temp = Entity[1];
+    if (val.Entity === "南部") temp = Entity[2];
+    if (val.Entity === "北部") temp = Entity[3];
+
+    temp.children.push({
+      name: val.Class,
+      value: val.value,
+    });
+
+    temp.value += val.value;
+  });
+
+  return Entity;
+};
+
+const r1c1 = (data, params) => {
+  let newData = dealSheetData(data);
+
   let cardName = "R1C1";
   let echartDom = cfs.card.body.getDom(cardName).find(".echart");
   let headDom = cfs.card.head.getDom(cardName);
 
   cfs.echarts.correctHeight(cardName);
+
+  let seriesData = [];
+  newData.legend.forEach((val) => [
+    seriesData.push({
+      name: val,
+      type: "bar",
+      barWidth: 30,
+      data: newData[val],
+      stack: "total",
+      label: {
+        show: true,
+      },
+      emphasis: {
+        focus: "series",
+      },
+    }),
+  ]);
 
   let option = {
     tooltip: {
@@ -14,13 +127,13 @@ const r1c1 = (params) => {
       },
     },
     legend: {
-      data: ["Direct", "Mail Ad", "Affiliate Ad", "Video Ad", "Search Engine"],
+      data: newData.legend,
     },
     grid: {
       left: "3%",
       right: "4%",
       bottom: "3%",
-      top: "7%",
+      top: "12%",
       containLabel: true,
     },
     yAxis: {
@@ -28,46 +141,9 @@ const r1c1 = (params) => {
     },
     xAxis: {
       type: "category",
-      data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+      data: newData.xAxis,
     },
-    series: [
-      {
-        name: "Direct",
-        type: "bar",
-        stack: "total",
-        label: {
-          show: true,
-        },
-        emphasis: {
-          focus: "series",
-        },
-        data: [320, 302, 301, 334, 390, 330, 320],
-      },
-      {
-        name: "Mail Ad",
-        type: "bar",
-        stack: "total",
-        label: {
-          show: true,
-        },
-        emphasis: {
-          focus: "series",
-        },
-        data: [120, 132, 101, 134, 90, 230, 210],
-      },
-      {
-        name: "Affiliate Ad",
-        type: "bar",
-        stack: "total",
-        label: {
-          show: true,
-        },
-        emphasis: {
-          focus: "series",
-        },
-        data: [220, 182, 191, 234, 290, 330, 310],
-      },
-    ],
+    series: seriesData,
   };
 
   if (!Cus_echarts[cardName]) {
@@ -77,481 +153,78 @@ const r1c1 = (params) => {
   }
 };
 
-const r1c2 = (params) => {
+const r1c2 = (data, params) => {
+  let newData = dealSheetData_r1c2(data);
+
   let cardName = "R1C2";
   let echartDom = cfs.card.body.getDom(cardName).find(".echart");
   let headDom = cfs.card.head.getDom(cardName);
 
   cfs.echarts.correctHeight(cardName);
 
+  let aaa = newData.map((val) => {
+    let val_children = val.children.map((cVal) => {
+      return {
+        ...cVal,
+        label: {
+          fontSize: 16,
+          color: "#fff",
+          show: true,
+          position: [5, 5],
+          formatter: function (params) {
+            var arr = ["{association|" + params.data.name + "}", "{peoNum|" + params.data.value + "}" + "家"];
+            return arr.join("\n\n");
+          },
+          rich: {
+            association: {
+              fontSize: 16,
+              color: "#fff",
+            },
+            peoNum: {
+              fontSize: 30,
+              color: "#fff",
+              fontFamily: "liquidCrystal",
+            },
+          },
+        },
+      };
+    });
+
+    return {
+      ...val,
+      children: val_children,
+      label: {
+        fontSize: 16,
+        color: "#fff",
+        show: true,
+        position: [5, 5],
+        formatter: function (params) {
+          var arr = ["{association|" + params.data.name + "}", "{peoNum|" + params.data.value + "}" + "家"];
+          return arr.join("\n\n");
+        },
+        rich: {
+          association: {
+            fontSize: 16,
+            color: "#fff",
+          },
+          peoNum: {
+            fontSize: 30,
+            color: "#fff",
+            fontFamily: "liquidCrystal",
+          },
+        },
+      },
+    };
+  });
+
   let option = {
-    // color:['#a9cee8','#88b9e1','#498ace','#004fb6','#004ea1'],
-    // color: ['#004ea1', '#004fb6', '#498ace', '#88b9e1', '#a9cee8'],
-    color: ["#cbb0e3", "#516b91", "#59c4e6", "#edafda", "#93b7e3", "#a5e7f0"],
     series: [
       {
         type: "treemap",
         leafDepth: 1,
-        data: [
-          {
-            name: "西部",
-            value: 62,
-            label: {
-              fontSize: 16,
-              color: "#fff",
-              show: true,
-              position: [5, 5],
-              formatter: function (params) {
-                var arr = ["{association|" + params.data.name + "}", "{peoNum|" + params.data.value + "}" + "家"];
-                return arr.join("\n\n");
-              },
-              rich: {
-                association: {
-                  fontSize: 16,
-                  color: "#fff",
-                },
-                peoNum: {
-                  fontSize: 30,
-                  color: "#fff",
-                  fontFamily: "liquidCrystal",
-                },
-              },
-            },
-            children: [
-              {
-                name: "四川",
-                label: {
-                  fontSize: 16,
-                  color: "#fff",
-                  show: true,
-                  position: [5, 5],
-                  formatter: function (params) {
-                    var arr = ["{association|" + params.data.name + "}", "{peoNum|" + params.data.value + "}" + "家"];
-                    return arr.join("\n\n");
-                  },
-                  rich: {
-                    association: {
-                      fontSize: 16,
-                      color: "#fff",
-                    },
-                    peoNum: {
-                      fontSize: 30,
-                      color: "#fff",
-                      fontFamily: "liquidCrystal",
-                    },
-                  },
-                },
-                value: 24,
-              },
-              {
-                name: "甘肃",
-                label: {
-                  fontSize: 14,
-                  color: "#fff",
-                  show: true,
-                  position: [5, 5],
-                  formatter: function (params) {
-                    var arr = ["{association|" + params.data.name + "}", "{peoNum|" + params.data.value + "}" + "家"];
-                    return arr.join("\n\n");
-                  },
-                  rich: {
-                    association: {
-                      fontSize: 16,
-                      color: "#fff",
-                    },
-                    peoNum: {
-                      fontSize: 30,
-                      color: "#fff",
-                      fontFamily: "liquidCrystal",
-                    },
-                  },
-                },
-                value: 26,
-              },
-              {
-                name: "云南",
-                label: {
-                  fontSize: 15,
-                  color: "#fff",
-                  show: true,
-                  position: [5, 5],
-                  formatter: function (params) {
-                    var arr = ["{association|" + params.data.name + "}", "{peoNum|" + params.data.value + "}" + "家"];
-                    return arr.join("\n\n");
-                  },
-                  rich: {
-                    association: {
-                      fontSize: 16,
-                      color: "#fff",
-                    },
-                    peoNum: {
-                      fontSize: 30,
-                      color: "#fff",
-                      fontFamily: "liquidCrystal",
-                    },
-                  },
-                },
-                value: 16,
-              },
-              {
-                name: "贵州",
-                label: {
-                  fontSize: 19,
-                  color: "#fff",
-                  show: true,
-                  position: [5, 5],
-                  formatter: function (params) {
-                    var arr = ["{association|" + params.data.name + "}", "{peoNum|" + params.data.value + "}" + "家"];
-                    return arr.join("\n\n");
-                  },
-                  rich: {
-                    association: {
-                      fontSize: 16,
-                      color: "#fff",
-                    },
-                    peoNum: {
-                      fontSize: 30,
-                      color: "#fff",
-                      fontFamily: "liquidCrystal",
-                    },
-                  },
-                },
-                value: 16,
-              },
-            ],
-          },
-          {
-            name: "东部",
-            label: {
-              fontSize: 16,
-              color: "#fff",
-              show: true,
-              position: [5, 5],
-              formatter: function (params) {
-                var arr = ["{association|" + params.data.name + "}", "{peoNum|" + params.data.value + "}" + "家"];
-                return arr.join("\n\n");
-              },
-              rich: {
-                association: {
-                  fontSize: 16,
-                  color: "#fff",
-                },
-                peoNum: {
-                  fontSize: 30,
-                  color: "#fff",
-                  fontFamily: "liquidCrystal",
-                },
-              },
-            },
-            value: 100,
-            children: [
-              {
-                name: "上海",
-                label: {
-                  fontSize: 16,
-                  color: "#fff",
-                  show: true,
-                  position: [5, 5],
-                  formatter: function (params) {
-                    var arr = ["{association|" + params.data.name + "}", "{peoNum|" + params.data.value + "}" + "家"];
-                    return arr.join("\n\n");
-                  },
-                  rich: {
-                    association: {
-                      fontSize: 16,
-                      color: "#fff",
-                    },
-                    peoNum: {
-                      fontSize: 30,
-                      color: "#fff",
-                      fontFamily: "liquidCrystal",
-                    },
-                  },
-                },
-                value: 83,
-              },
-              {
-                name: "江苏",
-                label: {
-                  fontSize: 16,
-                  color: "#fff",
-                  show: true,
-                  position: [5, 5],
-                  formatter: function (params) {
-                    var arr = ["{association|" + params.data.name + "}", "{peoNum|" + params.data.value + "}" + "家"];
-                    return arr.join("\n\n");
-                  },
-                  rich: {
-                    association: {
-                      fontSize: 16,
-                      color: "#fff",
-                    },
-                    peoNum: {
-                      fontSize: 30,
-                      color: "#fff",
-                      fontFamily: "liquidCrystal",
-                    },
-                  },
-                },
-                value: 17,
-              },
-            ],
-          },
-          {
-            name: "南部",
-            label: {
-              fontSize: 16,
-              color: "#fff",
-              show: true,
-              position: [5, 5],
-              formatter: function (params) {
-                var arr = ["{association|" + params.data.name + "}", "{peoNum|" + params.data.value + "}" + "家"];
-                return arr.join("\n\n");
-              },
-              rich: {
-                association: {
-                  fontSize: 16,
-                  color: "#fff",
-                },
-                peoNum: {
-                  fontSize: 30,
-                  color: "#fff",
-                  fontFamily: "liquidCrystal",
-                },
-              },
-            },
-            value: 48,
-            children: [
-              {
-                name: "广州",
-                label: {
-                  fontSize: 16,
-                  color: "#fff",
-                  show: true,
-                  position: [5, 5],
-                  formatter: function (params) {
-                    var arr = ["{association|" + params.data.name + "}", "{peoNum|" + params.data.value + "}" + "家"];
-                    return arr.join("\n\n");
-                  },
-                  rich: {
-                    association: {
-                      fontSize: 16,
-                      color: "#fff",
-                    },
-                    peoNum: {
-                      fontSize: 30,
-                      color: "#fff",
-                      fontFamily: "liquidCrystal",
-                    },
-                  },
-                },
-                value: 24,
-              },
-              {
-                name: "湖南",
-                label: {
-                  fontSize: 16,
-                  color: "#fff",
-                  show: true,
-                  position: [5, 5],
-                  formatter: function (params) {
-                    var arr = ["{association|" + params.data.name + "}", "{peoNum|" + params.data.value + "}" + "家"];
-                    return arr.join("\n\n");
-                  },
-                  rich: {
-                    association: {
-                      fontSize: 16,
-                      color: "#fff",
-                    },
-                    peoNum: {
-                      fontSize: 30,
-                      color: "#fff",
-                      fontFamily: "liquidCrystal",
-                    },
-                  },
-                },
-                value: 12,
-              },
-              {
-                name: "湖北",
-                label: {
-                  fontSize: 16,
-                  color: "#fff",
-                  show: true,
-                  position: [5, 5],
-                  formatter: function (params) {
-                    var arr = ["{association|" + params.data.name + "}", "{peoNum|" + params.data.value + "}" + "家"];
-                    return arr.join("\n\n");
-                  },
-                  rich: {
-                    association: {
-                      fontSize: 16,
-                      color: "#fff",
-                    },
-                    peoNum: {
-                      fontSize: 30,
-                      color: "#fff",
-                      fontFamily: "liquidCrystal",
-                    },
-                  },
-                },
-                value: 6,
-              },
-              {
-                name: "广西",
-                label: {
-                  fontSize: 16,
-                  color: "#fff",
-                  show: true,
-                  position: [5, 5],
-                  formatter: function (params) {
-                    var arr = ["{association|" + params.data.name + "}", "{peoNum|" + params.data.value + "}" + "家"];
-                    return arr.join("\n\n");
-                  },
-                  rich: {
-                    association: {
-                      fontSize: 16,
-                      color: "#fff",
-                    },
-                    peoNum: {
-                      fontSize: 30,
-                      color: "#fff",
-                      fontFamily: "liquidCrystal",
-                    },
-                  },
-                },
-                value: 6,
-              },
-            ],
-          },
-          {
-            name: "北部",
-            label: {
-              fontSize: 16,
-              color: "#fff",
-              show: true,
-              position: [5, 5],
-              formatter: function (params) {
-                var arr = ["{association|" + params.data.name + "}", "{peoNum|" + params.data.value + "}" + "家"];
-                return arr.join("\n\n");
-              },
-              rich: {
-                association: {
-                  fontSize: 16,
-                  color: "#fff",
-                },
-                peoNum: {
-                  fontSize: 30,
-                  color: "#fff",
-                  fontFamily: "liquidCrystal",
-                },
-              },
-            },
-            value: 42,
-            children: [
-              {
-                name: "北京",
-                label: {
-                  fontSize: 16,
-                  color: "#fff",
-                  show: true,
-                  position: [5, 5],
-                  formatter: function (params) {
-                    var arr = ["{association|" + params.data.name + "}", "{peoNum|" + params.data.value + "}" + "家"];
-                    return arr.join("\n\n");
-                  },
-                  rich: {
-                    association: {
-                      fontSize: 16,
-                      color: "#fff",
-                    },
-                    peoNum: {
-                      fontSize: 30,
-                      color: "#fff",
-                      fontFamily: "liquidCrystal",
-                    },
-                  },
-                },
-                value: 24,
-              },
-              {
-                name: "湖北",
-                label: {
-                  fontSize: 16,
-                  color: "#fff",
-                  show: true,
-                  position: [5, 5],
-                  formatter: function (params) {
-                    var arr = ["{association|" + params.data.name + "}", "{peoNum|" + params.data.value + "}" + "家"];
-                    return arr.join("\n\n");
-                  },
-                  rich: {
-                    association: {
-                      fontSize: 16,
-                      color: "#fff",
-                    },
-                    peoNum: {
-                      fontSize: 30,
-                      color: "#fff",
-                      fontFamily: "liquidCrystal",
-                    },
-                  },
-                },
-                value: 7,
-              },
-              {
-                name: "天津",
-                label: {
-                  fontSize: 16,
-                  color: "#fff",
-                  show: true,
-                  position: [5, 5],
-                  formatter: function (params) {
-                    var arr = ["{association|" + params.data.name + "}", "{peoNum|" + params.data.value + "}" + "家"];
-                    return arr.join("\n\n");
-                  },
-                  rich: {
-                    association: {
-                      fontSize: 16,
-                      color: "#fff",
-                    },
-                    peoNum: {
-                      fontSize: 30,
-                      color: "#fff",
-                      fontFamily: "liquidCrystal",
-                    },
-                  },
-                },
-                value: 5,
-              },
-              {
-                name: "黑龙江",
-                label: {
-                  fontSize: 16,
-                  color: "#fff",
-                  show: true,
-                  position: [5, 5],
-                  formatter: function (params) {
-                    var arr = ["{association|" + params.data.name + "}", "{peoNum|" + params.data.value + "}" + "家"];
-                    return arr.join("\n\n");
-                  },
-                  rich: {
-                    association: {
-                      fontSize: 16,
-                      color: "#fff",
-                    },
-                    peoNum: {
-                      fontSize: 30,
-                      color: "#fff",
-                      fontFamily: "liquidCrystal",
-                    },
-                  },
-                },
-                value: 6,
-              },
-            ],
-          },
-        ],
+        top: 10,
+        roam: "move",
+        data: aaa,
       },
     ],
   };
@@ -563,7 +236,7 @@ const r1c2 = (params) => {
   }
 };
 
-var Cus_theme = "westeros";
+var Cus_theme = "westeros2";
 var Cus_echarts = {};
 //extrajs全局方法
 var cfs = {
@@ -1030,3 +703,408 @@ var cfs = {
     },
   },
 };
+
+(function (root, factory) {
+  if (typeof define === "function" && define.amd) {
+    // AMD. Register as an anonymous module.
+    define(["exports", "echarts"], factory);
+  } else if (typeof exports === "object" && typeof exports.nodeName !== "string") {
+    // CommonJS
+    factory(exports, require("echarts"));
+  } else {
+    // Browser globals
+    factory({}, root.echarts);
+  }
+})(this, function (exports, echarts) {
+  var log = function (msg) {
+    if (typeof console !== "undefined") {
+      console && console.error && console.error(msg);
+    }
+  };
+  if (!echarts) {
+    log("ECharts is not Loaded");
+    return;
+  }
+  echarts.registerTheme("westeros2", {
+    color: ["#516b91", "#59c4e6", "#93b7e3", "#a5e7f0"],
+    backgroundColor: "rgba(0,0,0,0)",
+    textStyle: {},
+    title: {
+      textStyle: {
+        color: "#516b91",
+      },
+      subtextStyle: {
+        color: "#93b7e3",
+      },
+    },
+    line: {
+      itemStyle: {
+        borderWidth: "2",
+      },
+      lineStyle: {
+        width: "2",
+      },
+      symbolSize: "6",
+      symbol: "emptyCircle",
+      smooth: true,
+    },
+    radar: {
+      itemStyle: {
+        borderWidth: "2",
+      },
+      lineStyle: {
+        width: "2",
+      },
+      symbolSize: "6",
+      symbol: "emptyCircle",
+      smooth: true,
+    },
+    bar: {
+      itemStyle: {
+        barBorderWidth: 0,
+        barBorderColor: "#ccc",
+      },
+    },
+    pie: {
+      itemStyle: {
+        borderWidth: 0,
+        borderColor: "#ccc",
+      },
+    },
+    scatter: {
+      itemStyle: {
+        borderWidth: 0,
+        borderColor: "#ccc",
+      },
+    },
+    boxplot: {
+      itemStyle: {
+        borderWidth: 0,
+        borderColor: "#ccc",
+      },
+    },
+    parallel: {
+      itemStyle: {
+        borderWidth: 0,
+        borderColor: "#ccc",
+      },
+    },
+    sankey: {
+      itemStyle: {
+        borderWidth: 0,
+        borderColor: "#ccc",
+      },
+    },
+    funnel: {
+      itemStyle: {
+        borderWidth: 0,
+        borderColor: "#ccc",
+      },
+    },
+    gauge: {
+      itemStyle: {
+        borderWidth: 0,
+        borderColor: "#ccc",
+      },
+    },
+    candlestick: {
+      itemStyle: {
+        color: "#edafda",
+        color0: "transparent",
+        borderColor: "#d680bc",
+        borderColor0: "#8fd3e8",
+        borderWidth: "2",
+      },
+    },
+    graph: {
+      itemStyle: {
+        borderWidth: 0,
+        borderColor: "#ccc",
+      },
+      lineStyle: {
+        width: 1,
+        color: "#aaa",
+      },
+      symbolSize: "6",
+      symbol: "emptyCircle",
+      smooth: true,
+      color: ["#516b91", "#59c4e6", "#93b7e3", "#a5e7f0"],
+      label: {
+        color: "#eee",
+      },
+    },
+    map: {
+      itemStyle: {
+        normal: {
+          areaColor: "#f3f3f3",
+          borderColor: "#516b91",
+          borderWidth: 0.5,
+        },
+        emphasis: {
+          areaColor: "#a5e7f0",
+          borderColor: "#516b91",
+          borderWidth: 1,
+        },
+      },
+      label: {
+        normal: {
+          textStyle: {
+            color: "#000",
+          },
+        },
+        emphasis: {
+          textStyle: {
+            color: "#516b91",
+          },
+        },
+      },
+    },
+    geo: {
+      itemStyle: {
+        normal: {
+          areaColor: "#f3f3f3",
+          borderColor: "#516b91",
+          borderWidth: 0.5,
+        },
+        emphasis: {
+          areaColor: "#a5e7f0",
+          borderColor: "#516b91",
+          borderWidth: 1,
+        },
+      },
+      label: {
+        normal: {
+          textStyle: {
+            color: "#000",
+          },
+        },
+        emphasis: {
+          textStyle: {
+            color: "#516b91",
+          },
+        },
+      },
+    },
+    categoryAxis: {
+      axisLine: {
+        show: true,
+        lineStyle: {
+          color: "#cccccc",
+        },
+      },
+      axisTick: {
+        show: false,
+        lineStyle: {
+          color: "#333",
+        },
+      },
+      axisLabel: {
+        show: true,
+        textStyle: {
+          color: "#999999",
+        },
+      },
+      splitLine: {
+        show: true,
+        lineStyle: {
+          color: ["#eeeeee"],
+        },
+      },
+      splitArea: {
+        show: false,
+        areaStyle: {
+          color: ["rgba(250,250,250,0.05)", "rgba(200,200,200,0.02)"],
+        },
+      },
+    },
+    valueAxis: {
+      axisLine: {
+        show: true,
+        lineStyle: {
+          color: "#cccccc",
+        },
+      },
+      axisTick: {
+        show: false,
+        lineStyle: {
+          color: "#333",
+        },
+      },
+      axisLabel: {
+        show: true,
+        textStyle: {
+          color: "#999999",
+        },
+      },
+      splitLine: {
+        show: true,
+        lineStyle: {
+          color: ["#eeeeee"],
+        },
+      },
+      splitArea: {
+        show: false,
+        areaStyle: {
+          color: ["rgba(250,250,250,0.05)", "rgba(200,200,200,0.02)"],
+        },
+      },
+    },
+    logAxis: {
+      axisLine: {
+        show: true,
+        lineStyle: {
+          color: "#cccccc",
+        },
+      },
+      axisTick: {
+        show: false,
+        lineStyle: {
+          color: "#333",
+        },
+      },
+      axisLabel: {
+        show: true,
+        textStyle: {
+          color: "#999999",
+        },
+      },
+      splitLine: {
+        show: true,
+        lineStyle: {
+          color: ["#eeeeee"],
+        },
+      },
+      splitArea: {
+        show: false,
+        areaStyle: {
+          color: ["rgba(250,250,250,0.05)", "rgba(200,200,200,0.02)"],
+        },
+      },
+    },
+    timeAxis: {
+      axisLine: {
+        show: true,
+        lineStyle: {
+          color: "#cccccc",
+        },
+      },
+      axisTick: {
+        show: false,
+        lineStyle: {
+          color: "#333",
+        },
+      },
+      axisLabel: {
+        show: true,
+        textStyle: {
+          color: "#999999",
+        },
+      },
+      splitLine: {
+        show: true,
+        lineStyle: {
+          color: ["#eeeeee"],
+        },
+      },
+      splitArea: {
+        show: false,
+        areaStyle: {
+          color: ["rgba(250,250,250,0.05)", "rgba(200,200,200,0.02)"],
+        },
+      },
+    },
+    toolbox: {
+      iconStyle: {
+        normal: {
+          borderColor: "#999",
+        },
+        emphasis: {
+          borderColor: "#666",
+        },
+      },
+    },
+    legend: {
+      textStyle: {
+        color: "#999999",
+      },
+    },
+    tooltip: {
+      axisPointer: {
+        lineStyle: {
+          color: "#ccc",
+          width: 1,
+        },
+        crossStyle: {
+          color: "#ccc",
+          width: 1,
+        },
+      },
+    },
+    timeline: {
+      lineStyle: {
+        color: "#8fd3e8",
+        width: 1,
+      },
+      itemStyle: {
+        normal: {
+          color: "#8fd3e8",
+          borderWidth: 1,
+        },
+        emphasis: {
+          color: "#8fd3e8",
+        },
+      },
+      controlStyle: {
+        normal: {
+          color: "#8fd3e8",
+          borderColor: "#8fd3e8",
+          borderWidth: 0.5,
+        },
+        emphasis: {
+          color: "#8fd3e8",
+          borderColor: "#8fd3e8",
+          borderWidth: 0.5,
+        },
+      },
+      checkpointStyle: {
+        color: "#8fd3e8",
+        borderColor: "rgba(138,124,168,0.37)",
+      },
+      label: {
+        normal: {
+          textStyle: {
+            color: "#8fd3e8",
+          },
+        },
+        emphasis: {
+          textStyle: {
+            color: "#8fd3e8",
+          },
+        },
+      },
+    },
+    visualMap: {
+      color: ["#516b91", "#59c4e6", "#a5e7f0"],
+    },
+    dataZoom: {
+      backgroundColor: "rgba(0,0,0,0)",
+      dataBackgroundColor: "rgba(255,255,255,0.3)",
+      fillerColor: "rgba(167,183,204,0.4)",
+      handleColor: "#a7b7cc",
+      handleSize: "100%",
+      textStyle: {
+        color: "#333",
+      },
+    },
+    markPoint: {
+      label: {
+        color: "#eee",
+      },
+      emphasis: {
+        label: {
+          color: "#eee",
+        },
+      },
+    },
+  });
+});
