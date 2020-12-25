@@ -765,8 +765,6 @@ const mergeProvinces2 = (chinaJson) => {
   };
   chinaJson.features.forEach((val, i) => {
     refactorFormat.areaDivide.forEach((_, j) => {
-      console.log(refactorFormat.areaChildren[j]);
-      console.log(refactorFormat.areaChildren[j].toString());
       if (refactorFormat.areaChildren[j].toString().indexOf(val.properties.name.slice(0, 2)) != -1 && val.properties.name != "" && val.properties.name.slice(0, 2) === "内蒙") {
         newChinaJson.features[j].geometry.coordinates = [...newChinaJson.features[j].geometry.coordinates, [...val.geometry.coordinates]];
       } else if (refactorFormat.areaChildren[j].toString().indexOf(val.properties.name.slice(0, 2)) != -1 && val.properties.name != "") {
