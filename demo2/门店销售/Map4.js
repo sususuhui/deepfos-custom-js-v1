@@ -151,6 +151,8 @@ const mapTable = async (MapCode) => {
     resultData.FormColumns.forEach((FormColumnsVal) => {
       if (FormColumnsVal.Column === "Md") {
         formRowHtml += `<td style="background-color:${MdColor[FormVal[FormColumnsVal.Column]]};">${MdDescription[FormVal[FormColumnsVal.Column]]}</td>`;
+      } else if (FormColumnsVal.Column === "Sales") {
+        formRowHtml += `<td>${numFormat(FormVal[FormColumnsVal.Column])}</td>`;
       } else {
         formRowHtml += `<td>${FormVal[FormColumnsVal.Column]}</td>`;
       }
@@ -175,6 +177,17 @@ const mapTable = async (MapCode) => {
       }
     });
   });
+};
+
+/**
+ * 千分符
+ * @param {*} num
+ * @returns
+ */
+const numFormat = (num) => {
+  let RNum = Number(num);
+  let c = RNum.toString().indexOf(".") !== -1 ? RNum.toLocaleString() : RNum.toString().replace(/(\d)(?=(?:\d{3})+$)/g, "$1,");
+  return c;
 };
 
 const renderMap = async () => {
@@ -243,8 +256,7 @@ const mapLevelRenderer = async (level, MapCode) => {
     chinaJson = await getGeoJson(`${MapCode}_full.json`);
     data = await getData({ Region: `${MapCode}` });
   } else {
-    // chinaJson = mergeProvinces(chinaGeoJson);
-    chinaJson = mergeProvinces2(chinaGeoJson);
+    chinaJson = mergeProvinces(chinaGeoJson);
     data = await getData();
   }
 
@@ -677,55 +689,6 @@ const getGeoJson = async (jsonName) => {
  * @param {*} chinaJson
  */
 const mergeProvinces = (chinaJson) => {
-  let refactorFormat = {
-    areaDivide: ["华北", "华东", "华南", "华西"],
-    areaChildren: [
-      // 把各个大区的省份用二维数组分开
-      ["北京", "天津", "河北", "山西", "内蒙古", "黑龙江", "吉林", "辽宁"],
-      ["山东", "江苏", "安徽", "江西", "浙江", "福建", "上海", "台湾", "河南", "湖北"],
-      ["广东", "广西", "海南", "香港", "澳门", "湖南"],
-      ["陕西", "甘肃", "青海", "宁夏", "新疆", "重庆", "四川", "云南", "西藏", "贵州"],
-    ],
-  };
-
-  let newChinaJson = {
-    features: [
-      {
-        geometry: { type: "MultiPolygon", coordinates: [] },
-        properties: { name: "华北", level: "area" },
-        type: "Feature",
-      },
-      {
-        geometry: { type: "MultiPolygon", coordinates: [] },
-        properties: { name: "华东", level: "area" },
-        type: "Feature",
-      },
-      {
-        geometry: { type: "MultiPolygon", coordinates: [] },
-        properties: { name: "华南", level: "area" },
-        type: "Feature",
-      },
-      {
-        geometry: { type: "MultiPolygon", coordinates: [] },
-        properties: { name: "华西", level: "area" },
-        type: "Feature",
-      },
-    ],
-    type: "FeatureCollection",
-  };
-
-  chinaJson.features.forEach((val, i) => {
-    refactorFormat.areaDivide.forEach((_, j) => {
-      if (refactorFormat.areaChildren[j].toString().indexOf(val.properties.name.slice(0, 2)) != -1 && val.properties.name != "") {
-        newChinaJson.features[j].geometry.coordinates = [...newChinaJson.features[j].geometry.coordinates, ...val.geometry.coordinates];
-      }
-    });
-  });
-
-  return newChinaJson;
-};
-
-const mergeProvinces2 = (chinaJson) => {
   let refactorFormat = {
     areaDivide: ["华北", "华东", "华南", "华西"],
     // areaDivide: ['华北'],
