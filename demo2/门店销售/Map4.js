@@ -1,5 +1,5 @@
 // 引入样式
-let style = document.createElement('style');
+let style = document.createElement("style");
 style.innerHTML = `
 .customAreaWrap table{
   table-layout:fixed;
@@ -40,15 +40,15 @@ style.innerHTML = `
 document.head.appendChild(style);
 
 // 引入bmap
-let bmap_Script = document.createElement('script');
-bmap_Script.setAttribute('type', 'text/javascript');
-bmap_Script.setAttribute('src', '../js/common/bmap.min.js');
+let bmap_Script = document.createElement("script");
+bmap_Script.setAttribute("type", "text/javascript");
+bmap_Script.setAttribute("src", "../js/common/bmap.min.js");
 document.head.appendChild(bmap_Script);
 
 // 解除限制（datav）
-let metaReferrer = document.createElement('meta');
-metaReferrer.setAttribute('name', 'referrer');
-metaReferrer.setAttribute('content', 'no-referrer');
+let metaReferrer = document.createElement("meta");
+metaReferrer.setAttribute("name", "referrer");
+metaReferrer.setAttribute("content", "no-referrer");
 document.head.appendChild(metaReferrer);
 
 /**
@@ -56,23 +56,23 @@ document.head.appendChild(metaReferrer);
  */
 const LoadBaiduMapScript = () => {
   //console.log("初始化百度地图脚本...");
-  const AK = 'NiGaA3XdWH2IqZB0ohynxvB9yh492DY2';
-  const BMap_URL = 'https://api.map.baidu.com/api?v=3.0&ak=' + AK + '&s=1&callback=onBMapCallback';
+  const AK = "NiGaA3XdWH2IqZB0ohynxvB9yh492DY2";
+  const BMap_URL = "https://api.map.baidu.com/api?v=3.0&ak=" + AK + "&s=1&callback=onBMapCallback";
   return new Promise((resolve, reject) => {
     // 如果已加载直接返回
-    if (typeof BMap !== 'undefined') {
+    if (typeof BMap !== "undefined") {
       resolve(BMap);
       return true;
     }
     // 百度地图异步加载回调处理
     window.onBMapCallback = function () {
-      console.log('百度地图脚本初始化成功...');
+      console.log("百度地图脚本初始化成功...");
       resolve(BMap);
     };
     // 插入script脚本
-    let scriptNode = document.createElement('script');
-    scriptNode.setAttribute('type', 'text/javascript');
-    scriptNode.setAttribute('src', BMap_URL);
+    let scriptNode = document.createElement("script");
+    scriptNode.setAttribute("type", "text/javascript");
+    scriptNode.setAttribute("src", BMap_URL);
     document.body.appendChild(scriptNode);
   });
 };
@@ -80,25 +80,25 @@ const LoadBaiduMapScript = () => {
 let mapChart,
   extraMapView_1_chart,
   extraMapView_2_chart,
-  mapOperationArray = ['china'];
+  mapOperationArray = ["china"];
 
 window.onresize = function () {
   mapChart.resize();
 };
 // 市场颜色
 let MdColor = {
-  MD01: '#F08080',
-  MD02: '#F0F8FF',
-  MD03: '#1E90FF',
-  MD04: '#C0C0C0',
-  MD05: '#AFEEEE',
+  MD01: "#F08080",
+  MD02: "#F0F8FF",
+  MD03: "#1E90FF",
+  MD04: "#C0C0C0",
+  MD05: "#AFEEEE",
 };
 let MdDescription = {
-  MD01: '核心市场',
-  MD02: '潜力市场',
-  MD03: '忠实市场',
-  MD04: '边缘市场',
-  MD05: '空白区县',
+  MD01: "核心市场",
+  MD02: "潜力市场",
+  MD03: "忠实市场",
+  MD04: "边缘市场",
+  MD05: "空白区县",
 };
 
 $(() => {
@@ -108,10 +108,10 @@ $(() => {
 });
 
 const renderTable = async () => {
-  let cardName = 'Table';
-  let echartDom = cfs.card.body.getDom(cardName).find('.echart');
+  let cardName = "Table";
+  let echartDom = cfs.card.body.getDom(cardName).find(".echart");
 
-  cfs.card.body.getDom(cardName).css('padding', '0');
+  cfs.card.body.getDom(cardName).css("padding", "0");
   cfs.echarts.correctHeight(cardName);
 
   let table = `
@@ -143,13 +143,13 @@ const mapTable = async (MapCode) => {
   resultData.FormColumns.forEach((val) => {
     theadHtml += `<th>${val.Description}</th>`;
   });
-  $('#mapTable thead tr').html(theadHtml);
+  $("#mapTable thead tr").html(theadHtml);
 
   let tbodyHtml = ``;
   resultData.Form.forEach((FormVal) => {
     let formRowHtml = `<tr MapCode="${FormVal.MapCode}" level="${FormVal.level}" style="cursor: pointer;">`;
     resultData.FormColumns.forEach((FormColumnsVal) => {
-      if (FormColumnsVal.Column === 'Md') {
+      if (FormColumnsVal.Column === "Md") {
         formRowHtml += `<td style="background-color:${MdColor[FormVal[FormColumnsVal.Column]]};">${MdDescription[FormVal[FormColumnsVal.Column]]}</td>`;
       } else {
         formRowHtml += `<td>${FormVal[FormColumnsVal.Column]}</td>`;
@@ -158,16 +158,16 @@ const mapTable = async (MapCode) => {
     formRowHtml += `</tr>`;
     tbodyHtml += formRowHtml;
   });
-  $('#mapTable tbody').html(tbodyHtml);
+  $("#mapTable tbody").html(tbodyHtml);
 
   // table里的每行tr点击进入对应省份下面的市地图
-  $('#mapTable tbody tr').each((i, v) => {
+  $("#mapTable tbody tr").each((i, v) => {
     const trObj = $(v);
-    trObj.on('click', async () => {
-      if (typeof trObj.attr('MapCode') == 'undefined') return;
-      let MapCode = trObj.attr('MapCode');
-      let level = trObj.attr('level');
-      if (level === 'District') {
+    trObj.on("click", async () => {
+      if (typeof trObj.attr("MapCode") == "undefined") return;
+      let MapCode = trObj.attr("MapCode");
+      let level = trObj.attr("level");
+      if (level === "District") {
         bmapRenderer(MapCode, resultData.StoreMap);
       } else {
         mapTable(MapCode);
@@ -178,20 +178,20 @@ const mapTable = async (MapCode) => {
 };
 
 const renderMap = async () => {
-  let cardName = 'Map';
-  let echartDom = cfs.card.body.getDom(cardName).find('.echart');
+  let cardName = "Map";
+  let echartDom = cfs.card.body.getDom(cardName).find(".echart");
   let headDom = cfs.card.head.getDom(cardName);
 
   let buttonInfo = {
-    id: 'MapBackButton',
-    text: '后退',
+    id: "MapBackButton",
+    text: "后退",
   };
   cfs.card.head.addButton(headDom, buttonInfo);
-  $('#MapBackButton').click(function () {
+  $("#MapBackButton").click(function () {
     mapBack();
   });
 
-  cfs.card.body.getDom(cardName).css('padding', '8px');
+  cfs.card.body.getDom(cardName).css("padding", "8px");
   cfs.echarts.correctHeight(cardName);
 
   // 添加地图布局
@@ -222,10 +222,10 @@ const renderMap = async () => {
  * @param {*} MapCode
  */
 const mapLevelRenderer = async (level, MapCode) => {
-  mapChart = echarts.init(document.getElementById('mainMapView'));
-  $('#extraMapView_1').css('height', '0px');
-  $('#extraMapView_2').css('height', '0px');
-  $('#mainMapView').css('height', '100%');
+  mapChart = echarts.init(document.getElementById("mainMapView"));
+  $("#extraMapView_1").css("height", "0px");
+  $("#extraMapView_2").css("height", "0px");
+  $("#mainMapView").css("height", "100%");
   mapChart.resize();
 
   if (!_.isUndefined(extraMapView_1_chart)) {
@@ -233,32 +233,33 @@ const mapLevelRenderer = async (level, MapCode) => {
     extraMapView_2_chart.dispose();
   }
 
-  let chinaGeoJson = await getGeoJson('100000_full.json');
+  let chinaGeoJson = await getGeoJson("100000_full.json");
 
   let chinaJson, data;
-  if (level === 'Area') {
+  if (level === "Area") {
     chinaJson = mergeArea(chinaGeoJson, MapCode);
     data = await getData({ Region: `${MapCode}` });
-  } else if (level === 'Province' || level === 'City') {
+  } else if (level === "Province" || level === "City") {
     chinaJson = await getGeoJson(`${MapCode}_full.json`);
     data = await getData({ Region: `${MapCode}` });
   } else {
-    chinaJson = mergeProvinces(chinaGeoJson);
+    // chinaJson = mergeProvinces(chinaGeoJson);
+    chinaJson = mergeProvinces2(chinaGeoJson);
     data = await getData();
   }
 
   let resultData = JSON.parse(data.result);
 
   if (!_.isUndefined(resultData.StoreMap)) {
-    $('#extraMapView_1').css('height', '300px');
-    $('#extraMapView_2').css('height', '300px');
-    $('#mainMapView').css('height', $('#mainMapView').height() - 300 + 'px');
+    $("#extraMapView_1").css("height", "300px");
+    $("#extraMapView_2").css("height", "300px");
+    $("#mainMapView").css("height", $("#mainMapView").height() - 300 + "px");
     mapChart.resize();
     extraMapView_1(resultData.Form);
     extraMapView_2(resultData.Form);
   }
 
-  initMapEcharts(chinaJson, MapCode || '全国', resultData.Form, resultData.StoreMap);
+  initMapEcharts(chinaJson, MapCode || "全国", resultData.Form, resultData.StoreMap);
 };
 
 /**
@@ -304,7 +305,7 @@ const initMapEcharts = (geoJson, name, data, StoreMap) => {
     tooltip: {},
 
     grid: {
-      left: '30%',
+      left: "30%",
       containLabel: true,
     },
     visualMap: !_.isUndefined(StoreMap)
@@ -312,28 +313,28 @@ const initMapEcharts = (geoJson, name, data, StoreMap) => {
       : {
           min: minValue,
           max: maxValue,
-          left: 'left',
-          top: 'bottom',
-          text: ['高', '低'], // 文本，默认为数值文本
+          left: "left",
+          top: "bottom",
+          text: ["高", "低"], // 文本，默认为数值文本
           calculable: true,
           inRange: {
-            color: ['#edf3f6', '#04a1f6'],
+            color: ["#edf3f6", "#04a1f6"],
           },
         },
     series: [
       {
-        type: 'map',
+        type: "map",
         map: name,
         itemStyle: {
           normal: {
-            borderColor: 'rgba(0, 0, 0, 0.2)',
+            borderColor: "rgba(0, 0, 0, 0.2)",
           },
           emphasis: {
             shadowOffsetX: 0,
             shadowOffsetY: 0,
             shadowBlur: 20,
             borderWidth: 0,
-            shadowColor: 'rgba(0, 0, 0, 0.5)',
+            shadowColor: "rgba(0, 0, 0, 0.5)",
           },
         },
         showLegendSymbol: false,
@@ -344,17 +345,17 @@ const initMapEcharts = (geoJson, name, data, StoreMap) => {
           normal: {
             show: false,
             rotate: 40,
-            formatter: '{b}：{value|{c}}',
+            formatter: "{b}：{value|{c}}",
             // position: 'inside',
-            backgroundColor: '#fff',
+            backgroundColor: "#fff",
             padding: [3, 5],
             borderRadius: 3,
             borderWidth: 1,
-            borderColor: 'rgba(0,0,0,0.5)',
-            color: '#777',
+            borderColor: "rgba(0,0,0,0.5)",
+            color: "#777",
             rich: {
               value: {
-                color: '#019D2D',
+                color: "#019D2D",
                 fontSize: 14,
                 // fontWeight: 'bold'
                 // textBorderWidth: 2,
@@ -373,12 +374,12 @@ const initMapEcharts = (geoJson, name, data, StoreMap) => {
   };
   mapChart.setOption(option, true);
   // 解绑click事件
-  mapChart.off('click');
+  mapChart.off("click");
   //给地图添加监听事件
-  mapChart.on('click', async (params) => {
+  mapChart.on("click", async (params) => {
     let MapData = params.data.MapData;
 
-    if (MapData.level === 'District') {
+    if (MapData.level === "District") {
       mapOperationArray.push({ level: MapData.level, MapCode: MapData.MapCode });
       bmapRenderer(MapData.MapCode, StoreMap);
     } else {
@@ -390,7 +391,7 @@ const initMapEcharts = (geoJson, name, data, StoreMap) => {
 };
 
 const extraMapView_1 = (data) => {
-  extraMapView_1_chart = echarts.init(document.getElementById('extraMapView_1'));
+  extraMapView_1_chart = echarts.init(document.getElementById("extraMapView_1"));
 
   let MD01 = 0,
     MD02 = 0,
@@ -398,47 +399,47 @@ const extraMapView_1 = (data) => {
     MD04 = 0,
     MD05 = 0;
   data.forEach((val) => {
-    if (val.Md === 'MD01') MD01 += parseInt(val.Sales);
-    if (val.Md === 'MD02') MD02 += parseInt(val.Sales);
-    if (val.Md === 'MD03') MD03 += parseInt(val.Sales);
-    if (val.Md === 'MD04') MD04 += parseInt(val.Sales);
-    if (val.Md === 'MD05') MD05 += parseInt(val.Sales);
+    if (val.Md === "MD01") MD01 += parseInt(val.Sales);
+    if (val.Md === "MD02") MD02 += parseInt(val.Sales);
+    if (val.Md === "MD03") MD03 += parseInt(val.Sales);
+    if (val.Md === "MD04") MD04 += parseInt(val.Sales);
+    if (val.Md === "MD05") MD05 += parseInt(val.Sales);
   });
 
   let pieData = [
-    { value: MD01, name: MdDescription['MD01'] },
-    { value: MD02, name: MdDescription['MD02'] },
-    { value: MD03, name: MdDescription['MD03'] },
-    { value: MD04, name: MdDescription['MD04'] },
-    { value: MD05, name: MdDescription['MD05'] },
+    { value: MD01, name: MdDescription["MD01"] },
+    { value: MD02, name: MdDescription["MD02"] },
+    { value: MD03, name: MdDescription["MD03"] },
+    { value: MD04, name: MdDescription["MD04"] },
+    { value: MD05, name: MdDescription["MD05"] },
   ];
 
   let option = {
     tooltip: {
-      trigger: 'item',
-      formatter: '{b} : {c} ({d}%)',
+      trigger: "item",
+      formatter: "{b} : {c} ({d}%)",
     },
     legend: {
       // orient: 'vertical',
       // top: 'middle',
       bottom: 10,
-      left: 'center',
+      left: "center",
       data: pieData,
     },
-    color: ['#F08080', '#F0F8FF', '#1E90FF', '#C0C0C0', '#AFEEEE'],
+    color: ["#F08080", "#F0F8FF", "#1E90FF", "#C0C0C0", "#AFEEEE"],
     series: [
       {
-        type: 'pie',
-        radius: '65%',
-        center: ['50%', '50%'],
-        selectedMode: 'single',
+        type: "pie",
+        radius: "65%",
+        center: ["50%", "50%"],
+        selectedMode: "single",
         // data: Chart1Data,
         data: pieData,
         emphasis: {
           itemStyle: {
             shadowBlur: 10,
             shadowOffsetX: 0,
-            shadowColor: 'rgba(0, 0, 0, 0.5)',
+            shadowColor: "rgba(0, 0, 0, 0.5)",
           },
         },
       },
@@ -449,7 +450,7 @@ const extraMapView_1 = (data) => {
 };
 
 const extraMapView_2 = (data) => {
-  extraMapView_2_chart = echarts.init(document.getElementById('extraMapView_2'));
+  extraMapView_2_chart = echarts.init(document.getElementById("extraMapView_2"));
 
   let xAxisData = data.map((val) => {
     return val.name;
@@ -460,16 +461,16 @@ const extraMapView_2 = (data) => {
 
   let option = {
     tooltip: {
-      trigger: 'axis',
+      trigger: "axis",
       axisPointer: {
-        type: 'shadow',
+        type: "shadow",
       },
     },
     grid: {
       left: 70,
     },
     xAxis: {
-      type: 'category',
+      type: "category",
       data: xAxisData,
       axisLabel: {
         interval: 0,
@@ -477,12 +478,12 @@ const extraMapView_2 = (data) => {
       },
     },
     yAxis: {
-      type: 'value',
+      type: "value",
     },
     series: [
       {
         data: salesData,
-        type: 'bar',
+        type: "bar",
         itemStyle: {
           normal: {
             color: function (params) {
@@ -498,15 +499,15 @@ const extraMapView_2 = (data) => {
 };
 
 const bmapRenderer = async (MapCode, StoreMap) => {
-  $('#extraMapView_1').css('height', '0px');
-  $('#extraMapView_2').css('height', '0px');
-  $('#mainMapView').css('height', '100%');
+  $("#extraMapView_1").css("height", "0px");
+  $("#extraMapView_2").css("height", "0px");
+  $("#mainMapView").css("height", "100%");
   mapChart.resize();
 
   extraMapView_1_chart.dispose();
   extraMapView_2_chart.dispose();
 
-  let allAdCode = await getGeoJson('all.json');
+  let allAdCode = await getGeoJson("all.json");
   let mapInfo = allAdCode.filter((val) => {
     return val.adcode === parseInt(MapCode);
   });
@@ -541,17 +542,17 @@ const initBmapEcharts = (point, data) => {
       mapStyle: {},
     },
     tooltip: {
-      trigger: 'item',
+      trigger: "item",
       formatter: function (params) {
-        return params.name
+        return params.name;
       },
     },
     series: [
       {
-        type: 'scatter',
+        type: "scatter",
         // 使用百度地图坐标系
-        name: '店铺',
-        coordinateSystem: 'bmap',
+        name: "店铺",
+        coordinateSystem: "bmap",
         // 数据格式跟在 geo 坐标系上一样，每一项都是 [经度，纬度，数值大小，其它维度...]
         data: data,
         symbolSize: function (val) {
@@ -568,7 +569,7 @@ const initBmapEcharts = (point, data) => {
             // formatter: function (data) {
             //   return data.name + ':' + format(parseInt(data.value[2] / 10000));
             // },
-            position: 'right',
+            position: "right",
             show: false,
           },
           emphasis: {
@@ -577,27 +578,27 @@ const initBmapEcharts = (point, data) => {
         },
         itemStyle: {
           normal: {
-            color: 'red',
+            color: "red",
           },
         },
       },
     ],
   };
   mapChart.setOption(option, true);
-  mapChart.off('click');
-  mapChart.on('click', function (params) {
+  mapChart.off("click");
+  mapChart.on("click", function (params) {
     showStoreDetail(params.data);
   });
-  let bmap = mapChart.getModel().getComponent('bmap').getBMap();
+  let bmap = mapChart.getModel().getComponent("bmap").getBMap();
   bmap.setMapStyleV2({
-    styleId: 'be9e79ac5f78998b25fcb5ca44bcc6f7',
+    styleId: "be9e79ac5f78998b25fcb5ca44bcc6f7",
   });
 };
 
 const showStoreDetail = (store) => {
-  $('#Cus_StoreTable').remove();
+  $("#Cus_StoreTable").remove();
 
-  let height = '150px';
+  let height = "150px";
   let div = $(`<div id="Cus_StoreTable" style="position: absolute; z-index: 1000; height: ${height}; bottom:0;width:100%">
                   <div class="card" style="height: ${height};background-color:rgba(255,255,255,0.7)">
                     <div class="card-header header-elements-inline" style="padding-top: 5px; padding-bottom: 0px">
@@ -623,14 +624,14 @@ const showStoreDetail = (store) => {
       </table>
     `;
 
-  $('#mainMapView').css('position', 'relative');
+  $("#mainMapView").css("position", "relative");
 
-  $('#mainMapView').append(div).find('#Cus_StoreTable').find('div.card-body').append(table);
+  $("#mainMapView").append(div).find("#Cus_StoreTable").find("div.card-body").append(table);
 
-  $('#Cus_StoreTable')
+  $("#Cus_StoreTable")
     .find("[data-action='remove']")
     .click(function () {
-      $('#Cus_StoreTable').remove();
+      $("#Cus_StoreTable").remove();
     });
 };
 
@@ -643,13 +644,13 @@ const showStoreDetail = (store) => {
 const getData = (params) => {
   return CommonRequest({
     url: `${Api.python}start/web`,
-    method: 'POST',
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     data: JSON.stringify({
-      pyName: 'map_interface_real_data',
-      params: params || { Region: '100000' },
+      pyName: "map_interface_real_data",
+      params: params || { Region: "100000" },
       ...userinfoParams2,
     }),
   });
@@ -660,11 +661,11 @@ const getData = (params) => {
  * @param {*} jsonName
  */
 const getGeoJson = async (jsonName) => {
-  const publicUrl = 'https://geo.datav.aliyun.com/areas_v2/bound/';
+  const publicUrl = "https://geo.datav.aliyun.com/areas_v2/bound/";
 
   let url = publicUrl + jsonName;
   let config = {
-    method: 'GET',
+    method: "GET",
     url: url,
   };
   let res = await axios(config);
@@ -677,45 +678,98 @@ const getGeoJson = async (jsonName) => {
  */
 const mergeProvinces = (chinaJson) => {
   let refactorFormat = {
-    areaDivide: ['华北', '华东', '华南', '华西'],
+    areaDivide: ["华北", "华东", "华南", "华西"],
     areaChildren: [
       // 把各个大区的省份用二维数组分开
-      ['北京', '天津', '河北', '山西', '内蒙古', '黑龙江', '吉林', '辽宁'],
-      ['山东', '江苏', '安徽', '江西', '浙江', '福建', '上海', '台湾', '河南', '湖北'],
-      ['广东', '广西', '海南', '香港', '澳门', '湖南'],
-      ['陕西', '甘肃', '青海', '宁夏', '新疆', '重庆', '四川', '云南', '西藏', '贵州'],
+      ["北京", "天津", "河北", "山西", "内蒙古", "黑龙江", "吉林", "辽宁"],
+      ["山东", "江苏", "安徽", "江西", "浙江", "福建", "上海", "台湾", "河南", "湖北"],
+      ["广东", "广西", "海南", "香港", "澳门", "湖南"],
+      ["陕西", "甘肃", "青海", "宁夏", "新疆", "重庆", "四川", "云南", "西藏", "贵州"],
     ],
   };
 
   let newChinaJson = {
     features: [
       {
-        geometry: { type: 'MultiPolygon', coordinates: [] },
-        properties: { name: '华北', level: 'area' },
-        type: 'Feature',
+        geometry: { type: "MultiPolygon", coordinates: [] },
+        properties: { name: "华北", level: "area" },
+        type: "Feature",
       },
       {
-        geometry: { type: 'MultiPolygon', coordinates: [] },
-        properties: { name: '华东', level: 'area' },
-        type: 'Feature',
+        geometry: { type: "MultiPolygon", coordinates: [] },
+        properties: { name: "华东", level: "area" },
+        type: "Feature",
       },
       {
-        geometry: { type: 'MultiPolygon', coordinates: [] },
-        properties: { name: '华南', level: 'area' },
-        type: 'Feature',
+        geometry: { type: "MultiPolygon", coordinates: [] },
+        properties: { name: "华南", level: "area" },
+        type: "Feature",
       },
       {
-        geometry: { type: 'MultiPolygon', coordinates: [] },
-        properties: { name: '华西', level: 'area' },
-        type: 'Feature',
+        geometry: { type: "MultiPolygon", coordinates: [] },
+        properties: { name: "华西", level: "area" },
+        type: "Feature",
       },
     ],
-    type: 'FeatureCollection',
+    type: "FeatureCollection",
   };
 
   chinaJson.features.forEach((val, i) => {
     refactorFormat.areaDivide.forEach((_, j) => {
-      if (refactorFormat.areaChildren[j].toString().indexOf(val.properties.name.slice(0, 2)) != -1 && val.properties.name != '') {
+      if (refactorFormat.areaChildren[j].toString().indexOf(val.properties.name.slice(0, 2)) != -1 && val.properties.name != "") {
+        newChinaJson.features[j].geometry.coordinates = [...newChinaJson.features[j].geometry.coordinates, ...val.geometry.coordinates];
+      }
+    });
+  });
+
+  return newChinaJson;
+};
+
+const mergeProvinces2 = (chinaJson) => {
+  let refactorFormat = {
+    areaDivide: ["华北", "华东", "华南", "华西"],
+    // areaDivide: ['华北'],
+    areaChildren: [
+      // 把各个大区的省份用二维数组分开
+      ["北京", "天津", "河北", "山西", "内蒙古", "黑龙江", "吉林", "辽宁"],
+      ["山东", "江苏", "安徽", "江西", "浙江", "福建", "上海", "台湾", "河南", "湖北"],
+      ["广东", "广西", "海南", "香港", "澳门", "湖南"],
+      ["陕西", "甘肃", "青海", "宁夏", "新疆", "重庆", "四川", "云南", "西藏", "贵州"],
+    ],
+  };
+
+  let newChinaJson = {
+    features: [
+      {
+        geometry: { type: "MultiPolygon", coordinates: [] },
+        properties: { name: "华北", level: "area" },
+        type: "Feature",
+      },
+      {
+        geometry: { type: "MultiPolygon", coordinates: [] },
+        properties: { name: "华东", level: "area" },
+        type: "Feature",
+      },
+      {
+        geometry: { type: "MultiPolygon", coordinates: [] },
+        properties: { name: "华南", level: "area" },
+        type: "Feature",
+      },
+      {
+        geometry: { type: "MultiPolygon", coordinates: [] },
+        properties: { name: "华西", level: "area" },
+        type: "Feature",
+      },
+    ],
+    type: "FeatureCollection",
+  };
+  chinaJson.features.forEach((val, i) => {
+    refactorFormat.areaDivide.forEach((_, j) => {
+      console.log(refactorFormat.areaChildren[j]);
+      console.log(refactorFormat.areaChildren[j].toString());
+      if (refactorFormat.areaChildren[j].toString().indexOf(val.properties.name.slice(0, 2)) != -1 && val.properties.name != "" && val.properties.name.slice(0, 2) === "内蒙") {
+        newChinaJson.features[j].geometry.coordinates = [...newChinaJson.features[j].geometry.coordinates, [...val.geometry.coordinates]];
+      } else if (refactorFormat.areaChildren[j].toString().indexOf(val.properties.name.slice(0, 2)) != -1 && val.properties.name != "") {
         newChinaJson.features[j].geometry.coordinates = [...newChinaJson.features[j].geometry.coordinates, ...val.geometry.coordinates];
       }
     });
@@ -731,26 +785,26 @@ const mergeProvinces = (chinaJson) => {
  */
 const mergeArea = (chinaJson, area) => {
   let refactorFormat = {
-    areaDivideCode: ['T01', 'T02', 'T03', 'T04'],
+    areaDivideCode: ["T01", "T02", "T03", "T04"],
     // areaDivide: ['华北', '华东', '华南', '华西'],
     areaChildren: [
       // 把各个大区的省份用二维数组分开
-      ['北京', '天津', '河北', '山西', '内蒙古', '黑龙江', '吉林', '辽宁'],
-      ['山东', '江苏', '安徽', '江西', '浙江', '福建', '上海', '台湾', '河南', '湖北'],
-      ['广东', '广西', '海南', '香港', '澳门', '湖南'],
-      ['陕西', '甘肃', '青海', '宁夏', '新疆', '重庆', '四川', '云南', '西藏', '贵州'],
+      ["北京", "天津", "河北", "山西", "内蒙古", "黑龙江", "吉林", "辽宁"],
+      ["山东", "江苏", "安徽", "江西", "浙江", "福建", "上海", "台湾", "河南", "湖北"],
+      ["广东", "广西", "海南", "香港", "澳门", "湖南"],
+      ["陕西", "甘肃", "青海", "宁夏", "新疆", "重庆", "四川", "云南", "西藏", "贵州"],
     ],
   };
 
   let newChinaJson = {
     features: [],
-    type: 'FeatureCollection',
+    type: "FeatureCollection",
   };
 
   chinaJson.features.forEach((val, i) => {
     let areaIndex = refactorFormat.areaDivideCode.indexOf(area);
     if (areaIndex != -1) {
-      if (refactorFormat.areaChildren[areaIndex].toString().indexOf(val.properties.name.slice(0, 2)) != -1 && val.properties.name != '') {
+      if (refactorFormat.areaChildren[areaIndex].toString().indexOf(val.properties.name.slice(0, 2)) != -1 && val.properties.name != "") {
         newChinaJson.features.push(val);
       }
     }
@@ -763,8 +817,8 @@ const mergeArea = (chinaJson, area) => {
  * 地图后退
  */
 const mapBack = () => {
-  _modalActionShow('#Map');
-  _modalActionShow('#Table');
+  _modalActionShow("#Map");
+  _modalActionShow("#Table");
 
   mapChart.dispose();
   if (mapOperationArray.length > 2) {
@@ -782,12 +836,12 @@ const mapBack = () => {
   }
 
   setTimeout(() => {
-    _modalActionHidden('#Map');
-    _modalActionHidden('#Table');
+    _modalActionHidden("#Map");
+    _modalActionHidden("#Table");
   }, 500);
 };
 
-var Cus_theme = 'westeros';
+var Cus_theme = "westeros";
 var Cus_echarts = {};
 //extrajs全局方法
 var cfs = {
@@ -802,9 +856,9 @@ var cfs = {
     common: {
       sendRequest: function (url, type, paramObj, json = false, returnAll = false) {
         var data = json ? JSON.stringify(paramObj) : paramObj;
-        var contentType = 'application/' + (json ? 'json' : 'x-www-form-urlencoded');
+        var contentType = "application/" + (json ? "json" : "x-www-form-urlencoded");
         var resObj = {};
-        var err = '';
+        var err = "";
         $.ajax({
           url: url,
           type: type,
@@ -831,7 +885,7 @@ var cfs = {
     cube: {
       //script: Year{2020}->Period{6}->Version{Working}...
       queryCubeData: function (cubeName, script) {
-        var url = Api.SeeplnCube + 'cube/queryCubeData';
+        var url = Api.SeeplnCube + "cube/queryCubeData";
         paramObj = $.extend(
           {
             cube_name: cubeName,
@@ -839,24 +893,24 @@ var cfs = {
           },
           cfs.common.userParams
         );
-        return cfs.request.common.sendRequest(url, 'POST', paramObj, true);
+        return cfs.request.common.sendRequest(url, "POST", paramObj, true);
       },
       //通用保存方法
       save: function (sheetDatas) {
-        var url = Api.SeeplnCube + 'spreadsheet/save';
+        var url = Api.SeeplnCube + "spreadsheet/save";
         paramObj = $.extend(
           {
             sheetDatas: sheetDatas,
           },
           cfs.common.userParams
         );
-        return cfs.request.common.sendRequest(url, 'POST', paramObj, true);
+        return cfs.request.common.sendRequest(url, "POST", paramObj, true);
       },
     },
     foundation: {
       //根据user权限获取维度，最多2层
-      getAccessDimensionMemberLevel: function (dimName, exp = '', name = '#root', id = '1', searchValue = '') {
-        let url = Api.seepln + 'dimension/getAccessDimensionMemberLevel';
+      getAccessDimensionMemberLevel: function (dimName, exp = "", name = "#root", id = "1", searchValue = "") {
+        let url = Api.seepln + "dimension/getAccessDimensionMemberLevel";
         paramObj = $.extend(
           {
             dimensionName: dimName,
@@ -867,35 +921,35 @@ var cfs = {
           },
           cfs.common.userParams
         );
-        return cfs.request.common.sendRequest(url, 'POST', paramObj, false);
+        return cfs.request.common.sendRequest(url, "POST", paramObj, false);
       },
       //根据表达式查询，不分权限
       selectDimensionMemberByNameFunction: function (dimensionMemberNames) {
-        let url = Api.seepln + 'dimension/selectDimensionMemberByNameFunction';
+        let url = Api.seepln + "dimension/selectDimensionMemberByNameFunction";
         paramObj = $.extend(
           {
             dimensionMemberNames: dimensionMemberNames,
           },
           cfs.common.userParams
         );
-        return cfs.request.common.sendRequest(url, 'POST', paramObj, false);
+        return cfs.request.common.sendRequest(url, "POST", paramObj, false);
       },
       //执行自定义sql语句
       runComm: function (comm) {
-        var url = Api.seepln + 'sqlparser/run/post';
+        var url = Api.seepln + "sqlparser/run/post";
         paramObj = $.extend(
           {
             sql: comm,
           },
           cfs.common.userParams
         );
-        return cfs.request.common.sendRequest(url, 'POST', paramObj, false, true);
+        return cfs.request.common.sendRequest(url, "POST", paramObj, false, true);
       },
     },
     python: {
       //同步调用python
       web: function (pyName, params) {
-        var url = Api.python + 'start/web';
+        var url = Api.python + "start/web";
         paramObj = $.extend(
           {
             pyName: pyName,
@@ -903,7 +957,7 @@ var cfs = {
           },
           cfs.common.userParams
         );
-        return cfs.request.common.sendRequest(url, 'POST', paramObj, true, true);
+        return cfs.request.common.sendRequest(url, "POST", paramObj, true, true);
       },
     },
   },
@@ -912,11 +966,11 @@ var cfs = {
     head: {
       //获取卡片表头jquery dom
       getDom: function (cardName) {
-        return $('#' + cardName);
+        return $("#" + cardName);
       },
       //删除卡片表右边所有元素
       removeButton: function (dom) {
-        dom.find('.header-elements').html('');
+        dom.find(".header-elements").html("");
       },
       addSelectButton: function (carHead, buttonInfo) {
         var btn = $(`<div class="list-icons ${buttonInfo.id}">
@@ -928,13 +982,13 @@ var cfs = {
 						>
 						</select>
 					</div>`);
-        let sHtml = '';
+        let sHtml = "";
         buttonInfo.list.forEach(function (v) {
-          sHtml += "<option value='" + v.key + "'>" + v.value + '</option>';
+          sHtml += "<option value='" + v.key + "'>" + v.value + "</option>";
         });
-        carHead.find('.header-elements').prepend(btn);
-        $('#' + buttonInfo.id).html(sHtml);
-        $('.select').select2({ minimumResultsForSearch: -1 });
+        carHead.find(".header-elements").prepend(btn);
+        $("#" + buttonInfo.id).html(sHtml);
+        $(".select").select2({ minimumResultsForSearch: -1 });
         return btn;
       },
       /*添加下拉按钮
@@ -948,7 +1002,7 @@ var cfs = {
       addDropdownButton: function (carHead, buttonInfo) {
         var list = buttonInfo.list;
         for (var i = 0; i < list.length; i++) {
-          list[i] = '<a index = "' + i + '" class="dropdown-item" href="#">' + list[i] + '</a>';
+          list[i] = '<a index = "' + i + '" class="dropdown-item" href="#">' + list[i] + "</a>";
         }
         var btn = $(
           '<div id="' +
@@ -959,20 +1013,20 @@ var cfs = {
             ' icon text-default mr-1"></i>' +
             '<span class="iconSpan loadDes">' +
             buttonInfo.text +
-            '</span></a>' +
+            "</span></a>" +
             '<div class="dropdown-menu" style="min-width:100px">' +
-            list.join('') +
-            '</div></div>'
+            list.join("") +
+            "</div></div>"
         );
-        carHead.find('.header-elements').append(btn);
-        if (buttonInfo.id.indexOf('_disable') == -1) {
+        carHead.find(".header-elements").append(btn);
+        if (buttonInfo.id.indexOf("_disable") == -1) {
           var buttonInfo2 = Object.create(buttonInfo);
-          buttonInfo2.id = buttonInfo.id + '_disable';
+          buttonInfo2.id = buttonInfo.id + "_disable";
           var btn_disable = this.addDropdownButton(carHead, buttonInfo2);
           btn_disable.hide();
-          btn_disable.find('.dropdown-menu').remove();
+          btn_disable.find(".dropdown-menu").remove();
           btn_disable.hover(function () {
-            this.style.cursor = 'not-allowed';
+            this.style.cursor = "not-allowed";
           });
         }
         return btn;
@@ -992,16 +1046,16 @@ var cfs = {
             buttonInfo.icon +
             ' icon text-default mr-1"></i><span class="iconSpan loadDes">' +
             buttonInfo.text +
-            '</span></a>'
+            "</span></a>"
         );
-        carHead.find('.header-elements').append(btn);
-        if (buttonInfo.id.indexOf('_disable') == -1) {
+        carHead.find(".header-elements").append(btn);
+        if (buttonInfo.id.indexOf("_disable") == -1) {
           var buttonInfo2 = Object.create(buttonInfo);
-          buttonInfo2.id = buttonInfo.id + '_disable';
+          buttonInfo2.id = buttonInfo.id + "_disable";
           var btn_disable = this.addButton(carHead, buttonInfo2);
           btn_disable.hide();
           btn_disable.hover(function () {
-            this.style.cursor = 'not-allowed';
+            this.style.cursor = "not-allowed";
           });
         }
         return btn;
@@ -1009,18 +1063,18 @@ var cfs = {
       //点击后调用防止反复执行
       disableButton: function (btn) {
         btn.hide();
-        $('#' + btn.attr('id') + '_disable').show();
+        $("#" + btn.attr("id") + "_disable").show();
       },
       //恢复按钮可用
       enableButton: function (btn) {
-        $('#' + btn.attr('id') + '_disable').hide();
+        $("#" + btn.attr("id") + "_disable").hide();
         btn.show();
       },
     },
     body: {
       //获取卡片内容jquery dom
       getDom: function (cardName) {
-        return $('#' + cardName).find('.card-body');
+        return $("#" + cardName).find(".card-body");
       },
       //添加文件上传卡片
       addFileTag: function (cardName, text) {
@@ -1030,7 +1084,7 @@ var cfs = {
             '" style="margin: 1.25rem; padding: 10px;display: inherit; background-color:#f7f7f7;width:fit-content;width:-webkit-fit-content;width:-moz-fit-content;">' +
             '<span style="margin-right: 15px;">' +
             text +
-            '</span>' +
+            "</span>" +
             '<i class="icon-bin delete" onclick="cfs.card.body.deleteFileTag(this)" style="margin-right: 10px;cursor: pointer;"></i>' +
             '<div class="customLoader" style="margin-bottom: 2px;display: none;"></div><span class="infotext" style="margin-left: 5px; margin-right: 5px; display: none;"></span>' +
             '<i data-trigger="hover" data-toggle="popover" data-placement="right" data-content="" class="infobtn icon-info22" style="margin-right: 10px;cursor: pointer; display: none;"></i>'
@@ -1080,7 +1134,7 @@ var cfs = {
   echarts: {
     init: function (dom, theme, option) {
       var ec = echarts.init(dom.get(0), theme);
-      window.addEventListener('resize', function () {
+      window.addEventListener("resize", function () {
         ec.resize();
       });
       this.refresh(ec, option);
@@ -1091,20 +1145,20 @@ var cfs = {
       ec.setOption(option);
     },
     correctHeight: function (cardName) {
-      let echartDom = $('#' + cardName)
-        .find('.card-body')
-        .find('.echart');
-      let cardBodyDom = $('#' + cardName).find('.card-body');
+      let echartDom = $("#" + cardName)
+        .find(".card-body")
+        .find(".echart");
+      let cardBodyDom = $("#" + cardName).find(".card-body");
 
       let _height = $(cardBodyDom).height();
       $(echartDom).height(_height);
     },
     mobileHeight: function (cardName, height) {
-      let cardDom = $('#' + cardName).parent();
+      let cardDom = $("#" + cardName).parent();
       $(cardDom).height(height);
-      let echartDom = $('#' + cardName)
-        .find('.card-body')
-        .find('.echart');
+      let echartDom = $("#" + cardName)
+        .find(".card-body")
+        .find(".echart");
       let _height = $(echartDom).parent().height();
       $(echartDom).height(_height);
     },
@@ -1127,11 +1181,11 @@ var cfs = {
     dialogBox: function (text, thenEvent) {
       swal({
         title: text,
-        text: '',
-        type: 'info',
+        text: "",
+        type: "info",
         showCancelButton: true,
-        confirmButtonText: getLanguage('sure'),
-        cancelButtonText: getLanguage('cancel'),
+        confirmButtonText: getLanguage("sure"),
+        cancelButtonText: getLanguage("cancel"),
       }).then(function (result) {
         if (result.value) {
           thenEvent();
@@ -1140,8 +1194,8 @@ var cfs = {
     },
     //excel的5位纯数字日期格式转yyyy-mm-dd
     valueToDate: function (value) {
-      var n = Number(value.split('.')[0]);
-      var date = new Date('1900-1-1');
+      var n = Number(value.split(".")[0]);
+      var date = new Date("1900-1-1");
       date.setDate(date.getDate() + n - 2);
       return date.format();
     },
@@ -1159,22 +1213,22 @@ var cfs = {
       //组标题
       var titleObj = dataJson[0];
       titleArr = titleArr || Object.keys(titleObj);
-      var titleStr = titleArr.join('\t,');
+      var titleStr = titleArr.join("\t,");
       var dataArr = [];
       for (var i = 0; i < dataJson.length; i++) {
         var rowArr = [];
         for (var j = 0; j < titleArr.length; j++) {
-          var cell = dataJson[i][titleArr[j]] || '';
-          if (cell.toString().indexOf(',') > -1) cell = '"' + cell + '"';
+          var cell = dataJson[i][titleArr[j]] || "";
+          if (cell.toString().indexOf(",") > -1) cell = '"' + cell + '"';
           rowArr.push(cell);
         }
-        dataArr.push(rowArr.join('\t,'));
+        dataArr.push(rowArr.join("\t,"));
       }
-      var dataStr = titleStr + '\n' + dataArr.join('\n');
-      var blob = new Blob([dataStr], { type: 'text/plain;charset=utf-8' });
+      var dataStr = titleStr + "\n" + dataArr.join("\n");
+      var blob = new Blob([dataStr], { type: "text/plain;charset=utf-8" });
       //解决中文乱码问题
       blob = new Blob([String.fromCharCode(0xfeff), blob], { type: blob.type });
-      this.download(blob, fileName + '.csv');
+      this.download(blob, fileName + ".csv");
     },
     toXls: function (fileName, dataJson, titleArr = null) {
       if (!dataJson) return;
@@ -1182,17 +1236,17 @@ var cfs = {
       //组标题
       var titleObj = dataJson[0];
       titleArr = titleArr || Object.keys(titleObj);
-      var titleStr = '<tr><td>' + titleArr.join('</td><td>') + '</td></tr>';
+      var titleStr = "<tr><td>" + titleArr.join("</td><td>") + "</td></tr>";
       var dataArr = [];
       for (var i = 0; i < dataJson.length; i++) {
         var rowArr = [];
         for (var j = 0; j < titleArr.length; j++) {
-          rowArr.push('<td>' + (dataJson[i][titleArr[j]] || '') + '</td>');
+          rowArr.push("<td>" + (dataJson[i][titleArr[j]] || "") + "</td>");
         }
-        dataArr.push('<tr>' + rowArr.join('') + '</tr>');
+        dataArr.push("<tr>" + rowArr.join("") + "</tr>");
       }
-      var dataStr = '<table>' + titleStr + dataArr.join('') + '</table>';
-      var uri = 'data:application/vnd.ms-excel;base64,';
+      var dataStr = "<table>" + titleStr + dataArr.join("") + "</table>";
+      var uri = "data:application/vnd.ms-excel;base64,";
       var excelHtml = `<html xmlns:o="urn:schemas-microsoft-com:office:office" 
                 xmlns:x="urn:schemas-microsoft-com:office:excel" 
                 xmlns="http://www.w3.org/TR/REC-html40">
@@ -1206,9 +1260,9 @@ var cfs = {
         return window.btoa(unescape(encodeURIComponent(s)));
       }
       var blob = new Blob([excelHtml], {
-        type: 'application/vnd.ms-excel',
+        type: "application/vnd.ms-excel",
       });
-      this.download(blob, fileName + '.xls');
+      this.download(blob, fileName + ".xls");
     },
     toXlsx: function (fileName, dataJson, titleArr = null) {
       if (!dataJson) return;
@@ -1217,10 +1271,10 @@ var cfs = {
       //
       var sheet = XLSX.utils.json_to_sheet(dataJson);
       var blob = this.sheet2blob(sheet, fileName.substr(0, 30));
-      this.download(blob, fileName + '.xlsx');
+      this.download(blob, fileName + ".xlsx");
     },
     sheet2blob: function (sheet, sheetName) {
-      sheetName = sheetName || 'sheet1';
+      sheetName = sheetName || "sheet1";
       var workbook = {
         SheetNames: [sheetName],
         Sheets: {},
@@ -1228,12 +1282,12 @@ var cfs = {
       workbook.Sheets[sheetName] = sheet;
       // 生成excel的配置项
       var wopts = {
-        bookType: 'xlsx', // 要生成的文件类型
+        bookType: "xlsx", // 要生成的文件类型
         bookSST: false, // 是否生成Shared String Table，官方解释是，如果开启生成速度会下降，但在低版本IOS设备上有更好的兼容性
-        type: 'binary',
+        type: "binary",
       };
       var wbout = XLSX.write(workbook, wopts);
-      var blob = new Blob([s2ab(wbout)], { type: 'application/octet-stream' });
+      var blob = new Blob([s2ab(wbout)], { type: "application/octet-stream" });
       // 字符串转ArrayBuffer
       function s2ab(s) {
         var buf = new ArrayBuffer(s.length);
@@ -1244,10 +1298,10 @@ var cfs = {
       return blob;
     },
     download: function (blob, fileFullName) {
-      var btn = document.createElement('a');
+      var btn = document.createElement("a");
       btn.href = URL.createObjectURL(blob);
       btn.download = fileFullName;
-      btn.style = 'display: none;';
+      btn.style = "display: none;";
       document.body.appendChild(btn);
       btn.click();
       document.body.removeChild(btn);
