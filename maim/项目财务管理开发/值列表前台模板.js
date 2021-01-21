@@ -1,4 +1,4 @@
-const this_list_name = 'approve_status';
+const this_list_name = 'asset_policy';
 
 // 引入样式
 let style = document.createElement('style');
@@ -698,8 +698,8 @@ const initDom = () => {
 
   const initHtml = `
   <div class="card searchForm nummberList">
-    <div class="card-header header-elements-inline bg-white">
-      <h6 id="searchTitle3" class="card-title bold">列表成员</h6>
+    <div class="card-header header-elements-inline bg-white" style="height:54px">
+      <h6 id="searchTitle3" class="card-title bold"></h6>
       <div class="header-elements">
         <div class="list-icons">
           <a class="list-icons-item" data-action="collapse"></a>
@@ -774,6 +774,7 @@ const editQueryData = () => {
           title: description_1,
           data: udname,
           id: sort,
+          type: description_2.includes('INPUT') ? 'INPUT' : 'SELECT',
         });
         tableDetail_temp.push({
           active: active === 1,
@@ -841,12 +842,22 @@ const initTableNummber = (res) => {
         nummberTableDom.push(sHtml);
       } else {
         if (v.data.includes('ud')) {
-          var sHtml = `<select name="${
-            v.data
-          }" class="form-control selectedValue otherType" required  data-name="${
-            this_list_name + '_' + v.data
-          }" default-value="-"><option></option></select>`;
-          nummberTableDom.push(sHtml);
+          if (v.type === 'SELECT') {
+            var sHtml = `<select name="${
+              v.data
+            }" class="form-control selectedValue otherType" required  data-name="${
+              this_list_name + '_' + v.data
+            }" default-value="-"><option></option></select>`;
+            nummberTableDom.push(sHtml);
+          }
+
+          if (v.type === 'INPUT') {
+            var sHtml =
+              '<input type="text" name="' +
+              v.data +
+              '" class="form-control otherType Describe" data-system="0" required onkeyup="checkInput(this);" autocomplete="off" onchange="numberChange(this);">';
+            nummberTableDom.push(sHtml);
+          }
         } else {
           var sHtml = `<select name="${
             v.data
@@ -883,6 +894,7 @@ const initTableNummber = (res) => {
     oLanguage: {
       sEmptyTable: getLanguage('noData'),
     },
+    columnDefs: [{ 'width': '100px', targets: 1 }],
     // fnDrawCallback: function (settings) {
     //   loadingHide('.dimensionContent');
     // },
@@ -920,11 +932,29 @@ const initTableNummber = (res) => {
             '>';
         }
       } else if (value.data.includes('ud')) {
-        sHtml = `<select name="${
-          value.data
-        }" class="form-control selectedValue otherType" required  data-name="${
-          this_list_name + '_' + value.data
-        }" default-value="${dataContent}"><option value="${dataContent}">${dataContent}</option></select>`;
+        if (value.type === 'SELECT') {
+          sHtml = `<select name="${
+            value.data
+          }" class="form-control selectedValue otherType" required  data-name="${
+            this_list_name + '_' + value.data
+          }" default-value="${dataContent}"><option value="${dataContent}">${dataContent}</option></select>`;
+        }
+
+        if (value.type === 'INPUT') {
+          sHtml =
+            '<input type="text" name="' +
+            value.data +
+            '" class="form-control otherType" value="' +
+            dataContent +
+            '"  data-index="' +
+            i +
+            '"  data-sort="' +
+            v.sortid +
+            '" data-system="' +
+            v.system +
+            '" onchange="numberChange(this);" autocomplete="off" ' +
+            '>';
+        }
       } else {
         if (v.system == '1') {
           sHtml =
