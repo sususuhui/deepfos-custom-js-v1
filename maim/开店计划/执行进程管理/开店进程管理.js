@@ -1,6 +1,31 @@
 $(() => {
   r2();
+  let btn = `
+    <span class="breadcrumb-elements-item cursor-pointer" id="newPage" style="margin-right: 20px;" onclick="toDetail()">
+      <i class="icon-database4 icon mr-1"></i>
+      <span class="text-ellipsis">新建立项申请</span>
+    </span>
+  `;
+  $(".breadcrumb-line .header-elements").prepend(btn);
 });
+
+const toDetail = () => {
+  const url = "../formTemplate/formTemplateDetailLayer.html?isNew=true&template_name=pipeline_progress&template_type=";
+  const layerFn = BasicHeaders["tenant-code"] === "cpm" ? top.layer : layer;
+  layerFn.open({
+    type: 2,
+    title: false,
+    area: ["100%", "100%"],
+    move: false,
+    resize: false,
+    scrollbar: false,
+    closeBtn: 0,
+    content: url,
+    success: function (layero, index) {
+      websocketFlag = false;
+    },
+  });
+};
 
 async function electronicFormFn() {
   let listDom = $("[data-name='SD_pipeline_main']").find(`.elementIframe`)[0].contentWindow;
