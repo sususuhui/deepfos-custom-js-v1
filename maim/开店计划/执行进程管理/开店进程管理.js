@@ -27,24 +27,30 @@ const toDetail = () => {
   });
 };
 
-async function electronicFormFn() {
+function electronicFormFn() {
   let listDom = $("[data-name='SD_pipeline_main']").find(`.elementIframe`)[0].contentWindow;
-  listDom.$("#contractList_table tbody").on("click", "tr td:not('.flexCon , .progress_status, .checkPart, .dataTables_empty')", function (e) {
+  listDom.$("#contractList_table tbody").on("click", "tr td:not('.flexCon , .progress_status, .checkPart, .dataTables_empty')", async function (e) {
     let system_id = $(e.target).attr("title");
     console.log(system_id);
 
     if (!_.isUndefined(system_id)) {
-      //  let data= await getData({ system_id });
+      let pythonData = await getData({ system_id });
+      const source = JSON.parse(pythonData.result);
+
+      // let data = {
+      //   source: [
+      //     ["立项申请", 0, "data1-1", "data1-2", "data1-3", "data1-4"],
+      //     ["选址勘探", 1, "data2-1", "data2-2", "data2-3", "data2-4"],
+      //     ["租金谈判", 2, "data3-1", "data3-2", "data3-3", "data3-4"],
+      //     ["门店装修", 3, "data4-1", "data4-2", "data4-3", "data4-4"],
+      //     ["开业准备", 4, "data5-1", "data5-2", "data5-3", "data5-4"],
+      //   ],
+      // };
 
       let data = {
-        source: [
-          ["立项申请", 0, "data1-1", "data1-2", "data1-3", "data1-4"],
-          ["选址勘探", 1, "data2-1", "data2-2", "data2-3", "data2-4"],
-          ["租金谈判", 2, "data3-1", "data3-2", "data3-3", "data3-4"],
-          ["门店装修", 3, "data4-1", "data4-2", "data4-3", "data4-4"],
-          ["开业准备", 4, "data5-1", "data5-2", "data5-3", "data5-4"],
-        ],
+        source: [...source],
       };
+
       initHeadDom_r2(system_id);
       initBodyDom_r2(data);
     }
@@ -214,7 +220,7 @@ function getData(params) {
       "Content-Type": "application/json",
     },
     data: JSON.stringify({
-      pyName: "xxxx",
+      pyName: "openstore_process_dashboard",
       params: params || {
         system_id: "S200101001",
       },
