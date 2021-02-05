@@ -202,16 +202,19 @@ const toPage = (sign) => {
   console.log(childProjectCode);
 
   if (sign === 1) {
-    console.log(JSON.stringify(childProjectCode));
-
     urls = `../dashboard/showDashBoardLayer.html?appid=75&isLayer=true&param1=BIDE903AQV5M0O&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%5D&elementType=BID&elementId=BIDE903AQV5M0O&folderId=121&elementTitle=Plan_store&pageName=Plan_store&Custom_params=${encodeURIComponent(
       JSON.stringify(childProjectCode)
     )}`;
   }
   if (sign === 2) {
-    urls = `../dashboard/showDashBoardLayer.html?appid=75&isLayer=true&param1=BIDE900UUAH5E1&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%5D&elementType=BID&elementId=BIDE900UUAH5E1&folderId=116&elementTitle=Actual_store&pageName=Actual_store`;
+    urls = `../dashboard/showDashBoardLayer.html?appid=75&isLayer=true&param1=BIDE900UUAH5E1&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%5D&elementType=BID&elementId=BIDE900UUAH5E1&folderId=116&elementTitle=Actual_store&pageName=Actual_store&Custom_params=${encodeURIComponent(
+      JSON.stringify(childProjectCode)
+    )}`;
   }
   if (sign === 3) {
+    urls = `../dashboard/showDashBoardLayer.html?appid=75&isLayer=true&param1=BIDE8S4K0ALIJ3&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%5D&elementType=BID&elementId=BIDE8S4K0ALIJ3&folderId=102&elementTitle=newstoreplan&pageName=newstoreplan&Custom_params=${encodeURIComponent(
+      JSON.stringify(childProjectCode)
+    )}`;
   }
   if (sign === 4) {
   }
@@ -262,7 +265,6 @@ const dealSheetData = (d) => {
 
 const table1 = (data) => {
   let totalData = dealSheetData(data);
-  debugger;
   let cardName = "table1";
   let echartDom = cfs.card.body.getDom(cardName).find(".echart");
   let headDom = cfs.card.head.getDom(cardName);
