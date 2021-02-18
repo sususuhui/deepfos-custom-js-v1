@@ -248,7 +248,11 @@ const renderTable1 = async () => {
     if (i > 0) {
       let body_html_tr = `<tr>`;
       val.forEach((cVal) => {
-        body_html_tr += `<td>${cVal}</td>`;
+        if (cVal === "可比门店数") {
+          body_html_tr += `<td><a href="javascript:;" onclick="toPage(1)">${cVal}</a></td>`;
+        } else {
+          body_html_tr += `<td>${cVal}</td>`;
+        }
       });
       body_html_tr += `</tr>`;
       body_html += body_html_tr;
@@ -279,6 +283,7 @@ const renderTable1 = async () => {
     bPaginate: false, //是否显示（应用）分页器
     bSort: false, //是否启动各个字段的排序功能
     info: false,
+    sScrollX: "100%",
     language: {
       // "sEmptyTable":"暂无数据"
     },
@@ -357,6 +362,7 @@ const renderTable2 = async () => {
     bPaginate: false, //是否显示（应用）分页器
     bSort: false, //是否启动各个字段的排序功能
     info: false,
+    sScrollX: "100%",
     language: {
       // "sEmptyTable":"暂无数据"
     },
@@ -530,6 +536,11 @@ const renderChart1 = async () => {
 
   echartDom.unblock();
 };
+
+$(window).on("resize", function () {
+  // 调整 datatable 大小
+  $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+});
 
 let mapChart,
   extraMapView_1_chart,
