@@ -17,9 +17,14 @@ const setPageTransferPov = () => {
     $(".dataSheetCon>div:eq(0)").find("select[aname=Scenario] option").trigger("change");
     $(".dataSheetCon>div:eq(0)").find("select[aname=Version] option").attr("value", pov.version);
     $(".dataSheetCon>div:eq(0)").find("select[aname=Version] option").trigger("change");
-    $(".dataSheetCon>div:eq(0)").find("select[aname=territory] option").attr("value", pov.Entity);
-    $(".dataSheetCon>div:eq(0)").find("select[aname=territory] option").trigger("change");
+    $(".dataSheetCon>div:eq(0)").find("select[aname=territory] option").attr("value", 'T01');
+    $(".dataSheetCon>div:eq(0)").find("select[aname=territory]").trigger("change");
     // debugger
+
+
+
+
+    $(".dataSheetCon>div:eq(0)").find("select[aname=territory]").select2('data', {id: '123', text: 'res_data.primary_email'})
 
     setTimeout(() => {
       $("#refreshBoard").click();

@@ -28,15 +28,43 @@ $(() => {
 
   $(".dashBoardContent").html(html);
 
-  renderSign();
+  $("#showDashBoard")
+    .find(".freshBS")
+    .click(() => {
+      renderPage();
+    });
+
+  renderPage();
 });
 
-let mapChart,
-  extraMapView_1_chart,
-  extraMapView_2_chart,
-  mapOperationArray = ["china"];
+const renderPage = async () => {
+  $("#showDashBoard").block({
+    message: '<i class="icon-spinner4 spinner"></i>',
+    overlayCSS: {
+      backgroundColor: "#fff",
+      opacity: 0.8,
+      cursor: "wait",
+    },
+    css: {
+      border: 0,
+      padding: 0,
+      backgroundColor: "transparent",
+    },
+  });
 
-const renderSign = () => {
+  let childProjectCode = showDashBoard.globalCurrentPovObj;
+  let data = await getData("synthesis_analysis", childProjectCode);
+  let result = JSON.parse(data.result);
+  console.log(result);
+  renderSign(result.sign);
+  renderTable1(result.table1);
+  renderTable2(result.table2);
+  renderChart1(result.chart1);
+  // $.unblockUI();
+  $("#showDashBoard").unblock();
+};
+
+const renderSign = (data) => {
   $("#new_positioning_signs").html("");
   let html = `
     <div class="col-3">
@@ -48,7 +76,7 @@ const renderSign = () => {
             </a>
             <div>
               <div class="font-weight-semibold" style="font-size: medium;white-space: nowrap;">门店数量</div>
-              <div class="font-weight-semibold" style="font-size: large">30</div>
+              <div class="font-weight-semibold" style="font-size: large">${data[0]}</div>
             </div>
           </div>
         </div>
@@ -64,7 +92,7 @@ const renderSign = () => {
             </a>
             <div>
               <div class="font-weight-semibold" style="font-size: medium;white-space: nowrap;">已有门店数</div>
-              <div class="font-weight-semibold" style="font-size: large">7</div>
+              <div class="font-weight-semibold" style="font-size: large">${data[1]}</div>
             </div>
           </div>
         </div>
@@ -80,7 +108,7 @@ const renderSign = () => {
             </a>
             <div>
               <div class="font-weight-semibold" style="font-size: medium;white-space: nowrap;">未开店数</div>
-              <div class="font-weight-semibold" style="font-size: large">2</div>
+              <div class="font-weight-semibold" style="font-size: large">${data[2]}</div>
             </div>
           </div>
         </div>
@@ -96,7 +124,7 @@ const renderSign = () => {
           </a>
           <div>
             <div class="font-weight-semibold" style="font-size: medium;white-space: nowrap;">开店中</div>
-            <div class="font-weight-semibold" style="font-size: large">2</div>
+            <div class="font-weight-semibold" style="font-size: large">${data[3]}</div>
           </div>
         </div>
       </div>
@@ -113,7 +141,7 @@ const renderSign = () => {
         </a>
         <div>
           <div class="font-weight-semibold" style="font-size: medium;white-space: nowrap;">已装修门店数</div>
-          <div class="font-weight-semibold" style="font-size: large">30</div>
+          <div class="font-weight-semibold" style="font-size: large">${data[4]}</div>
         </div>
       </div>
     </div>
@@ -129,7 +157,7 @@ const renderSign = () => {
         </a>
         <div>
           <div class="font-weight-semibold" style="font-size: medium;white-space: nowrap;">已关店数量</div>
-          <div class="font-weight-semibold" style="font-size: large">7</div>
+          <div class="font-weight-semibold" style="font-size: large">${data[5]}</div>
         </div>
       </div>
     </div>
@@ -145,7 +173,7 @@ const renderSign = () => {
         </a>
         <div>
           <div class="font-weight-semibold" style="font-size: medium;white-space: nowrap;">预计装修店次数</div>
-          <div class="font-weight-semibold" style="font-size: large">2</div>
+          <div class="font-weight-semibold" style="font-size: large">${data[6]}</div>
         </div>
       </div>
     </div>
@@ -161,7 +189,7 @@ const renderSign = () => {
       </a>
       <div>
         <div class="font-weight-semibold" style="font-size: medium;white-space: nowrap;">预计闭店数</div>
-        <div class="font-weight-semibold" style="font-size: large">2</div>
+        <div class="font-weight-semibold" style="font-size: large">${data[7]}</div>
       </div>
     </div>
   </div>
@@ -171,100 +199,7 @@ const renderSign = () => {
   $("#new_positioning_signs").html(html);
 };
 
-const toPage = (sign) => {
-  console.log(1);
-
-  // // 跳转电子表格，要配置pov
-  // var pageList = [
-  //   {
-  //     sheet_id: "GRDE9SJ27MK208",
-  //     page: [
-  //       {
-  //         dc: "project",
-  //         name: rowData.project,
-  //       },
-  //       {
-  //         dc: "phase",
-  //         name: rowData.phase,
-  //       },
-  //     ],
-  //   },
-  // ];
-  // window.location.href = `../dataSheet/dataSheetMenu.html?param1=GRDE9MOOKK3PPJ&pageList=${JSON.stringify(pageList)}`;
-
-  // // // 跳转电子清单表，//query_map查询条件传参
-  // var childProjectCode = $("input[id$='child_project_code']").val();
-  // var obj = {};
-  // obj["child_project_code"] = childProjectCode;
-
-  let urls;
-  let childProjectCode = showDashBoard.globalCurrentPovObj;
-  console.log(childProjectCode);
-
-  if (sign === 1) {
-    urls = `../dashboard/showDashBoardLayer.html?appid=75&isLayer=true&param1=BIDE903AQV5M0O&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%5D&elementType=BID&elementId=BIDE903AQV5M0O&folderId=121&elementTitle=Plan_store&pageName=Plan_store&Custom_params=${encodeURIComponent(
-      JSON.stringify(childProjectCode)
-    )}`;
-  }
-  if (sign === 2) {
-    urls = `../dashboard/showDashBoardLayer.html?appid=75&isLayer=true&param1=BIDE900UUAH5E1&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%5D&elementType=BID&elementId=BIDE900UUAH5E1&folderId=116&elementTitle=Actual_store&pageName=Actual_store&Custom_params=${encodeURIComponent(
-      JSON.stringify(childProjectCode)
-    )}`;
-  }
-  if (sign === 3) {
-    urls = `../dashboard/showDashBoardLayer.html?appid=75&isLayer=true&param1=BIDE8S4K0ALIJ3&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%5D&elementType=BID&elementId=BIDE8S4K0ALIJ3&folderId=102&elementTitle=newstoreplan&pageName=newstoreplan&Custom_params=${encodeURIComponent(
-      JSON.stringify(childProjectCode)
-    )}`;
-  }
-  if (sign === 4) {
-  }
-  if (sign === 5) {
-  }
-  if (sign === 6) {
-  }
-  if (sign === 7) {
-  }
-  if (sign === 8) {
-  }
-
-  parent.layer.open({
-    type: 2,
-    title: false,
-    area: ["100%", "100%"],
-    move: false,
-    resize: false,
-    scrollbar: false,
-    content: urls,
-    closeBtn: 0,
-  });
-};
-
-const dealSheetData = (d) => {
-  let sheetData = d.sheetList[0];
-  let header_r = sheetData.columnList[0].m.map((val) => {
-    return val.sdd[0].d;
-  });
-  let body_r = sheetData.dataList.map((val) => {
-    let body_r = val.map((cVal) => {
-      return cVal.d;
-    });
-    return body_r;
-  });
-  let body_l = sheetData.rowList[0].m.map((val) => {
-    return val.sdd[0].d;
-  });
-
-  let header = ["科目", ...header_r];
-  let body = body_l.map((val, i) => {
-    return [val, ...body_r[i]];
-  });
-
-  let totalData = [header, ...body];
-  return totalData;
-};
-
-const table1 = (data) => {
-  let totalData = dealSheetData(data);
+const renderTable1 = (data) => {
   let cardName = "table1";
   let echartDom = cfs.card.body.getDom(cardName).find(".echart");
   let headDom = cfs.card.head.getDom(cardName);
@@ -272,13 +207,13 @@ const table1 = (data) => {
   // cfs.echarts.correctHeight(cardName);
 
   let header_html = `<tr>`;
-  totalData[0].forEach((val) => {
+  data[0].forEach((val) => {
     header_html += `<th>${val}</th>`;
   });
   header_html += `</tr>`;
 
   let body_html = ``;
-  totalData.forEach((val, i) => {
+  data.forEach((val, i) => {
     if (i > 0) {
       let body_html_tr = `<tr>`;
       val.forEach((cVal) => {
@@ -319,20 +254,365 @@ const table1 = (data) => {
   });
 };
 
-const table2 = (data) => {
+const renderTable2 = (data) => {
   let cardName = "table2";
   let echartDom = cfs.card.body.getDom(cardName).find(".echart");
   let headDom = cfs.card.head.getDom(cardName);
-  echartDom.height(240);
+  echartDom.height(280);
   // cfs.echarts.correctHeight(cardName);
+
+  let header_html = `<tr>`;
+  data[0].forEach((val) => {
+    header_html += `<th>${val}</th>`;
+  });
+  header_html += `</tr>`;
+
+  let body_html = ``;
+  data.forEach((val, i) => {
+    if (i > 0) {
+      let body_html_tr = `<tr>`;
+      val.forEach((cVal, j) => {
+        if (j === 0) {
+          body_html_tr += `<td>${cVal}</td>`;
+        } else {
+          body_html_tr += `<td>${numFormat(cVal)}</td>`;
+        }
+      });
+      body_html_tr += `</tr>`;
+      body_html += body_html_tr;
+    }
+  });
+
+  let html = `
+  <table id="table2_DataTable" class="table datatable-basic">
+    <thead>
+      ${header_html}
+    </thead>
+    <tbody>
+      ${body_html}
+    </tbody>
+  </table>
+  `;
+  echartDom.html(html);
+
+  $("#table2_DataTable").DataTable({
+    destroy: true,
+    bFilter: false, //是否启动过滤、搜索功能
+    bLengthChange: true, //开启一页显示多少条数据的下拉菜单，允许用户从下拉框(10、25、50和100)，注意需要分页(bPaginate：true)。
+    paging: false,
+    stripeClasses: ["odd"],
+    processing: false, //隐藏加载提示,自行处理
+    serverSide: false, //开启后台分页
+    bAutoWidth: false, //是否自适应宽度
+    bPaginate: false, //是否显示（应用）分页器
+    bSort: false, //是否启动各个字段的排序功能
+    info: false,
+    language: {
+      // "sEmptyTable":"暂无数据"
+    },
+  });
 };
 
-const chart1 = (data) => {
+const renderChart1 = (data) => {
   let cardName = "chart1";
   let echartDom = cfs.card.body.getDom(cardName).find(".echart");
   let headDom = cfs.card.head.getDom(cardName);
-  echartDom.height(240);
-  // cfs.echarts.correctHeight(cardName);
+
+  // headDom.find('.card-header').css('display', 'none');
+
+  cfs.echarts.correctHeight(cardName);
+
+  const arrToFixed = (arr) => {
+    return arr.map((val, i) => {
+      if (val === "-") {
+        return val;
+      } else {
+        let intVal = parseInt(val);
+        return (intVal / 1000000).toFixed(2);
+      }
+    });
+  };
+
+  let option = {
+    // title: {
+    //   text: '阶梯瀑布图',
+    //   left: 'center',
+    // },
+    // tooltip: {
+    //   trigger: 'axis',
+    //   axisPointer: {
+    //     // 坐标轴指示器，坐标轴触发有效
+    //     type: 'shadow', // 默认为直线，可选为：'line' | 'shadow'
+    //   },
+    //   formatter: function (params) {
+    //     var tar;
+    //     if (params[1].value !== '-') {
+    //       tar = params[1];
+    //     } else {
+    //       tar = params[0];
+    //     }
+    //     return tar.name + '<br/>' + tar.seriesName + ' : ' + tar.value;
+    //   },
+    // },
+
+    legend: {
+      orient: "horizontal",
+      // y: 30,
+      data: ["增加", "减少", "汇总"],
+    },
+    grid: {
+      left: "3%",
+      right: "4%",
+      bottom: "3%",
+      top: 50,
+      containLabel: true,
+    },
+    xAxis: {
+      type: "category",
+      splitLine: {
+        show: false,
+      },
+      axisLabel: {
+        interval: 0,
+        formatter: function (value, index) {
+          if (index % 2 != 0) {
+            return "\n\n" + value;
+          } else {
+            return value;
+          }
+        },
+      },
+      data: data.dimensions,
+    },
+    yAxis: {
+      type: "value",
+      name: "M",
+    },
+    series: [
+      {
+        name: "汇总",
+        type: "bar",
+        barWidth: 50,
+        stack: "总量",
+        label: {
+          show: true,
+          position: "top",
+        },
+        // data: data.summary,
+        data: arrToFixed(data.summary),
+      },
+      {
+        name: "辅助",
+        type: "bar",
+        barWidth: 50,
+        stack: "总量",
+        itemStyle: {
+          barBorderColor: "rgba(0,0,0,0)",
+          color: "rgba(0,0,0,0)",
+        },
+        emphasis: {
+          itemStyle: {
+            barBorderColor: "rgba(0,0,0,0)",
+            color: "rgba(0,0,0,0)",
+          },
+        },
+        // data: data.support,
+        data: arrToFixed(data.support),
+      },
+      {
+        name: "增加",
+        type: "bar",
+        stack: "总量",
+        label: {
+          show: true,
+          position: "top",
+        },
+        data: data.add,
+        data: arrToFixed(data.add),
+      },
+      {
+        name: "减少",
+        type: "bar",
+        barWidth: 50,
+        stack: "总量",
+        data: data.reduce,
+        data: arrToFixed(data.reduce),
+        label: {
+          show: true,
+          position: "bottom",
+          formatter: function (params) {
+            return "-" + params.value;
+          },
+        },
+      },
+    ],
+  };
+
+  if (!Cus_echarts[cardName]) {
+    Cus_echarts[cardName] = cfs.echarts.init(echartDom, Cus_theme, option);
+  } else {
+    cfs.echarts.refresh(Cus_echarts[cardName], option);
+  }
+
+  Cus_echarts[cardName].off("click");
+  Cus_echarts[cardName].on("click", (params) => {
+    let sign = params.seriesIndex;
+    toPage(sign, "chart1");
+  });
+};
+
+let mapChart,
+  extraMapView_1_chart,
+  extraMapView_2_chart,
+  mapOperationArray = ["china"];
+
+const toPage = (sign, area) => {
+  // // 跳转电子表格，要配置pov
+  // var pageList = [
+  //   {
+  //     sheet_id: "GRDE9SJ27MK208",
+  //     page: [
+  //       {
+  //         dc: "project",
+  //         name: rowData.project,
+  //       },
+  //       {
+  //         dc: "phase",
+  //         name: rowData.phase,
+  //       },
+  //     ],
+  //   },
+  // ];
+  // window.location.href = `../dataSheet/dataSheetMenu.html?param1=GRDE9MOOKK3PPJ&pageList=${JSON.stringify(pageList)}`;
+
+  // // // 跳转电子清单表，//query_map查询条件传参
+  // var childProjectCode = $("input[id$='child_project_code']").val();
+  // var obj = {};
+  // obj["child_project_code"] = childProjectCode;
+
+  let urls;
+  let childProjectCode = showDashBoard.globalCurrentPovObj;
+  console.log(childProjectCode);
+
+  if (_.isUndefined(area)) {
+    if (sign === 1) {
+      urls = `../dashboard/showDashBoardLayer.html?appid=75&isLayer=true&param1=BIDE903AQV5M0O&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%5D&elementType=BID&elementId=BIDE903AQV5M0O&folderId=121&elementTitle=Plan_store&pageName=Plan_store&Custom_params=${encodeURIComponent(
+        JSON.stringify(childProjectCode)
+      )}`;
+    }
+    if (sign === 2) {
+      urls = `../dashboard/showDashBoardLayer.html?appid=75&isLayer=true&param1=BIDE900UUAH5E1&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%5D&elementType=BID&elementId=BIDE900UUAH5E1&folderId=116&elementTitle=Actual_store&pageName=Actual_store&Custom_params=${encodeURIComponent(
+        JSON.stringify(childProjectCode)
+      )}`;
+      // urls = `../dashboard/showDashBoardLayer.html?appid=75&isLayer=true&param1=BIDE900UUAH5E1&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%5D&elementType=BID&elementId=BIDE900UUAH5E1&folderId=116&elementTitle=Actual_store&pageName=Actual_store&query_map='{Year: 2021,Scenario: AOP,version: Working,Entity: CT01,}'`;
+    }
+    if (sign === 3) {
+      urls = `../dashboard/showDashBoardLayer.html?appid=75&isLayer=true&param1=BIDE8S4K0ALIJ3&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%5D&elementType=BID&elementId=BIDE8S4K0ALIJ3&folderId=102&elementTitle=newstoreplan&pageName=newstoreplan&Custom_params=${encodeURIComponent(
+        JSON.stringify(childProjectCode)
+      )}`;
+    }
+    if (sign === 4) {
+      urls = `../dashboard/showDashBoardLayer.html?appid=75&isLayer=true&param1=BIDE8SC6T8PGK2&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%5D&elementType=BID&elementId=BIDE8SC6T8PGK2&folderId=107&elementTitle=SD_PipelineTrack&pageName=SD_PipelineTrack`;
+    }
+    if (sign === 5) {
+      urls = `../formlistPage/viewformlistPage.html?appid=75&isLayer=true&param1=LSTE9SVCP1OM9C&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%5D&elementType=LST&elementId=LSTE9SVCP1OM9C&folderId=1172&elementTitle=reno_app&pageName=reno_app`;
+    }
+    if (sign === 6) {
+      urls = `../formlistPage/viewformlistPage.html?appid=75&isLayer=true&param1=LSTE9TRM0O9HR6&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%5D&elementType=LST&elementId=LSTE9TRM0O9HR6&folderId=1623&elementTitle=closureapp&pageName=closureapp`;
+    }
+    if (sign === 7) {
+      urls = `../dataSheet/dataSheet.html?appid=75&isLayer=true&param1=GRDE96B8FM39GD&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%2C%7B%22name%22%3A%22%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%20%20%u95E8%u5E97%u53D8%u66F4%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%22%2C%22foldId%22%3A%22108%22%2C%22elementId%22%3A%22DIRE8SC8P8TUEH%22%7D%5D&elementType=GRD&elementId=GRDE96B8FM39GD&folderId=139&elementTitle=Alteration_Store_List&pageName=Alteration_Store_List`;
+    }
+    if (sign === 8) {
+      let flag = 2;
+      urls = `../dataSheet/dataSheet.html?appid=75&isLayer=true&param1=GRDE96B8FM39GD&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%2C%7B%22name%22%3A%22%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%20%20%u95E8%u5E97%u53D8%u66F4%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%22%2C%22foldId%22%3A%22108%22%2C%22elementId%22%3A%22DIRE8SC8P8TUEH%22%7D%5D&elementType=GRD&elementId=GRDE96B8FM39GD&folderId=139&elementTitle=Alteration_Store_List&pageName=Alteration_Store_List&Custom_params=${flag}`;
+    }
+  }
+
+  if (area === "chart1") {
+    if (sign === 0) {
+      urls = `../dataSheet/dataSheet.html?appid=75&isLayer=true&param1=GRDE91P1D6GKOS&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%5D&elementType=GRD&elementId=GRDE91P1D6GKOS&folderId=122&elementTitle=PnL_analysis&pageName=PnL_analysis`;
+    }
+    if (sign === 1) {
+      urls = `../dataSheet/dataSheet.html?appid=75&isLayer=true&param1=GRDE9BS85AMQ40&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%5D&elementType=GRD&elementId=GRDE9BS85AMQ40&folderId=182&elementTitle=store_sales_forecast&pageName=store_sales_forecast`;
+    }
+    if (sign === 2) {
+      urls = `../dataSheet/dataSheet.html?appid=75&isLayer=true&param1=GRDE9CK7CUU8L6&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%5D&elementType=GRD&elementId=GRDE9CK7CUU8L6&folderId=184&elementTitle=store_PnL&pageName=store_PnL`;
+    }
+    if (sign === 3) {
+      urls = `../dataSheet/dataSheet.html?appid=75&isLayer=true&param1=GRDE9M20GN21NF&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%5D&elementType=GRD&elementId=GRDE9M20GN21NF&folderId=196&elementTitle=sales_loss_forecast&pageName=sales_loss_forecast`;
+    }
+    if (sign === 4) {
+      urls = `../dataSheet/dataSheet.html?appid=75&isLayer=true&param1=GRDEA8T0ONACAT&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%5D&elementType=GRD&elementId=GRDEA8T0ONACAT&folderId=8784254&elementTitle=PnL_forecast&pageName=PnL_forecast`;
+    }
+  }
+
+  parent.layer.open({
+    type: 2,
+    title: false,
+    area: ["100%", "100%"],
+    move: false,
+    resize: false,
+    scrollbar: false,
+    content: urls,
+    closeBtn: 0,
+  });
+};
+
+const dealSheetData = (d) => {
+  let sheetData = d.sheetList[0];
+  let header_r = sheetData.columnList[0].m.map((val) => {
+    return val.sdd[0].d;
+  });
+  let body_r = sheetData.dataList.map((val) => {
+    let body_r = val.map((cVal) => {
+      return cVal.d;
+    });
+    return body_r;
+  });
+  let body_l = sheetData.rowList[0].m.map((val) => {
+    return val.sdd[0].d;
+  });
+
+  let header = ["科目", ...header_r];
+  let body = body_l.map((val, i) => {
+    return [val, ...body_r[i]];
+  });
+
+  let totalData = [header, ...body];
+  return totalData;
+};
+
+/**
+ * 千分符
+ * @param {*} num
+ * @returns
+ */
+const numFormat = (num) => {
+  let RNum = Number(num);
+  let c = RNum.toString().indexOf(".") !== -1 ? RNum.toLocaleString() : RNum.toString().replace(/(\d)(?=(?:\d{3})+$)/g, "$1,");
+  return c;
+};
+
+/**
+ *
+ * 请求数据
+ * @param {*} params
+ * @returns
+ */
+const getData = (pyName, params) => {
+  return CommonRequest({
+    url: `${Api.python}start/web`,
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: JSON.stringify({
+      pyName,
+      params,
+      ...userinfoParams2,
+    }),
+  });
 };
 
 var Cus_theme = "westeros";
