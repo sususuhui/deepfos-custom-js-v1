@@ -15,7 +15,9 @@ $(() => {
   let html = `
     <div class="row">
       <div style="width:60%">
-        <div class="row" id="new_positioning_signs"></div>
+        <div style="margin-bottom: 1.25rem;">
+          <div class="row" id="new_positioning_signs" style="padding-bottom: 2px;"></div>
+        </div>
         <div class="row mb-3" id="new_positioning_table1">${table1_dom.prop("outerHTML")}</div>
         <div class="row">
           <div style="width:50%" id="new_positioning_table2">${table2_dom.prop("outerHTML")}</div>
@@ -38,17 +40,15 @@ $(() => {
 });
 
 const renderPage = () => {
+  renderSignDefaultDom();
+
   renderSign();
   renderTable1();
   renderTable2();
   renderChart1();
 };
 
-const renderSign = async () => {
-  let childProjectCode = showDashBoard.globalCurrentPovObj;
-  let pyData = await getData("synthesis_analysis_part1", childProjectCode);
-  let data = JSON.parse(pyData.result);
-
+const renderSignDefaultDom = () => {
   $("#new_positioning_signs").html("");
   let html = `
     <div class="col-3">
@@ -60,7 +60,7 @@ const renderSign = async () => {
             </a>
             <div>
               <div class="font-weight-semibold" style="font-size: medium;white-space: nowrap;">门店数量</div>
-              <div class="font-weight-semibold" style="font-size: large">${data[0]}</div>
+              <div class="font-weight-semibold showVal" style="font-size: large">NaN</div>
             </div>
           </div>
         </div>
@@ -76,7 +76,7 @@ const renderSign = async () => {
             </a>
             <div>
               <div class="font-weight-semibold" style="font-size: medium;white-space: nowrap;">已有门店数</div>
-              <div class="font-weight-semibold" style="font-size: large">${data[1]}</div>
+              <div class="font-weight-semibold showVal" style="font-size: large">NaN</div>
             </div>
           </div>
         </div>
@@ -92,7 +92,7 @@ const renderSign = async () => {
             </a>
             <div>
               <div class="font-weight-semibold" style="font-size: medium;white-space: nowrap;">未开店数</div>
-              <div class="font-weight-semibold" style="font-size: large">${data[2]}</div>
+              <div class="font-weight-semibold showVal" style="font-size: large">NaN</div>
             </div>
           </div>
         </div>
@@ -108,7 +108,7 @@ const renderSign = async () => {
           </a>
           <div>
             <div class="font-weight-semibold" style="font-size: medium;white-space: nowrap;">开店中</div>
-            <div class="font-weight-semibold" style="font-size: large">${data[3]}</div>
+            <div class="font-weight-semibold showVal" style="font-size: large">NaN</div>
           </div>
         </div>
       </div>
@@ -117,7 +117,7 @@ const renderSign = async () => {
 
 
   <div class="col-3">
-  <div class="card">
+  <div class="card" style="margin-bottom: unset;">
     <div class="card-body pb-1" style="background-color:#59C4E6;color:#f0f0f0;cursor: pointer;" onclick="toPage(5)">
       <div class="d-flex align-items-center justify-content-left mb-2">
         <a href="#" class="btn bg-transparent rounded-round border-2 btn-icon mr-3" style="border-color: #f0f0f0">
@@ -125,7 +125,7 @@ const renderSign = async () => {
         </a>
         <div>
           <div class="font-weight-semibold" style="font-size: medium;white-space: nowrap;">已装修门店数</div>
-          <div class="font-weight-semibold" style="font-size: large">${data[4]}</div>
+          <div class="font-weight-semibold showVal" style="font-size: large">NaN</div>
         </div>
       </div>
     </div>
@@ -133,7 +133,7 @@ const renderSign = async () => {
 </div>
 
 <div class="col-3">
-  <div class="card">
+  <div class="card" style="margin-bottom: unset;">
     <div class="card-body pb-1" style="background-color:#59C4E6;color:#f0f0f0;cursor: pointer;" onclick="toPage(6)">
       <div class="d-flex align-items-center justify-content-left mb-2">
         <a href="#" class="btn bg-transparent rounded-round border-2 btn-icon mr-3" style="border-color: #f0f0f0">
@@ -141,7 +141,7 @@ const renderSign = async () => {
         </a>
         <div>
           <div class="font-weight-semibold" style="font-size: medium;white-space: nowrap;">已关店数量</div>
-          <div class="font-weight-semibold" style="font-size: large">${data[5]}</div>
+          <div class="font-weight-semibold showVal" style="font-size: large">NaN</div>
         </div>
       </div>
     </div>
@@ -149,7 +149,7 @@ const renderSign = async () => {
 </div>
 
 <div class="col-3">
-  <div class="card">
+  <div class="card" style="margin-bottom: unset;">
     <div class="card-body pb-1" style="background-color:#ADB9CA;color:#f0f0f0;cursor: pointer;" onclick="toPage(7)">
       <div class="d-flex align-items-center justify-content-left mb-2">
         <a href="#" class="btn bg-transparent rounded-round border-2 btn-icon mr-3" style="border-color: #f0f0f0">
@@ -157,7 +157,7 @@ const renderSign = async () => {
         </a>
         <div>
           <div class="font-weight-semibold" style="font-size: medium;white-space: nowrap;">预计装修店次数</div>
-          <div class="font-weight-semibold" style="font-size: large">${data[6]}</div>
+          <div class="font-weight-semibold showVal" style="font-size: large">NaN</div>
         </div>
       </div>
     </div>
@@ -165,7 +165,7 @@ const renderSign = async () => {
 </div>
 
 <div class="col-3">
-<div class="card">
+<div class="card" style="margin-bottom: unset;">
   <div class="card-body pb-1" style="background-color:#ADB9CA;color:#f0f0f0;cursor: pointer;" onclick="toPage(8)">
     <div class="d-flex align-items-center justify-content-left mb-2">
       <a href="#" class="btn bg-transparent rounded-round border-2 btn-icon mr-3" style="border-color: #f0f0f0">
@@ -173,7 +173,7 @@ const renderSign = async () => {
       </a>
       <div>
         <div class="font-weight-semibold" style="font-size: medium;white-space: nowrap;">预计闭店数</div>
-        <div class="font-weight-semibold" style="font-size: large">${data[7]}</div>
+        <div class="font-weight-semibold showVal" style="font-size: large">NaN</div>
       </div>
     </div>
   </div>
@@ -183,13 +183,43 @@ const renderSign = async () => {
   $("#new_positioning_signs").html(html);
 };
 
+const renderSign = async () => {
+  $("#new_positioning_signs").block({
+    message: '<i class="icon-spinner4 spinner"></i>',
+    overlayCSS: {
+      backgroundColor: "#fff",
+      opacity: 0.8,
+      cursor: "wait",
+    },
+    css: {
+      border: 0,
+      padding: 0,
+      backgroundColor: "transparent",
+    },
+  });
+
+  let childProjectCode = showDashBoard.globalCurrentPovObj;
+  let pyData = await getData("synthesis_analysis_part1", childProjectCode);
+  let data = JSON.parse(pyData.result);
+  $("#new_positioning_signs").find(".card").find(".showVal")[0].innerHTML = data[0];
+  $("#new_positioning_signs").find(".card").find(".showVal")[1].innerHTML = data[1];
+  $("#new_positioning_signs").find(".card").find(".showVal")[2].innerHTML = data[2];
+  $("#new_positioning_signs").find(".card").find(".showVal")[3].innerHTML = data[3];
+  $("#new_positioning_signs").find(".card").find(".showVal")[4].innerHTML = data[4];
+  $("#new_positioning_signs").find(".card").find(".showVal")[5].innerHTML = data[5];
+  $("#new_positioning_signs").find(".card").find(".showVal")[6].innerHTML = data[6];
+  $("#new_positioning_signs").find(".card").find(".showVal")[7].innerHTML = data[7];
+
+  $("#new_positioning_signs").unblock();
+};
+
 const renderTable1 = async () => {
   let cardName = "table1";
   let echartDom = cfs.card.body.getDom(cardName).find(".echart");
   let headDom = cfs.card.head.getDom(cardName);
   echartDom.height(130);
   // cfs.echarts.correctHeight(cardName);
-  $(`[data-name='${cardName}']`).block({
+  echartDom.block({
     message: '<i class="icon-spinner4 spinner"></i>',
     overlayCSS: {
       backgroundColor: "#fff",
@@ -254,7 +284,7 @@ const renderTable1 = async () => {
     },
   });
 
-  $(`[data-name='${cardName}']`).unblock();
+  echartDom.unblock();
 };
 
 const renderTable2 = async () => {
@@ -263,7 +293,7 @@ const renderTable2 = async () => {
   let headDom = cfs.card.head.getDom(cardName);
   echartDom.height(280);
   // cfs.echarts.correctHeight(cardName);
-  $(`[data-name='${cardName}']`).block({
+  echartDom.block({
     message: '<i class="icon-spinner4 spinner"></i>',
     overlayCSS: {
       backgroundColor: "#fff",
@@ -332,7 +362,7 @@ const renderTable2 = async () => {
     },
   });
 
-  $(`[data-name='${cardName}']`).unblock();
+  echartDom.unblock();
 };
 
 const renderChart1 = async () => {
@@ -342,7 +372,7 @@ const renderChart1 = async () => {
   // headDom.find('.card-header').css('display', 'none');
   echartDom.height(300);
   // cfs.echarts.correctHeight(cardName);
-  $(`[data-name='${cardName}']`).block({
+  echartDom.block({
     message: '<i class="icon-spinner4 spinner"></i>',
     overlayCSS: {
       backgroundColor: "#fff",
@@ -498,7 +528,7 @@ const renderChart1 = async () => {
     toPage(sign, "chart1");
   });
 
-  $(`[data-name='${cardName}']`).unblock();
+  echartDom.unblock();
 };
 
 let mapChart,
