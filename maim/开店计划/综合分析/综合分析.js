@@ -37,34 +37,18 @@ $(() => {
   renderPage();
 });
 
-const renderPage = async () => {
-  $("#showDashBoard").block({
-    message: '<i class="icon-spinner4 spinner"></i>',
-    overlayCSS: {
-      backgroundColor: "#fff",
-      opacity: 0.8,
-      cursor: "wait",
-    },
-    css: {
-      border: 0,
-      padding: 0,
-      backgroundColor: "transparent",
-    },
-  });
-
-  let childProjectCode = showDashBoard.globalCurrentPovObj;
-  let data = await getData("synthesis_analysis", childProjectCode);
-  let result = JSON.parse(data.result);
-  console.log(result);
-  renderSign(result.sign);
-  renderTable1(result.table1);
-  renderTable2(result.table2);
-  renderChart1(result.chart1);
-  // $.unblockUI();
-  $("#showDashBoard").unblock();
+const renderPage = () => {
+  renderSign();
+  renderTable1();
+  renderTable2();
+  renderChart1();
 };
 
-const renderSign = (data) => {
+const renderSign = async () => {
+  let childProjectCode = showDashBoard.globalCurrentPovObj;
+  let pyData = await getData("synthesis_analysis_part1", childProjectCode);
+  let data = JSON.parse(pyData.result);
+
   $("#new_positioning_signs").html("");
   let html = `
     <div class="col-3">
@@ -199,12 +183,29 @@ const renderSign = (data) => {
   $("#new_positioning_signs").html(html);
 };
 
-const renderTable1 = (data) => {
+const renderTable1 = async () => {
   let cardName = "table1";
   let echartDom = cfs.card.body.getDom(cardName).find(".echart");
   let headDom = cfs.card.head.getDom(cardName);
   echartDom.height(130);
   // cfs.echarts.correctHeight(cardName);
+  $(`[data-name='${cardName}']`).block({
+    message: '<i class="icon-spinner4 spinner"></i>',
+    overlayCSS: {
+      backgroundColor: "#fff",
+      opacity: 0.8,
+      cursor: "wait",
+    },
+    css: {
+      border: 0,
+      padding: 0,
+      backgroundColor: "transparent",
+    },
+  });
+
+  let childProjectCode = showDashBoard.globalCurrentPovObj;
+  let pyData = await getData("synthesis_analysis_part2", childProjectCode);
+  let data = JSON.parse(pyData.result);
 
   let header_html = `<tr>`;
   data[0].forEach((val) => {
@@ -252,14 +253,33 @@ const renderTable1 = (data) => {
       // "sEmptyTable":"暂无数据"
     },
   });
+
+  $(`[data-name='${cardName}']`).unblock();
 };
 
-const renderTable2 = (data) => {
+const renderTable2 = async () => {
   let cardName = "table2";
   let echartDom = cfs.card.body.getDom(cardName).find(".echart");
   let headDom = cfs.card.head.getDom(cardName);
   echartDom.height(280);
   // cfs.echarts.correctHeight(cardName);
+  $(`[data-name='${cardName}']`).block({
+    message: '<i class="icon-spinner4 spinner"></i>',
+    overlayCSS: {
+      backgroundColor: "#fff",
+      opacity: 0.8,
+      cursor: "wait",
+    },
+    css: {
+      border: 0,
+      padding: 0,
+      backgroundColor: "transparent",
+    },
+  });
+
+  let childProjectCode = showDashBoard.globalCurrentPovObj;
+  let pyData = await getData("synthesis_analysis_part4", childProjectCode);
+  let data = JSON.parse(pyData.result);
 
   let header_html = `<tr>`;
   data[0].forEach((val) => {
@@ -311,16 +331,34 @@ const renderTable2 = (data) => {
       // "sEmptyTable":"暂无数据"
     },
   });
+
+  $(`[data-name='${cardName}']`).unblock();
 };
 
-const renderChart1 = (data) => {
+const renderChart1 = async () => {
   let cardName = "chart1";
   let echartDom = cfs.card.body.getDom(cardName).find(".echart");
   let headDom = cfs.card.head.getDom(cardName);
-
   // headDom.find('.card-header').css('display', 'none');
+  echartDom.height(300);
+  // cfs.echarts.correctHeight(cardName);
+  $(`[data-name='${cardName}']`).block({
+    message: '<i class="icon-spinner4 spinner"></i>',
+    overlayCSS: {
+      backgroundColor: "#fff",
+      opacity: 0.8,
+      cursor: "wait",
+    },
+    css: {
+      border: 0,
+      padding: 0,
+      backgroundColor: "transparent",
+    },
+  });
 
-  cfs.echarts.correctHeight(cardName);
+  let childProjectCode = showDashBoard.globalCurrentPovObj;
+  let pyData = await getData("synthesis_analysis_part3", childProjectCode);
+  let data = JSON.parse(pyData.result);
 
   const arrToFixed = (arr) => {
     return arr.map((val, i) => {
@@ -459,6 +497,8 @@ const renderChart1 = (data) => {
     let sign = params.seriesIndex;
     toPage(sign, "chart1");
   });
+
+  $(`[data-name='${cardName}']`).unblock();
 };
 
 let mapChart,
