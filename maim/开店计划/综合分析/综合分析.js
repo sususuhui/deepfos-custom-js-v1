@@ -1,4 +1,10 @@
 $(() => {
+  // 引入bmap
+  let bmap_Script = document.createElement("script");
+  bmap_Script.setAttribute("type", "text/javascript");
+  bmap_Script.setAttribute("src", "../js/common/bmap.min.js");
+  document.head.appendChild(bmap_Script);
+
   // 解除限制（datav）
   let metaReferrer = document.createElement("meta");
   metaReferrer.setAttribute("name", "referrer");
@@ -37,6 +43,12 @@ $(() => {
     });
 
   renderPage();
+
+  $(window).on("resize", function () {
+    // 调整 datatable 大小
+    $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+    mapChart.resize();
+  });
 });
 
 const renderPage = () => {
@@ -46,6 +58,9 @@ const renderPage = () => {
   renderTable1();
   renderTable2();
   renderChart1();
+
+  LoadBaiduMapScript();
+  renderMap();
 };
 
 const renderSignDefaultDom = () => {
@@ -200,6 +215,12 @@ const renderSign = async () => {
 
   let childProjectCode = showDashBoard.globalCurrentPovObj;
   let pyData = await getData("synthesis_analysis_part1", childProjectCode);
+
+  if (_.isEmpty(pyData.result)) {
+    $("#new_positioning_signs").unblock();
+    return;
+  }
+
   let data = JSON.parse(pyData.result);
   $("#new_positioning_signs").find(".card").find(".showVal")[0].innerHTML = data[0];
   $("#new_positioning_signs").find(".card").find(".showVal")[1].innerHTML = data[1];
@@ -249,7 +270,7 @@ const renderTable1 = async () => {
       let body_html_tr = `<tr>`;
       val.forEach((cVal) => {
         if (cVal === "可比门店数") {
-          body_html_tr += `<td><a href="javascript:;" onclick="toPage(1)">${cVal}</a></td>`;
+          body_html_tr += `<td><a href="javascript:;" onclick="toPage(0,'table1')">${cVal}</a></td>`;
         } else {
           body_html_tr += `<td>${cVal}</td>`;
         }
@@ -537,40 +558,159 @@ const renderChart1 = async () => {
   echartDom.unblock();
 };
 
-$(window).on("resize", function () {
-  // 调整 datatable 大小
-  $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
-});
+let mapChart;
+const renderMap = () => {
+  let cardName = "map";
+  let echartDom = cfs.card.body.getDom(cardName).find(".echart");
+  let headDom = cfs.card.head.getDom(cardName);
 
-let mapChart,
-  extraMapView_1_chart,
-  extraMapView_2_chart,
-  mapOperationArray = ["china"];
+  let buttonInfo = {
+    id: "MapBackButton",
+    text: "后退",
+  };
+  cfs.card.head.addButton(headDom, buttonInfo);
+  $("#MapBackButton").click(function () {
+    // mapBack();
+    console.log(1);
+  });
+
+  cfs.card.body.getDom(cardName).css("padding", "8px");
+  cfs.echarts.correctHeight(cardName);
+
+  // 添加地图布局
+  let mapHtml = `
+  <div class="echartWrap" style="height:100%">
+    <div id="mainMapView" style="height:100%"></div>
+  </div>
+  `;
+
+  echartDom.html(mapHtml);
+
+  mapLevelRenderer();
+};
+
+/**
+ * 地图渲染器
+ * @param {*} level
+ * @param {*} MapCode
+ */
+const mapLevelRenderer = async (level, MapCode) => {
+  mapChart = echarts.init(document.getElementById("mainMapView"));
+  $("#mainMapView").css("height", "100%");
+
+  let chinaGeoJson = await getGeoJson("100000_full.json");
+
+  // let chinaJson, data;
+  // if (level === "Area") {
+  //   chinaJson = mergeArea(chinaGeoJson, MapCode);
+  //   data = await getData({ Region: `${MapCode}` });
+  // } else if (level === "Province" || level === "City") {
+  //   chinaJson = await getGeoJson(`${MapCode}_full.json`);
+  //   data = await getData({ Region: `${MapCode}` });
+  // } else {
+  //   chinaJson = mergeProvinces(chinaGeoJson);
+  //   data = await getData();
+  // }
+
+  // let resultData = JSON.parse(data.result);
+
+  let chinaJson;
+  chinaJson = mergeProvinces(chinaGeoJson);
+  initMapEcharts(chinaJson, MapCode || "全国");
+  console.log(chinaGeoJson);
+};
+
+const initMapEcharts = (geoJson, name, data, StoreMap) => {
+  echarts.registerMap(name, geoJson);
+  let option = {
+    tooltip: {},
+
+    grid: {
+      left: "30%",
+      containLabel: true,
+    },
+    visualMap: !_.isUndefined(StoreMap)
+      ? null
+      : {
+          // min: minValue,
+          // max: maxValue,
+          left: "left",
+          top: "bottom",
+          text: ["高", "低"], // 文本，默认为数值文本
+          calculable: true,
+          inRange: {
+            color: ["#edf3f6", "#04a1f6"],
+          },
+        },
+    series: [
+      {
+        type: "map",
+        map: name,
+        itemStyle: {
+          normal: {
+            borderColor: "rgba(0, 0, 0, 0.2)",
+          },
+          emphasis: {
+            shadowOffsetX: 0,
+            shadowOffsetY: 0,
+            shadowBlur: 20,
+            borderWidth: 0,
+            shadowColor: "rgba(0, 0, 0, 0.5)",
+          },
+        },
+        showLegendSymbol: false,
+        // zoom: 10,
+        // center: [90.97, 36.71],
+        roam: true,
+        label: {
+          normal: {
+            show: false,
+            rotate: 40,
+            formatter: "{b}：{value|{c}}",
+            // position: 'inside',
+            backgroundColor: "#fff",
+            padding: [3, 5],
+            borderRadius: 3,
+            borderWidth: 1,
+            borderColor: "rgba(0,0,0,0.5)",
+            color: "#777",
+            rich: {
+              value: {
+                color: "#019D2D",
+                fontSize: 14,
+                // fontWeight: 'bold'
+                // textBorderWidth: 2,
+                // textBorderColor: '#000'
+              },
+            },
+          },
+          emphasis: {
+            show: false,
+          },
+        },
+        data: [],
+        // data: mapData,
+      },
+    ],
+  };
+  mapChart.setOption(option, true);
+  // 解绑click事件
+  mapChart.off("click");
+  //给地图添加监听事件
+  mapChart.on("click", async (params) => {
+    let MapData = params.data.MapData;
+
+    // if (MapData.level === "District") {
+    //   mapOperationArray.push({ level: MapData.level, MapCode: MapData.MapCode });
+    //   bmapRenderer(MapData.MapCode, StoreMap);
+    // } else {
+    //   mapOperationArray.push({ level: MapData.level, MapCode: MapData.MapCode });
+    //   mapLevelRenderer(MapData.level, MapData.MapCode);
+    // }
+  });
+};
 
 const toPage = (sign, area) => {
-  // // 跳转电子表格，要配置pov
-  // var pageList = [
-  //   {
-  //     sheet_id: "GRDE9SJ27MK208",
-  //     page: [
-  //       {
-  //         dc: "project",
-  //         name: rowData.project,
-  //       },
-  //       {
-  //         dc: "phase",
-  //         name: rowData.phase,
-  //       },
-  //     ],
-  //   },
-  // ];
-  // window.location.href = `../dataSheet/dataSheetMenu.html?param1=GRDE9MOOKK3PPJ&pageList=${JSON.stringify(pageList)}`;
-
-  // // // 跳转电子清单表，//query_map查询条件传参
-  // var childProjectCode = $("input[id$='child_project_code']").val();
-  // var obj = {};
-  // obj["child_project_code"] = childProjectCode;
-
   let urls;
   let childProjectCode = showDashBoard.globalCurrentPovObj;
   console.log(childProjectCode);
@@ -628,6 +768,13 @@ const toPage = (sign, area) => {
     }
   }
 
+  if (area === "table1") {
+    if (sign === 0) {
+      let flag = 1;
+      urls = `../dataSheet/dataSheet.html?appid=75&isLayer=true&param1=GRDE9B4MQH9NF1&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%5D&elementType=GRD&elementId=GRDE9B4MQH9NF1&folderId=181&elementTitle=CompStore&pageName=CompStore&Custom_params=${flag}`;
+    }
+  }
+
   parent.layer.open({
     type: 2,
     title: false,
@@ -640,28 +787,120 @@ const toPage = (sign, area) => {
   });
 };
 
-const dealSheetData = (d) => {
-  let sheetData = d.sheetList[0];
-  let header_r = sheetData.columnList[0].m.map((val) => {
-    return val.sdd[0].d;
-  });
-  let body_r = sheetData.dataList.map((val) => {
-    let body_r = val.map((cVal) => {
-      return cVal.d;
+/**
+ * 首层合并省份为四大区
+ * @param {*} chinaJson
+ */
+const mergeProvinces = (chinaJson) => {
+  let refactorFormat = {
+    areaDivide: ["华北", "华东", "华南", "华西"],
+    // areaDivide: ['华北'],
+    areaChildren: [
+      // 把各个大区的省份用二维数组分开
+      ["北京", "天津", "河北", "山西", "内蒙古", "黑龙江", "吉林", "辽宁"],
+      ["山东", "江苏", "安徽", "江西", "浙江", "福建", "上海", "台湾", "河南", "湖北"],
+      ["广东", "广西", "海南", "香港", "澳门", "湖南"],
+      ["陕西", "甘肃", "青海", "宁夏", "新疆", "重庆", "四川", "云南", "西藏", "贵州"],
+    ],
+  };
+
+  let newChinaJson = {
+    features: [
+      {
+        geometry: { type: "MultiPolygon", coordinates: [] },
+        properties: { name: "华北", level: "area" },
+        type: "Feature",
+      },
+      {
+        geometry: { type: "MultiPolygon", coordinates: [] },
+        properties: { name: "华东", level: "area" },
+        type: "Feature",
+      },
+      {
+        geometry: { type: "MultiPolygon", coordinates: [] },
+        properties: { name: "华南", level: "area" },
+        type: "Feature",
+      },
+      {
+        geometry: { type: "MultiPolygon", coordinates: [] },
+        properties: { name: "华西", level: "area" },
+        type: "Feature",
+      },
+    ],
+    type: "FeatureCollection",
+  };
+  chinaJson.features.forEach((val, i) => {
+    refactorFormat.areaDivide.forEach((_, j) => {
+      if (refactorFormat.areaChildren[j].toString().indexOf(val.properties.name.slice(0, 2)) != -1 && val.properties.name != "" && val.properties.name.slice(0, 2) === "内蒙") {
+        newChinaJson.features[j].geometry.coordinates = [...newChinaJson.features[j].geometry.coordinates, [...val.geometry.coordinates]];
+      } else if (refactorFormat.areaChildren[j].toString().indexOf(val.properties.name.slice(0, 2)) != -1 && val.properties.name != "") {
+        newChinaJson.features[j].geometry.coordinates = [...newChinaJson.features[j].geometry.coordinates, ...val.geometry.coordinates];
+      }
     });
-    return body_r;
-  });
-  let body_l = sheetData.rowList[0].m.map((val) => {
-    return val.sdd[0].d;
   });
 
-  let header = ["科目", ...header_r];
-  let body = body_l.map((val, i) => {
-    return [val, ...body_r[i]];
+  return newChinaJson;
+};
+
+/**
+ * 大区分块（第二层级）
+ * @param {*} chinaJson
+ * @param {*} area
+ */
+const mergeArea = (chinaJson, area) => {
+  let refactorFormat = {
+    areaDivideCode: ["T01", "T02", "T03", "T04"],
+    // areaDivide: ['华北', '华东', '华南', '华西'],
+    areaChildren: [
+      // 把各个大区的省份用二维数组分开
+      ["北京", "天津", "河北", "山西", "内蒙古", "黑龙江", "吉林", "辽宁"],
+      ["山东", "江苏", "安徽", "江西", "浙江", "福建", "上海", "台湾", "河南", "湖北"],
+      ["广东", "广西", "海南", "香港", "澳门", "湖南"],
+      ["陕西", "甘肃", "青海", "宁夏", "新疆", "重庆", "四川", "云南", "西藏", "贵州"],
+    ],
+  };
+
+  let newChinaJson = {
+    features: [],
+    type: "FeatureCollection",
+  };
+
+  chinaJson.features.forEach((val, i) => {
+    let areaIndex = refactorFormat.areaDivideCode.indexOf(area);
+    if (areaIndex != -1) {
+      if (refactorFormat.areaChildren[areaIndex].toString().indexOf(val.properties.name.slice(0, 2)) != -1 && val.properties.name != "") {
+        newChinaJson.features.push(val);
+      }
+    }
   });
 
-  let totalData = [header, ...body];
-  return totalData;
+  return newChinaJson;
+};
+
+/**
+ * 加载百度地图 API
+ */
+const LoadBaiduMapScript = () => {
+  //console.log("初始化百度地图脚本...");
+  const AK = "NiGaA3XdWH2IqZB0ohynxvB9yh492DY2";
+  const BMap_URL = "https://api.map.baidu.com/api?v=3.0&ak=" + AK + "&s=1&callback=onBMapCallback";
+  return new Promise((resolve, reject) => {
+    // 如果已加载直接返回
+    if (typeof BMap !== "undefined") {
+      resolve(BMap);
+      return true;
+    }
+    // 百度地图异步加载回调处理
+    window.onBMapCallback = function () {
+      console.log("百度地图脚本初始化成功...");
+      resolve(BMap);
+    };
+    // 插入script脚本
+    let scriptNode = document.createElement("script");
+    scriptNode.setAttribute("type", "text/javascript");
+    scriptNode.setAttribute("src", BMap_URL);
+    document.body.appendChild(scriptNode);
+  });
 };
 
 /**
@@ -673,6 +912,22 @@ const numFormat = (num) => {
   let RNum = Number(num);
   let c = RNum.toString().indexOf(".") !== -1 ? RNum.toLocaleString() : RNum.toString().replace(/(\d)(?=(?:\d{3})+$)/g, "$1,");
   return c;
+};
+
+/**
+ * datav geo 接口
+ * @param {*} jsonName
+ */
+const getGeoJson = async (jsonName) => {
+  const publicUrl = "https://geo.datav.aliyun.com/areas_v2/bound/";
+
+  let url = publicUrl + jsonName;
+  let config = {
+    method: "GET",
+    url: url,
+  };
+  let res = await axios(config);
+  return res.data;
 };
 
 /**
