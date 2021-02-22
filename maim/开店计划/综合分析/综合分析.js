@@ -558,7 +558,8 @@ const renderChart1 = async () => {
   echartDom.unblock();
 };
 
-let mapChart;
+let mapChart,
+  mapOperationArray = [];
 const renderMap = () => {
   let cardName = "map";
   let echartDom = cfs.card.body.getDom(cardName).find(".echart");
@@ -568,10 +569,19 @@ const renderMap = () => {
     id: "MapBackButton",
     text: "后退",
   };
-  cfs.card.head.addButton(headDom, buttonInfo);
+  let btn = $(
+    '<a class="breadcrumb-elements-item mr-2 cursor-pointer" id="' +
+      buttonInfo.id +
+      '"><div class="customLoader mr-1" style="margin-bottom: 2px; display: none;"></div><i class="' +
+      buttonInfo.icon +
+      ' icon text-default mr-1"></i><span class="iconSpan loadDes">' +
+      buttonInfo.text +
+      "</span></a>"
+  );
+  headDom.find(".header-elements").html(btn);
+
   $("#MapBackButton").click(function () {
-    // mapBack();
-    console.log(1);
+    mapBack();
   });
 
   cfs.card.body.getDom(cardName).css("padding", "8px");
@@ -586,7 +596,17 @@ const renderMap = () => {
 
   echartDom.html(mapHtml);
 
-  mapLevelRenderer();
+  let childProjectCode = showDashBoard.globalCurrentPovObj;
+  let { Entity } = childProjectCode;
+  mapOperationArray = [];
+  mapOperationArray.push(Entity);
+  if (Entity === "MLC") {
+    mapLevelRenderer("China", Entity);
+  } else if (["CT04", "CT01", "CT02", "CT03"].includes(Entity)) {
+    mapLevelRenderer("Area", Entity);
+  } else {
+    mapLevelRenderer(_, Entity);
+  }
 };
 
 /**
@@ -599,28 +619,54 @@ const mapLevelRenderer = async (level, MapCode) => {
   $("#mainMapView").css("height", "100%");
 
   let chinaGeoJson = await getGeoJson("100000_full.json");
-
-  // let chinaJson, data;
-  // if (level === "Area") {
-  //   chinaJson = mergeArea(chinaGeoJson, MapCode);
-  //   data = await getData({ Region: `${MapCode}` });
-  // } else if (level === "Province" || level === "City") {
+  let chinaJson;
+  if (level === "China") {
+    chinaJson = mergeProvinces(chinaGeoJson);
+  } else if (level === "Area") {
+    chinaJson = mergeArea(chinaGeoJson, MapCode);
+  } else {
+    chinaJson = await getGeoJson(`${MapCode}_full.json`);
+  }
+  // if (level === "Province" || level === "City") {
   //   chinaJson = await getGeoJson(`${MapCode}_full.json`);
-  //   data = await getData({ Region: `${MapCode}` });
-  // } else {
-  //   chinaJson = mergeProvinces(chinaGeoJson);
-  //   data = await getData();
   // }
 
-  // let resultData = JSON.parse(data.result);
+  $("#map").block({
+    message: '<i class="icon-spinner4 spinner"></i>',
+    overlayCSS: {
+      backgroundColor: "#fff",
+      opacity: 0.8,
+      cursor: "wait",
+    },
+    css: {
+      border: 0,
+      padding: 0,
+      backgroundColor: "transparent",
+    },
+  });
+  let pyData = await getData("synthesis_analysis_part5", { Entity: MapCode });
+  let resultData = JSON.parse(pyData.result);
+  $("#map").unblock();
 
-  let chinaJson;
-  chinaJson = mergeProvinces(chinaGeoJson);
-  initMapEcharts(chinaJson, MapCode || "全国");
-  console.log(chinaGeoJson);
+  initMapEcharts(chinaJson, MapCode, resultData.Form, resultData.StoreMap);
 };
 
 const initMapEcharts = (geoJson, name, data, StoreMap) => {
+  let mapData = data.map((v) => {
+    return { value: v.StoreNum, name: v.name, MapData: v };
+  });
+  console.log(mapData);
+
+  let valueArr = [];
+  mapData.forEach((val) => {
+    valueArr.push(val.value);
+  });
+  let minValue = Math.min(...valueArr);
+  let maxValue = Math.max(...valueArr);
+
+  minValue = Math.floor(minValue / Math.pow(10, minValue.toString().length - 1)) * Math.pow(10, minValue.toString().length - 1);
+  maxValue = Math.ceil(maxValue / Math.pow(10, maxValue.toString().length - 1)) * Math.pow(10, maxValue.toString().length - 1);
+
   echarts.registerMap(name, geoJson);
   let option = {
     tooltip: {},
@@ -632,8 +678,8 @@ const initMapEcharts = (geoJson, name, data, StoreMap) => {
     visualMap: !_.isUndefined(StoreMap)
       ? null
       : {
-          // min: minValue,
-          // max: maxValue,
+          min: minValue,
+          max: maxValue,
           left: "left",
           top: "bottom",
           text: ["高", "低"], // 文本，默认为数值文本
@@ -688,8 +734,8 @@ const initMapEcharts = (geoJson, name, data, StoreMap) => {
             show: false,
           },
         },
-        data: [],
-        // data: mapData,
+        // data: [],
+        data: mapData,
       },
     ],
   };
@@ -698,16 +744,36 @@ const initMapEcharts = (geoJson, name, data, StoreMap) => {
   mapChart.off("click");
   //给地图添加监听事件
   mapChart.on("click", async (params) => {
-    let MapData = params.data.MapData;
+    let { MapData } = params.data;
 
-    // if (MapData.level === "District") {
-    //   mapOperationArray.push({ level: MapData.level, MapCode: MapData.MapCode });
-    //   bmapRenderer(MapData.MapCode, StoreMap);
-    // } else {
-    //   mapOperationArray.push({ level: MapData.level, MapCode: MapData.MapCode });
-    //   mapLevelRenderer(MapData.level, MapData.MapCode);
-    // }
+    if (MapData.level === "District") {
+      // mapOperationArray.push({ level: MapData.level, MapCode: MapData.MapCode });
+      // bmapRenderer(MapData.MapCode, StoreMap);
+      debugger;
+    } else {
+      mapOperationArray.push(MapData.MapCode);
+      mapLevelRenderer(MapData.level, MapData.MapCode);
+    }
   });
+};
+
+const mapBack = () => {
+  if (mapOperationArray.length >= 2) {
+    mapChart.dispose();
+
+    let Entity = mapOperationArray[mapOperationArray.length - 2];
+
+    if (Entity === "MLC") {
+      mapLevelRenderer("China", Entity);
+      mapOperationArray.pop();
+    } else if (["CT04", "CT01", "CT02", "CT03"].includes(Entity)) {
+      mapLevelRenderer("Area", Entity);
+      mapOperationArray.pop();
+    } else {
+      mapLevelRenderer(_, Entity);
+      mapOperationArray.pop();
+    }
+  }
 };
 
 const toPage = (sign, area) => {
@@ -849,7 +915,7 @@ const mergeProvinces = (chinaJson) => {
  */
 const mergeArea = (chinaJson, area) => {
   let refactorFormat = {
-    areaDivideCode: ["T01", "T02", "T03", "T04"],
+    areaDivideCode: ["CT04", "CT01", "CT02", "CT03"],
     // areaDivide: ['华北', '华东', '华南', '华西'],
     areaChildren: [
       // 把各个大区的省份用二维数组分开
