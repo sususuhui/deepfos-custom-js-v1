@@ -36,37 +36,37 @@ const getSrcParam = (src) => {
   }
   return obj;
 };
-// let iframeE = [];
-// function electronicFormFn(tn) {
-//   let d = getIframeByElement(tn.nTBody);
-//   let a = d.parent().parent().attr("data-name");
+let iframeE = [];
+function electronicFormFn(tn) {
+  let d = getIframeByElement(tn.nTBody);
+  let a = d.parent().parent().attr("data-name");
 
-//   if (iframeE.includes(a)) {
-//     debugger
-//     let src = $("iframe", window.parent.document).attr("src");
+  if (iframeE.includes(a)) {
+    debugger
+    let src = $("iframe", window.parent.document).attr("src");
 
-//     const paramObj = getSrcParam(src);
-//     let pov = JSON.parse(decodeURIComponent(paramObj.Custom_params));
-//     d[0].contentWindow.tableDataDraw("#contractList_table", { territory: pov.Entity });
-//     debugger;
-//   } else {
-//     iframeE.push(a);
-//   }
-// }
-// //获取元素所在的iframe对象
-// function getIframeByElement(element) {
-//   let iframe;
-//   $("iframe", document).each(function () {
-//     if (element.ownerDocument === $(this).prop("contentWindow").document) {
-//       iframe = $(this);
-//     }
-//     return !iframe;
-//   });
-//   return iframe;
-// }
-// $(() => {
-//   setPageTransferPov();
-// });
+    const paramObj = getSrcParam(src);
+    let pov = JSON.parse(decodeURIComponent(paramObj.Custom_params));
+    d[0].contentWindow.tableDataDraw("#contractList_table", { territory: pov.Entity });
+    debugger;
+  } else {
+    iframeE.push(a);
+  }
+}
+//获取元素所在的iframe对象
+function getIframeByElement(element) {
+  let iframe;
+  $("iframe", document).each(function () {
+    if (element.ownerDocument === $(this).prop("contentWindow").document) {
+      iframe = $(this);
+    }
+    return !iframe;
+  });
+  return iframe;
+}
+$(() => {
+  setPageTransferPov();
+});
 
 // /**
 //  * 设置跳转 pov （具体分析）

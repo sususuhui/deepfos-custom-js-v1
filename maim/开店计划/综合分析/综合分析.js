@@ -11,6 +11,18 @@ $(() => {
   metaReferrer.setAttribute("content", "no-referrer");
   document.head.appendChild(metaReferrer);
 
+  // 引入样式
+  let style = document.createElement("style");
+  style.innerHTML = `
+  .BMap_cpyCtrl {
+    display:none;
+  }
+  .anchorBL{
+    display:none;
+  }
+  `;
+  document.head.appendChild(style);
+
   let table1_dom = $(`[data-name='table1']`);
   let table2_dom = $(`[data-name='table2']`);
   let chart1_dom = $(`[data-name='chart1']`);
@@ -648,10 +660,10 @@ const mapLevelRenderer = async (level, MapCode) => {
   let resultData = JSON.parse(pyData.result);
   $("#map").unblock();
 
-  initMapEcharts(chinaJson, MapCode, resultData.Form, resultData.StoreMap);
+  initMapEcharts(chinaJson, MapCode, resultData.Form);
 };
 
-const initMapEcharts = (geoJson, name, data, StoreMap) => {
+const initMapEcharts = (geoJson, name, data) => {
   let mapData = data.map((v) => {
     return { value: v.StoreNum, name: v.name, MapData: v };
   });
@@ -675,19 +687,17 @@ const initMapEcharts = (geoJson, name, data, StoreMap) => {
       left: "30%",
       containLabel: true,
     },
-    visualMap: !_.isUndefined(StoreMap)
-      ? null
-      : {
-          min: minValue,
-          max: maxValue,
-          left: "left",
-          top: "bottom",
-          text: ["高", "低"], // 文本，默认为数值文本
-          calculable: true,
-          inRange: {
-            color: ["#edf3f6", "#04a1f6"],
-          },
-        },
+    visualMap: {
+      min: minValue,
+      max: maxValue,
+      left: "left",
+      top: "bottom",
+      text: ["高", "低"], // 文本，默认为数值文本
+      calculable: true,
+      inRange: {
+        color: ["#edf3f6", "#04a1f6"],
+      },
+    },
     series: [
       {
         type: "map",
@@ -748,13 +758,156 @@ const initMapEcharts = (geoJson, name, data, StoreMap) => {
 
     if (MapData.level === "District") {
       // mapOperationArray.push({ level: MapData.level, MapCode: MapData.MapCode });
-      // bmapRenderer(MapData.MapCode, StoreMap);
-      debugger;
+      mapOperationArray.push(MapData.MapCode);
+      bmapRenderer(MapData.MapCode);
     } else {
       mapOperationArray.push(MapData.MapCode);
       mapLevelRenderer(MapData.level, MapData.MapCode);
     }
   });
+};
+const bmapRenderer = async (MapCode) => {
+  $("#map").block({
+    message: '<i class="icon-spinner4 spinner"></i>',
+    overlayCSS: {
+      backgroundColor: "#fff",
+      opacity: 0.8,
+      cursor: "wait",
+    },
+    css: {
+      border: 0,
+      padding: 0,
+      backgroundColor: "transparent",
+    },
+  });
+
+  // 获取 区 定位点
+  let allAdCode = await getGeoJson("all.json");
+  let mapInfo = allAdCode.filter((val) => {
+    return val.adcode === parseInt(MapCode);
+  });
+  let point = { lng: mapInfo[0].lng, lat: mapInfo[0].lat };
+
+  // 获取 市 店铺信息
+  let pyData = await getData("synthesis_analysis_part5", { Entity: MapCode });
+  let resultData = JSON.parse(pyData.result);
+  let newStoreMap = resultData.Form.map((val) => {
+    return {
+      name: val.Name,
+      value: [val.Lng, val.Lat],
+    };
+  });
+
+  $("#map").unblock();
+
+  initBmapEcharts(point, newStoreMap);
+};
+
+const initBmapEcharts = (point, data) => {
+  let option = {
+    // 加载 bmap 组件
+    bmap: {
+      // 百度地图中心经纬度
+      center: [point.lng, point.lat],
+      // 百度地图缩放
+      zoom: 12,
+      // 是否开启拖拽缩放，可以只设置 'scale' 或者 'move'
+      roam: true,
+      // 百度地图的自定义样式，见 http://developer.baidu.com/map/jsdevelop-11.htm
+      mapStyle: {},
+    },
+    tooltip: {
+      trigger: "item",
+      formatter: function (params) {
+        return params.name;
+      },
+    },
+    series: [
+      {
+        type: "scatter",
+        // 使用百度地图坐标系
+        name: "店铺",
+        coordinateSystem: "bmap",
+        // 数据格式跟在 geo 坐标系上一样，每一项都是 [经度，纬度，数值大小，其它维度...]
+        data: data,
+        symbolSize: function (val) {
+          // if (val[2] > 100000) {
+
+          // 	return val[2] / 10000
+          // } else {
+          // 	return val[2] / 2000
+          // }
+          return 15;
+        },
+        label: {
+          normal: {
+            // formatter: function (data) {
+            //   return data.name + ':' + format(parseInt(data.value[2] / 10000));
+            // },
+            position: "right",
+            show: false,
+          },
+          emphasis: {
+            show: false,
+          },
+        },
+        itemStyle: {
+          normal: {
+            color: "red",
+          },
+        },
+      },
+    ],
+  };
+  mapChart.setOption(option, true);
+  mapChart.off("click");
+  mapChart.on("click", function (params) {
+    showStoreDetail(params.data);
+  });
+  let bmap = mapChart.getModel().getComponent("bmap").getBMap();
+  bmap.setMapStyleV2({
+    styleId: "be9e79ac5f78998b25fcb5ca44bcc6f7",
+  });
+};
+
+const showStoreDetail = (store) => {
+  $("#Cus_StoreTable").remove();
+
+  let height = "150px";
+  let div = $(`<div id="Cus_StoreTable" style="position: absolute; z-index: 1000; height: ${height}; bottom:0;width:100%">
+                  <div class="card" style="height: ${height};background-color:rgba(255,255,255,0.7)">
+                    <div class="card-header header-elements-inline" style="padding-top: 5px; padding-bottom: 0px">
+                    <h6 class="card-title"></h6>
+                      <div class="header-elements">
+                        <div class="list-icons"><a class="list-icons-item" data-action="remove"></a></div>
+                      </div>
+                    </div>
+                    <div class="card-body"></div>
+                  </div>
+                </div>`);
+
+  let table = `
+      <table class="table table-xs table-hover" style="">
+        <tr>
+          <th scope="col" style="width: 100px;padding: .5rem .5rem;">门店名称</th>
+        </tr>
+        <tbody>
+          <tr>
+            <td style="padding: .5rem .5rem;">${store.name}</td>
+          </tr>
+        </tbody>
+      </table>
+    `;
+
+  $("#mainMapView").css("position", "relative");
+
+  $("#mainMapView").append(div).find("#Cus_StoreTable").find("div.card-body").append(table);
+
+  $("#Cus_StoreTable")
+    .find("[data-action='remove']")
+    .click(function () {
+      $("#Cus_StoreTable").remove();
+    });
 };
 
 const mapBack = () => {
