@@ -1,3 +1,5 @@
+const globalCurrentYear = 2020;
+
 // 引入echarts
 let echarts_Script = document.createElement("script");
 echarts_Script.setAttribute("type", "text/javascript");
@@ -2675,12 +2677,19 @@ function numFormat(num) {
  * @returns 2020 / 20
  */
 function getCurrentYear(simple = false) {
-  let date = new Date();
+  // 当前时间
+  // let date = new Date();
+  // if (simple) {
+  //   let vYear = date.getYear() < 2000 ? date.getYear() + 1900 : date.getYear();
+  //   return Number(vYear.toString().substr(2, 2));
+  // } else {
+  //   return date.getFullYear();
+  // }
   if (simple) {
-    let vYear = date.getYear() < 2000 ? date.getYear() + 1900 : date.getYear();
+    let vYear = globalCurrentYear;
     return Number(vYear.toString().substr(2, 2));
   } else {
-    return date.getFullYear();
+    return globalCurrentYear;
   }
 }
 
