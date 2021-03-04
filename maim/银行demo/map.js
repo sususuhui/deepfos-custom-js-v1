@@ -101,7 +101,7 @@ const mapLevelRenderer = async (level, MapCode) => {
   let chinaGeoJson = await getGeoJson("100000_full.json");
   let chinaJson;
   if (level === "China") {
-    chinaJson = mergeProvinces(chinaGeoJson);
+    chinaJson = chinaGeoJson;
   } else if (level === "Area") {
     chinaJson = mergeArea(chinaGeoJson, MapCode);
   } else {
@@ -149,7 +149,10 @@ const initMapEcharts = (geoJson, name, data) => {
 
   echarts.registerMap(name, geoJson);
   let option = {
-    tooltip: {},
+    tooltip: {
+      trigger: "item",
+      formatter: "{b} {c}",
+    },
 
     grid: {
       left: "30%",
@@ -224,13 +227,18 @@ const initMapEcharts = (geoJson, name, data) => {
   mapChart.on("click", async (params) => {
     let { MapData } = params.data;
 
-    if (MapData.level === "District") {
+    if (MapData.level === "City") {
       // mapOperationArray.push({ level: MapData.level, MapCode: MapData.MapCode });
       mapOperationArray.push(MapData.MapCode);
       bmapRenderer(MapData.MapCode);
     } else {
-      mapOperationArray.push(MapData.MapCode);
-      mapLevelRenderer(MapData.level, MapData.MapCode);
+      if (["110000", "120000", "310000", "500000"].includes(MapData.MapCode)) {
+        mapOperationArray.push(MapData.MapCode);
+        bmapRenderer(MapData.MapCode);
+      } else {
+        mapOperationArray.push(MapData.MapCode);
+        mapLevelRenderer(MapData.level, MapData.MapCode);
+      }
     }
   });
 };
