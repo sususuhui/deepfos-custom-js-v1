@@ -74,6 +74,11 @@ const r1c1 = () => {
     ],
   };
 
+  echartDom.click(() => {
+    toPage(1);
+  });
+  echartDom.css("cursor", "pointer");
+
   if (!Cus_echarts[cardName_mini]) {
     Cus_echarts[cardName_mini] = cfs.echarts.init(miniEchartDom, Cus_theme, option);
   } else {
@@ -734,6 +739,29 @@ const r4c2 = () => {
   } else {
     cfs.echarts.refresh(Cus_echarts[cardName], option);
   }
+};
+
+const toPage = (sign, area) => {
+  let urls;
+  let childProjectCode = showDashBoard.globalCurrentPovObj;
+  console.log(childProjectCode);
+
+  if (_.isUndefined(area)) {
+    if (sign === 1) {
+      urls = `../dataSheet/dataSheet.html?appid=97&isLayer=true&param1=GRDEAT75VRFP2P&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%5D&elementType=GRD&elementId=GRDEAT75VRFP2P&folderId=8784346&elementTitle=annual_target_cal&pageName=annual_target_cal`;
+    }
+  }
+
+  parent.layer.open({
+    type: 2,
+    title: false,
+    area: ["100%", "100%"],
+    move: false,
+    resize: false,
+    scrollbar: false,
+    content: urls,
+    closeBtn: 0,
+  });
 };
 
 //extrajs全局方法
