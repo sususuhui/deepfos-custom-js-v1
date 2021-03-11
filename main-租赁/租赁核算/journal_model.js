@@ -18,6 +18,7 @@ const new_journal_model = () => {
 
 const del_journal_model = () => {
   console.log("del_journal_model");
+  handleModal_del();
 };
 
 let new_journal_model_html = `
@@ -26,7 +27,7 @@ let new_journal_model_html = `
     <div class="form-group row" style="margin-left: 0; margin-right: 0">
       <label class="col-form-label col-lg-4">
         新建凭证类型
-        <i class="icon-question3 font-size-base ml-2" data-d="0"></i>
+        <i class="icon-question3 font-size-base ml-2" data-d="0" data-w="2"></i>
       </label>
       <div class="col-lg-4">
         <div class="input-group">
@@ -42,7 +43,7 @@ let new_journal_model_html = `
     <div class="form-group">
       <label class="col-form-label col-lg-12">
         新建凭证类型
-        <i class="icon-question3 font-size-base ml-2" data-d="1"></i>
+        <i class="icon-question3 font-size-base ml-2" data-d="1" data-w="2"></i>
         <i class="icon-plus3 ml-2"></i>
       </label>
       <div class="col-lg-12">
@@ -64,7 +65,7 @@ let new_journal_model_html = `
   </div>
 
   <div class="modal-footer">
-    <i class="icon-question3 font-size-base mr-4" data-d="2"></i>
+    <i class="icon-question3 font-size-base mr-4" data-d="2" data-w="1"></i>
     <button class="btn bg-primary" data-func="close"><i class="icon-cross2 font-size-base mr-1"></i> 取消</button>
     <button class="btn bg-primary" data-func="save"><i class="icon-checkmark3 font-size-base mr-1"></i> 确认</button>
   </div>
@@ -75,7 +76,7 @@ const handleModal_new = () => {
   layer.open({
     zIndex: 9999,
     type: 1,
-    area: ["40%", "60%"],
+    area: ["50%", "60%"],
     title: "新建凭证模型",
     // move: false,
     resize: false,
@@ -159,7 +160,7 @@ const handleModal_new = () => {
         });
         // 表格 account_type_code 列 选择框增加打开请求远程数据渲染下拉 dom
         $("#table_demo select.account_type_code").on("select2:open", async function (e) {
-          getSelectData(e.currentTarget);
+          getSelectData(e.currentTarget, "Account{Base(Book_account,0)}");
         });
         // 表格删除行dom事件绑定
         $(`.icon-trash`, layero).click(function (e) {
@@ -286,33 +287,64 @@ const tips = [
 1、自定义凭证类型必须以C开头,长度10个字符以内,且不重复;
 2、至少存在两行凭证分录;
 3、至少同时存在借方和贷方
+
 处理
-1. journal mapping ;
-2. JournalType :
-3. smartlist-journal _ type ;
+1. journal mapping 增加相关配置;
+2. JournalType 维度增加该成员
+3. smartlist-journal_type 增加该成员;
 4. journal_info_config 增加相关配置;
-5. journal mapping config
+5. journal_mapping_config 增加相关配置;
+    </pre>
+  </div>
+  `,
+  `
+  <div>
+    <pre
+      style="
+        display: block;
+        font-family: monospace;
+        padding: 0;
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.42857143;
+        color: #333;
+        word-break: break-all;
+        word-wrap: break-word;
+        background-color: #f5f5f5;
+        border: 0;
+        border-radius: 4px;
+      "
+    >
+校验:
+选择的凭证类型为系统预置类，不得删除
+
+处理:
+1. journal mapping 增加相关配置;
+2. JournalType 维度增加该成员
+3. smartlist-journal_type 增加该成员;
+4. journal_info_config 增加相关配置;
+5. journal_mapping_config 增加相关配置;
     </pre>
   </div>
   `,
 ];
 const handleTips = (e) => {
   layer.tips(tips[$(e.currentTarget).attr("data-d")], e.currentTarget, {
-    tips: [2, "#f5f5f5"],
+    tips: [$(e.currentTarget).attr("data-w"), "#f5f5f5"],
     shade: 0,
     area: ["300px", "auto"],
     time: 0,
   });
 };
 
-const getSelectData = (dom, value, defaultValue) => {
+const getSelectData = (dom, dimensionMemberNames) => {
   $.ajax({
     type: "POST",
     url: Api.seepln + "dimension/selectDimensionMemberByNameFunction",
     async: false,
     data: $.extend(
       {
-        dimensionMemberNames: `Account{Base(Book_account,0)}`,
+        dimensionMemberNames: dimensionMemberNames,
         duplicate: true,
       },
       userinfoParamsApp
@@ -327,6 +359,87 @@ const getSelectData = (dom, value, defaultValue) => {
       // $(e.currentTarget).html(html);
 
       $(dom).html(html);
+    },
+  });
+};
+
+let del_journal_model_html = `
+<div class="d-flex flex-column" style="height: 100%">
+  <div class="modal-body" style="width: 60%; margin: 0 auto; margin-top: 3rem">
+    <div class="form-group row" style="margin-left: 0; margin-right: 0">
+      <label class="col-form-label col-lg-4">
+        删除凭证类型
+      </label>
+      <div class="col-lg-8">
+        <div class="input-group">
+          <select class="form-control selectedValue otherType account_type_code" default-value="-">
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <i class="icon-question3 font-size-base mr-4" data-d="3" data-w="2"></i>
+    <button class="btn bg-primary" data-func="close"><i class="icon-cross2 font-size-base mr-1"></i> 取消</button>
+    <button class="btn bg-primary" data-func="save"><i class="icon-checkmark3 font-size-base mr-1"></i> 确认</button>
+  </div>
+</div>
+`;
+const handleModal_del = () => {
+  layer.open({
+    zIndex: 9999,
+    type: 1,
+    area: ["50%", "30%"],
+    title: "删除凭证模型",
+    // move: false,
+    resize: false,
+    // scrollbar: false,
+    closeBtn: 1,
+    content: del_journal_model_html,
+    success: function (layero, index) {
+      $(`button[data-func='close']`, layero).click(function (e) {
+        layer.close(index);
+      });
+      $(`button[data-func='save']`, layero).click(function () {
+        let journal_type = $("select.account_type_code", layero).val();
+
+        if (_.isNull(journal_type) || _.isEmpty(journal_type) || _.isUndefined(journal_type)) {
+          $.jGrowl("", {
+            header: "删除凭证类型 不能为空",
+            theme: "bg-danger alert-danger alert-styled-left alert-styled-custom",
+          });
+        } else {
+          $.jGrowl("", {
+            header: "接口还没写",
+            theme: "bg-danger alert-danger alert-styled-left alert-styled-custom",
+          });
+        }
+      });
+
+      // 绑定 tip hover事件
+      $(`.icon-question3`, layero).mouseover(function (e) {
+        handleTips(e);
+      });
+      $(`.icon-question3`, layero).mouseout(function () {
+        layer.closeAll("tips");
+      });
+
+      // 表格内选择框初始化
+      $("select", layero).select2({
+        placeholder: "-",
+        dropdownAutoWidth: true,
+        minimumResultsForSearch: Infinity,
+        language: {
+          noResults: function (params) {
+            return "暂无数据";
+          },
+        },
+      });
+      // 表格 account_type_code 列 选择框增加打开请求远程数据渲染下拉 dom
+      $("select.account_type_code", layero).on("select2:open", async function (e) {
+        getSelectData(e.currentTarget, "JournalType{Base(TotalJournaltype,0)}");
+      });
     },
   });
 };
