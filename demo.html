@@ -1,16 +1,90 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <body>
-    <table class="table datatable-basic">
-      <thead>
-      </thead>
-      <tbody>
-      </tbody>
-    </table>
-  </body>
-</html>
+<div class="d-flex flex-column" style="height: 100%">
+  <div class="modal-body" style="width: 60%; margin: 0 auto; margin-top: 3rem">
+    <div class="form-group row" style="margin-left: 0; margin-right: 0">
+      <label class="col-form-label col-lg-4">
+        新建凭证类型
+        <i class="icon-question3 font-size-base ml-2"></i>
+      </label>
+      <div class="col-lg-6">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="" />
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-form-label col-lg-4">
+        新建凭证类型
+        <i class="icon-question3 font-size-base ml-2"></i>
+
+        <button
+          type="button"
+          class="btn btn-light"
+          data-popup="popover"
+          title="Popover title"
+          data-trigger="hover"
+          data-content="And here's some amazing content. It's very engaging. Right?"
+        >
+          Popover <i class="icon-play3 ml-2"></i>
+        </button>
+      </label>
+      <div class="col-lg-6">
+        <div class="input-group">
+          <input type="text" class="form-control" placeholder="" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-link" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> 取消</button>
+    <button class="btn bg-primary"><i class="icon-checkmark3 font-size-base mr-1"></i> 确认</button>
+  </div>
+
+  <div>
+    <pre
+      style="
+        display: block;
+        font-family: monospace;
+        padding: 0;
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.42857143;
+        color: #333;
+        word-break: break-all;
+        word-wrap: break-word;
+        background-color: #f5f5f5;
+        border: 0;
+        border-radius: 4px;
+      "
+    >
+校验:
+1、自定义凭证类型必须以C开头,长度10个字符以内,且不重复;
+2、至少存在两行凭证分录;
+3、至少同时存在借方和贷方
+处理
+1 . journal mapping ;
+2 , JournalType :
+3 . smartlist - journal _ type ;
+4、journal_info_config 增加相关配置;
+5 . journal mapping config
+    </pre>
+  </div>
+
+  <table class="table datatable-html">
+    <thead>
+      <tr>
+        <th class="text-center">借贷方</th>
+        <th class="text-center">科目大类(account_type_code)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <select class="form-control selectedValue otherType" required data-name="" default-value="-">
+            <option></option>
+          </select>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
