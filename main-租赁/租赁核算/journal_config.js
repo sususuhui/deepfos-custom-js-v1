@@ -106,7 +106,7 @@ const modalRender = (exp, sign) => {
               to_journal_mapping_id: selected_mul_val,
             };
           }
-          confirmNotice(content, data);
+          confirmNotice(content, data, sign);
         }
       });
 
@@ -160,15 +160,25 @@ const modalRender = (exp, sign) => {
   });
 };
 
-const confirmNotice = (content, data) => {
+const confirmNotice = (content, data, sign) => {
   layer.open({
     content,
     btn: ["确定"],
     yes: async function (index, layero) {
-      //按钮【按钮一】的回调
       console.log(data);
-      let res = await postData(data);
-      console.log(res)
+
+      if (sign === "info") {
+        // let res = await api_journal_copy_infofields(data);
+        // console.log(res);
+        layer.closeAll();
+        $("[name=refresh_all]").trigger("click");
+      }
+      if (sign === "detail") {
+        // let res = await api_journal_copy_detailfieldss(data);
+        // console.log(res);
+        layer.closeAll();
+        $("[name=refresh_all]").trigger("click");
+      }
     },
     cancel: function () {
       //右上角关闭回调
@@ -201,7 +211,20 @@ const getSelectData = (dom, dimensionMemberNames) => {
   });
 };
 
-const postData = (params) => {
+const api_journal_copy_infofields = (params) => {
+  return CommonRequest({
+    url: Api.seepln + "SeeplnGLedger/drilling-vourcher/journal_copy_infofields",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: JSON.stringify({
+      ...params,
+    }),
+  });
+};
+
+const api_journal_copy_detailfieldss = (params) => {
   return CommonRequest({
     url: Api.seepln + "SeeplnGLedger/drilling-vourcher/journal_copy_detailfieldss",
     method: "POST",

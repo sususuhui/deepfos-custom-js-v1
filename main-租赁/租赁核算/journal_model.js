@@ -77,7 +77,7 @@ const new_journal_model = () => {
       $(`button[data-func='close']`, layero).click(function (e) {
         layer.close(index);
       });
-      $(`button[data-func='save']`, layero).click(function () {
+      $(`button[data-func='save']`, layero).click(async function () {
         let Journal_line = [];
         $("#table_demo tbody tr").each(function (i, tr) {
           let rowObj = { d_c: null, account_type_code: null };
@@ -117,10 +117,20 @@ const new_journal_model = () => {
             theme: "bg-danger alert-danger alert-styled-left alert-styled-custom",
           });
         } else {
-          $.jGrowl("", {
-            header: "接口还没写",
-            theme: "bg-danger alert-danger alert-styled-left alert-styled-custom",
-          });
+          // $.jGrowl("", {
+          //   header: "接口还没写",
+          //   theme: "bg-danger alert-danger alert-styled-left alert-styled-custom",
+          // });
+          // let data = {
+          //   journal_type,
+          //   journal_type_name,
+          //   Journal_line,
+          // };
+          // let res = await api_journal_add_model(data);
+          // console.log(res);
+
+          layer.close(index);
+          $("[name=refresh_all]").trigger("click");
         }
       });
 
@@ -255,10 +265,12 @@ const del_journal_model = () => {
             theme: "bg-danger alert-danger alert-styled-left alert-styled-custom",
           });
         } else {
-          $.jGrowl("", {
-            header: "接口还没写",
-            theme: "bg-danger alert-danger alert-styled-left alert-styled-custom",
-          });
+          // $.jGrowl("", {
+          //   header: "接口还没写",
+          //   theme: "bg-danger alert-danger alert-styled-left alert-styled-custom",
+          // });
+          layer.close(index);
+          $("[name=refresh_all]").trigger("click");
         }
       });
 
@@ -431,5 +443,30 @@ const handleTips = (e) => {
     shade: 0,
     area: ["300px", "auto"],
     time: 0,
+  });
+};
+
+const api_journal_add_model = (params) => {
+  return CommonRequest({
+    url: Api.seepln + "SeeplnGLedger/drilling-vourcher/journal_add_model",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: JSON.stringify({
+      ...params,
+    }),
+  });
+};
+const api_journal_del_model = (params) => {
+  return CommonRequest({
+    url: Api.seepln + "SeeplnGLedger/drilling-vourcher/journal_del_model",
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: JSON.stringify({
+      ...params,
+    }),
   });
 };
