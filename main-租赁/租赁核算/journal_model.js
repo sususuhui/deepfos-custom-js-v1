@@ -30,12 +30,12 @@ let new_journal_model_html = `
       </label>
       <div class="col-lg-4">
         <div class="input-group">
-          <input type="text" class="form-control" placeholder="如：c46" />
+          <input type="text" data-name="journal_type" class="form-control" placeholder="如：c46" />
         </div>
       </div>
       <div class="col-lg-4">
       <div class="input-group">
-        <input type="text" class="form-control" placeholder="如：支付差异" />
+        <input type="text" data-name="journal_type_name" class="form-control" placeholder="如：支付差异" />
       </div>
     </div>
     </div>
@@ -64,7 +64,7 @@ let new_journal_model_html = `
   </div>
 
   <div class="modal-footer">
-    <i class="icon-question3 font-size-base ml-2" data-d="2"></i>
+    <i class="icon-question3 font-size-base mr-4" data-d="2"></i>
     <button class="btn bg-primary" data-func="close"><i class="icon-cross2 font-size-base mr-1"></i> 取消</button>
     <button class="btn bg-primary" data-func="save"><i class="icon-checkmark3 font-size-base mr-1"></i> 确认</button>
   </div>
@@ -75,7 +75,7 @@ const handleModal_new = () => {
   layer.open({
     zIndex: 9999,
     type: 1,
-    area: ["50%", "60%"],
+    area: ["40%", "60%"],
     title: "新建凭证模型",
     // move: false,
     resize: false,
@@ -83,6 +83,56 @@ const handleModal_new = () => {
     closeBtn: 1,
     content: new_journal_model_html,
     success: function (layero, index) {
+      $(`button[data-func='close']`, layero).click(function (e) {
+        layer.close(index);
+      });
+      $(`button[data-func='save']`, layero).click(function () {
+        let Journal_line = [];
+        $("#table_demo tbody tr").each(function (i, tr) {
+          let rowObj = { d_c: null, account_type_code: null };
+          $(tr)
+            .find("td")
+            .each(function (j, td) {
+              if (j == 0) rowObj.d_c = $(td).find("select").val();
+              if (j == 1) rowObj.account_type_code = $(td).find("select").val();
+              if (j == 2) return;
+            });
+          Journal_line.push(rowObj);
+        });
+        let journal_type = $(`input[data-name='journal_type']`, layero).val();
+        let journal_type_name = $(`input[data-name='journal_type_name']`, layero).val();
+
+        let Journal_line_check = true;
+        if (Journal_line.length > 0) {
+          Journal_line.forEach((val, i) => {
+            if (
+              _.isNull(val.d_c) ||
+              _.isEmpty(val.d_c) ||
+              _.isUndefined(val.d_c) ||
+              _.isNull(val.account_type_code) ||
+              _.isEmpty(val.account_type_code) ||
+              _.isUndefined(val.account_type_code)
+            ) {
+              Journal_line_check = false;
+            }
+          });
+        } else {
+          Journal_line_check = false;
+        }
+
+        if (journal_type.trim().length == 0 || journal_type_name.trim().length == 0 || !Journal_line_check) {
+          $.jGrowl("", {
+            header: "新建凭证类型/名称/分录行 不能为空",
+            theme: "bg-danger alert-danger alert-styled-left alert-styled-custom",
+          });
+        } else {
+          $.jGrowl("", {
+            header: "接口还没写",
+            theme: "bg-danger alert-danger alert-styled-left alert-styled-custom",
+          });
+        }
+      });
+
       // 绑定 tip hover事件
       $(`.icon-question3`, layero).mouseover(function (e) {
         handleTips(e);
