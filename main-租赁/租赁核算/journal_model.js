@@ -1,10 +1,5 @@
 /**spread2 = spread对象
  */
-// 引入样式
-let style = document.createElement("style");
-style.innerHTML = `
-`;
-document.head.appendChild(style);
 
 $(() => {
   $(`[name='new_journal_model']`).click(function () {
@@ -18,7 +13,7 @@ $(() => {
 
 const new_journal_model = () => {
   console.log("new_journal_model");
-  handleModal();
+  handleModal_new();
 };
 
 const del_journal_model = () => {
@@ -69,13 +64,14 @@ let new_journal_model_html = `
   </div>
 
   <div class="modal-footer">
-    <button class="btn btn-link" data-dismiss="modal"><i class="icon-cross2 font-size-base mr-1"></i> 取消</button>
-    <button class="btn bg-primary"><i class="icon-checkmark3 font-size-base mr-1"></i> 确认</button>
+    <i class="icon-question3 font-size-base ml-2" data-d="2"></i>
+    <button class="btn bg-primary" data-func="close"><i class="icon-cross2 font-size-base mr-1"></i> 取消</button>
+    <button class="btn bg-primary" data-func="save"><i class="icon-checkmark3 font-size-base mr-1"></i> 确认</button>
   </div>
 </div>
 `;
 
-const handleModal = () => {
+const handleModal_new = () => {
   layer.open({
     zIndex: 9999,
     type: 1,
@@ -87,18 +83,21 @@ const handleModal = () => {
     closeBtn: 1,
     content: new_journal_model_html,
     success: function (layero, index) {
+      // 绑定 tip hover事件
       $(`.icon-question3`, layero).mouseover(function (e) {
         handleTips(e);
       });
       $(`.icon-question3`, layero).mouseout(function () {
         layer.closeAll("tips");
       });
-
+      // 初始化表格为空
       $("#table_demo tbody").html("");
+      // 绑定表格新增行
       $(`.icon-plus3`, layero).click(function () {
+        // 表格新增行 dom
         addTableRow();
+        // 表格内选择框初始化
         $("#table_demo select").select2({
-          //下拉框初始化
           placeholder: "-",
           dropdownAutoWidth: true,
           minimumResultsForSearch: Infinity,
@@ -108,15 +107,16 @@ const handleModal = () => {
             },
           },
         });
+        // 表格 account_type_code 列 选择框增加打开请求远程数据渲染下拉 dom
         $("#table_demo select.account_type_code").on("select2:open", async function (e) {
           getSelectData(e.currentTarget);
         });
-
+        // 表格删除行dom事件绑定
         $(`.icon-trash`, layero).click(function (e) {
           $(e.currentTarget).parents("tr").remove();
         });
       });
-
+      // 表格 DataTable 渲染
       $(`#table_demo`, layero).DataTable({
         destroy: true,
         bFilter: false, //是否启动过滤、搜索功能
@@ -134,6 +134,7 @@ const handleModal = () => {
         },
         // columnDefs: [{ width: "100px", targets: 1 }],
       });
+      // 设置 DataTable 容器宽度
       $(".dataTables_wrapper").css("width", "100%");
     },
   });
@@ -186,10 +187,30 @@ const tips = [
         border-radius: 4px;
       "
     >
-校验:
-1、自定义凭证类型必须以C开头,长度10个字符以内,且不重复;
-2、至少存在两行凭证分录;
-3、至少同时存在借方和贷方
+自定义凭证类型必须以"C"开头,长度10个字符以内
+    </pre>
+  </div>
+  `,
+  `
+  <div>
+    <pre
+      style="
+        display: block;
+        font-family: monospace;
+        padding: 0;
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.42857143;
+        color: #333;
+        word-break: break-all;
+        word-wrap: break-word;
+        background-color: #f5f5f5;
+        border: 0;
+        border-radius: 4px;
+      "
+    >
+1、至少存在两行凭证分录
+2、至少同时存在借方和贷方
     </pre>
   </div>
   `,
