@@ -1,6 +1,8 @@
 $(() => {
   r1();
   r1c1();
+  r1c2();
+  r2c1();
 });
 
 const r1 = () => {
@@ -176,6 +178,161 @@ const r1c1 = () => {
 
   echartDom.html(html);
 };
+
+function r1c2() {
+  let cardName = "r1c2";
+  let echartDom = cfs.card.body.getDom(cardName).find(".echart");
+
+  let cardBodyDom = cfs.card.body.getDom(cardName);
+  let _height = $(cardBodyDom).height();
+  $(echartDom).height(_height);
+
+  let option = {
+    tooltip: {
+      trigger: "item",
+      formatter: "{b}: {c} ({d}%)",
+    },
+    legend: {
+      orient: "vertical",
+      left: 10,
+      data: ["剩余额度", "已使用"],
+    },
+    graphic: [
+      {
+        type: "text",
+        left: "center",
+        top: "48%",
+        style: {
+          text: "40%",
+          textAlign: "center",
+          fill: "#000",
+          width: 40,
+          height: 30,
+          fontSize: 18,
+        },
+      },
+    ],
+    series: [
+      {
+        // name: '访问来源',
+        type: "pie",
+        radius: ["50%", "70%"],
+        avoidLabelOverlap: false,
+        label: {
+          show: false,
+          position: "center",
+        },
+        labelLine: {
+          show: false,
+        },
+        data: [
+          { value: 29880800, name: "剩余额度" },
+          { value: 19544900, name: "已使用" },
+        ],
+      },
+    ],
+  };
+
+  if (!Cus_echarts[cardName]) {
+    Cus_echarts[cardName] = cfs.echarts.init(echartDom, Cus_theme, option);
+  } else {
+    cfs.echarts.refresh(Cus_echarts[cardName], option);
+  }
+}
+
+function r2c1() {
+  let cardName = "r2c1";
+  let echartDom = cfs.card.body.getDom(cardName).find(".echart");
+
+  let cardBodyDom = cfs.card.body.getDom(cardName);
+  let _height = $(cardBodyDom).height();
+  $(echartDom).height(_height);
+
+  let option = {
+    tooltip: {
+      trigger: "axis",
+      axisPointer: {
+        type: "cross",
+        crossStyle: {
+          color: "#999",
+        },
+      },
+    },
+    legend: {
+      data: ["预算支出", "实际支出", "预算总量", "实际总量"],
+      bottom: "bottom",
+    },
+    grid: {
+      left: "4%",
+      right: "4%",
+      bottom: "10%",
+      top: "6%",
+      containLabel: true,
+    },
+    xAxis: [
+      {
+        type: "category",
+        data: ["Jan-20", "Feb-20", "Mar-20", "Apr-20", "May-20", "Jun-20", "Jul-20", "Aug-20", "Sep-20", "Oct-20", "Nov-20", "Dec-20"],
+        axisPointer: {
+          type: "shadow",
+        },
+      },
+    ],
+    yAxis: [
+      {
+        type: "value",
+        // name: '水量',
+        min: 0,
+        // max: 250,
+        interval: 20000,
+        axisLabel: {
+          formatter: "{value}",
+        },
+      },
+      {
+        type: "value",
+        // name: '温度',
+        min: 0,
+        // max: 25,
+        interval: 100000,
+        axisLabel: {
+          formatter: "{value}",
+        },
+      },
+    ],
+
+    series: [
+      {
+        name: "预算支出",
+        type: "bar",
+        data: [8399, 20391, 28966, 90407, 58060, 9519, 50790, 48181, 40710, 38718, 97960, 2156],
+      },
+      {
+        name: "实际支出",
+        type: "bar",
+        data: [6099, 9384, 38966, 91000, 50000, "-", "-", "-", "-", "-", "-", "-"],
+      },
+      {
+        name: "预算总量",
+        type: "line",
+        yAxisIndex: 1,
+        data: [8399, 28790, 57756, 148163, 206223, 215742, 266532, 314713, 355423, 394141, 492101, 494257],
+      },
+      {
+        name: "实际总量",
+        type: "line",
+        yAxisIndex: 1,
+        data: [6099, 15483, 54449, 145449, 195449, "-", "-", "-", "-", "-", "-", "-"],
+      },
+    ],
+  };
+
+  if (!Cus_echarts[cardName]) {
+    Cus_echarts[cardName] = cfs.echarts.init(echartDom, Cus_theme, option);
+  } else {
+    cfs.echarts.refresh(Cus_echarts[cardName], option);
+  }
+}
 
 var Cus_theme = "westeros";
 var Cus_echarts = {};
