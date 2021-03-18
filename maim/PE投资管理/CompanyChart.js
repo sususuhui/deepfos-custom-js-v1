@@ -1084,6 +1084,9 @@ function Chart_R3C1_Main() {
           36135.25103,
           36972.14635,
         ],
+        itemStyle: {
+          color: "#0F953A",
+        },
       },
       {
         name: "股东估值",
@@ -1111,6 +1114,9 @@ function Chart_R3C1_Main() {
           24340.67922,
           24842.81641,
         ],
+        itemStyle: {
+          color: "#82BC01",
+        },
       },
     ],
   };
