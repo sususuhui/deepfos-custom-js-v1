@@ -114,7 +114,7 @@ const modalRender = (exp, sign) => {
       $("select.account_type_code", layero).select2({
         placeholder: "-",
         dropdownAutoWidth: true,
-        minimumResultsForSearch: Infinity,
+        minimumResultsForSearch: true,
         language: {
           noResults: function (params) {
             return "暂无数据";
@@ -128,7 +128,7 @@ const modalRender = (exp, sign) => {
       // 多选框
       $("select.multiselect").multiselect({
         nonSelectedText: "-",
-
+        enableFiltering: true,
         onDropdownShow: function (e) {
           $.ajax({
             type: "POST",

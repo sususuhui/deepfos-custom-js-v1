@@ -151,7 +151,7 @@ const new_journal_model = () => {
         $("#table_demo select").select2({
           placeholder: "-",
           dropdownAutoWidth: true,
-          minimumResultsForSearch: Infinity,
+          minimumResultsForSearch: true,
           language: {
             noResults: function (params) {
               return "暂无数据";
@@ -286,7 +286,7 @@ const del_journal_model = () => {
       $("select", layero).select2({
         placeholder: "-",
         dropdownAutoWidth: true,
-        minimumResultsForSearch: Infinity,
+        minimumResultsForSearch: true,
         language: {
           noResults: function (params) {
             return "暂无数据";
