@@ -166,18 +166,22 @@ const confirmNotice = (content, data, sign) => {
     btn: ["确定"],
     yes: async function (index, layero) {
       console.log(data);
-
-      if (sign === "info") {
-        // let res = await api_journal_copy_infofields(data);
-        // console.log(res);
+      try {
+        let res;
+        if (sign === "info") {
+          res = await api_journal_copy_infofields(data);
+        }
+        if (sign === "detail") {
+          res = await api_journal_copy_detailfieldss(data);
+        }
+        console.log(res);
         layer.closeAll();
         $("[name=refresh_all]").trigger("click");
-      }
-      if (sign === "detail") {
-        // let res = await api_journal_copy_detailfieldss(data);
-        // console.log(res);
-        layer.closeAll();
-        $("[name=refresh_all]").trigger("click");
+      } catch (e) {
+        $.jGrowl("", {
+          header: e,
+          theme: "bg-danger alert-danger alert-styled-left alert-styled-custom",
+        });
       }
     },
     cancel: function () {
@@ -213,7 +217,8 @@ const getSelectData = (dom, dimensionMemberNames) => {
 
 const api_journal_copy_infofields = (params) => {
   return CommonRequest({
-    url: Api.seepln + "SeeplnGLedger/drilling-vourcher/journal_copy_infofields",
+    url: "http://v1.test01.proinnova.com.cn/SeeplnGLedger/drilling-vourcher/journal_copy_infofields",
+    // url: Api.seepln + "SeeplnGLedger/drilling-vourcher/journal_copy_infofields",
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -226,7 +231,8 @@ const api_journal_copy_infofields = (params) => {
 
 const api_journal_copy_detailfieldss = (params) => {
   return CommonRequest({
-    url: Api.seepln + "SeeplnGLedger/drilling-vourcher/journal_copy_detailfieldss",
+    url: "http://v1.test01.proinnova.com.cn/SeeplnGLedger/drilling-vourcher/journal_copy_detailfields",
+    // url: Api.seepln + "SeeplnGLedger/drilling-vourcher/journal_copy_detailfieldss",
     method: "POST",
     headers: {
       "Content-Type": "application/json",

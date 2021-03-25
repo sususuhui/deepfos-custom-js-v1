@@ -21,7 +21,7 @@ let new_journal_model_html = `
       </label>
       <div class="col-lg-4">
         <div class="input-group">
-          <input type="text" data-name="journal_type" class="form-control" placeholder="如：c46" />
+          <input type="text" data-name="journal_type" class="form-control" placeholder="如：C46" />
         </div>
       </div>
       <div class="col-lg-4">
@@ -121,16 +121,18 @@ const new_journal_model = () => {
           //   header: "接口还没写",
           //   theme: "bg-danger alert-danger alert-styled-left alert-styled-custom",
           // });
-          // let data = {
-          //   journal_type,
-          //   journal_type_name,
-          //   Journal_line,
-          // };
-          // let res = await api_journal_add_model(data);
-          // console.log(res);
+          let data = {
+            journal_type,
+            journal_type_name,
+            Journal_line,
+          };
 
-          layer.close(index);
-          $("[name=refresh_all]").trigger("click");
+          try {
+            let res = await api_journal_add_model(data);
+            console.log(res);
+            layer.close(index);
+            $("[name=refresh_all]").trigger("click");
+          } catch (e) {}
         }
       });
 
@@ -256,7 +258,7 @@ const del_journal_model = () => {
       $(`button[data-func='close']`, layero).click(function (e) {
         layer.close(index);
       });
-      $(`button[data-func='save']`, layero).click(function () {
+      $(`button[data-func='save']`, layero).click(async function () {
         let journal_type = $("select.account_type_code", layero).val();
 
         if (_.isNull(journal_type) || _.isEmpty(journal_type) || _.isUndefined(journal_type)) {
@@ -269,8 +271,15 @@ const del_journal_model = () => {
           //   header: "接口还没写",
           //   theme: "bg-danger alert-danger alert-styled-left alert-styled-custom",
           // });
-          layer.close(index);
-          $("[name=refresh_all]").trigger("click");
+          let data = {
+            journal_type,
+          };
+          try {
+            let res = await api_journal_del_model(data);
+            console.log(res);
+            layer.close(index);
+            $("[name=refresh_all]").trigger("click");
+          } catch (e) {}
         }
       });
 
@@ -448,7 +457,8 @@ const handleTips = (e) => {
 
 const api_journal_add_model = (params) => {
   return CommonRequest({
-    url: Api.seepln + "SeeplnGLedger/drilling-vourcher/journal_add_model",
+    url: "http://v1.test01.proinnova.com.cn/SeeplnGLedger/drilling-vourcher/journal_add_model",
+    // url: Api.seepln + "SeeplnGLedger/drilling-vourcher/journal_add_model",
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -460,7 +470,8 @@ const api_journal_add_model = (params) => {
 };
 const api_journal_del_model = (params) => {
   return CommonRequest({
-    url: Api.seepln + "SeeplnGLedger/drilling-vourcher/journal_del_model",
+    url: "http://v1.test01.proinnova.com.cn/SeeplnGLedger/drilling-vourcher/journal_del_model",
+    // url: Api.seepln + "SeeplnGLedger/drilling-vourcher/journal_del_model",
     method: "POST",
     headers: {
       "Content-Type": "application/json",
