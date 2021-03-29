@@ -1,345 +1,8 @@
 function r1m1(data, params) {
   var componentId = params.componentId;
-  var html = `<div class="card-header" style="padding:0;">
-                  <h6 class="card-title" style="display:inline-block;"><i class="icon-table2 mr-2"></i><span class="contractInformation">门店编号</span></h6>
-                  <div class="header-elements ml-3" style="display:inline-block;padding:0;" id="slectId">
-                    <form action="#" class="d-inline-flex row" style="width:35rem;">
-                      <div class="dropdown p-0 col-md-6">
-                        <select class="disPNone user_2s" data-fouc="" name="eq_user_id" id="eq_user_id">
-                          <option value="">-</option>
-                        </select>
-                        <span class="clearDimensionA" onclick="clearUser(this,'2')"></span>
-                        <a href="#" style="padding-top:0.5rem;padding-bottom:0.5rem;"
-                          class=" multiselect dimensionA btn btn-light dropdown-toggle user_2A"
-                          onclick="searchList(this,2);">-</a>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-                <div class="inputShow row contractField" id="assetInformationFiled" style="height: 80%;overflow: auto;margin-top:10px;"></div>`;
+  var html = `<div class="inputShow row contractField" id="assetInformationFiled" style="height: 80%;overflow: auto;margin-top:10px;"></div>`;
   $("#chart-" + componentId).html(html);
-  getSelectData();
-  var defaultValue = "1355";
   getListData();
-  $(".dimensionA").attr("data-contractId", defaultValue);
-  $(".dimensionA").text(defaultValue);
-}
-let sqlSelectData = []; //查询条件下拉框数据
-function getSelectData() {
-  //直接通过sql查询下拉框数据
-  var res2 = cfs.request.foundation.getAccessDimensionMemberLevel("Entity", "Entity{Base(C_FRANCHISEES,0)}");
-  if (res2.err) {
-    ForSwal("读取数据失败:" + res2.err.Message); //通过右上角的红色卡片报错
-  } else {
-    // sqlSelectData = res2.res.resultList[0].children;
-  }
-  sqlSelectData = [
-    {
-      parent_name: "LE744",
-      is_base: true,
-      isParent: false,
-      sharedmember: true,
-      level: 3,
-      name: "1153-绍兴市中山supper商场店",
-      is_access: true,
-      pId: 11768,
-      id: 11769,
-      value: "1153",
-      selected: false,
-    },
-    {
-      parent_name: "LE744",
-      is_base: true,
-      isParent: false,
-      sharedmember: true,
-      level: 3,
-      name: "1257-上海市绿城广场店",
-      is_access: true,
-      pId: 11768,
-      id: 11770,
-      value: "1257",
-      selected: false,
-    },
-    {
-      parent_name: "LE744",
-      is_base: true,
-      isParent: false,
-      sharedmember: true,
-      level: 3,
-      name: "1355-上海市老城宏润国际商场店",
-      is_access: true,
-      pId: 11768,
-      id: 11771,
-      value: "1355",
-      selected: false,
-    },
-    {
-      parent_name: "LE744",
-      is_base: true,
-      isParent: false,
-      sharedmember: true,
-      level: 3,
-      name: "15119-上海市中山大楼店",
-      is_access: true,
-      pId: 11768,
-      id: 11772,
-      value: "15119",
-      selected: false,
-    },
-    {
-      parent_name: "LE744",
-      is_base: true,
-      isParent: false,
-      sharedmember: true,
-      level: 3,
-      name: "18932-上海市振兴路五星金融商场店",
-      is_access: true,
-      pId: 11768,
-      id: 11773,
-      value: "18932",
-      selected: false,
-    },
-    {
-      parent_name: "LE744",
-      is_base: true,
-      isParent: false,
-      sharedmember: true,
-      level: 3,
-      name: "20614-上海市建设路绿城-X-大楼店",
-      is_access: true,
-      pId: 11768,
-      id: 11774,
-      value: "20614",
-      selected: false,
-    },
-    {
-      parent_name: "LE744",
-      is_base: true,
-      isParent: false,
-      sharedmember: true,
-      level: 3,
-      name: "22501-上海市体育路胜利大厦店",
-      is_access: true,
-      pId: 11768,
-      id: 11775,
-      value: "22501",
-      selected: false,
-    },
-    {
-      parent_name: "LE744",
-      is_base: true,
-      isParent: false,
-      sharedmember: true,
-      level: 3,
-      name: "23331-上海市振兴路蝴蝶大楼店",
-      is_access: true,
-      pId: 11768,
-      id: 11776,
-      value: "23331",
-      selected: false,
-    },
-    {
-      parent_name: "LE744",
-      is_base: true,
-      isParent: false,
-      sharedmember: true,
-      level: 3,
-      name: "47216-上海市中山新星大厦店",
-      is_access: true,
-      pId: 11768,
-      id: 11777,
-      value: "47216",
-      selected: false,
-    },
-    {
-      parent_name: "LE744",
-      is_base: true,
-      isParent: false,
-      sharedmember: true,
-      level: 3,
-      name: "48131-上海市老城胜利大楼店",
-      is_access: true,
-      pId: 11768,
-      id: 11778,
-      value: "48131",
-      selected: false,
-    },
-    {
-      parent_name: "LE744",
-      is_base: true,
-      isParent: false,
-      sharedmember: true,
-      level: 3,
-      name: "51621-上海市人民路中山商场店",
-      is_access: true,
-      pId: 11768,
-      id: 11779,
-      value: "51621",
-      selected: false,
-    },
-    {
-      parent_name: "LE744",
-      is_base: true,
-      isParent: false,
-      sharedmember: true,
-      level: 3,
-      name: "53575-上海市人民路宏润-X-中心店",
-      is_access: true,
-      pId: 11768,
-      id: 11780,
-      value: "53575",
-      selected: false,
-    },
-    {
-      parent_name: "LE744",
-      is_base: true,
-      isParent: false,
-      sharedmember: true,
-      level: 3,
-      name: "55842-上海市人民路东方新世界中心店",
-      is_access: true,
-      pId: 11768,
-      id: 11781,
-      value: "55842",
-      selected: false,
-    },
-    {
-      parent_name: "LE744",
-      is_base: true,
-      isParent: false,
-      sharedmember: true,
-      level: 3,
-      name: "56770-上海市人民路宏润国际中心店",
-      is_access: true,
-      pId: 11768,
-      id: 11782,
-      value: "56770",
-      selected: false,
-    },
-    {
-      parent_name: "LE744",
-      is_base: true,
-      isParent: false,
-      sharedmember: true,
-      level: 3,
-      name: "7198-上海市振兴路宏润supper商场店",
-      is_access: true,
-      pId: 11768,
-      id: 11783,
-      value: "7198",
-      selected: false,
-    },
-    {
-      parent_name: "LE744",
-      is_base: true,
-      isParent: false,
-      sharedmember: true,
-      level: 3,
-      name: "20116-南京市文化路蝴蝶新世界大楼店",
-      is_access: true,
-      pId: 11768,
-      id: 11784,
-      value: "20116",
-      selected: false,
-    },
-    {
-      parent_name: "LE744",
-      is_base: true,
-      isParent: false,
-      sharedmember: true,
-      level: 3,
-      name: "22622-南京市老城金地国际中心店",
-      is_access: true,
-      pId: 11768,
-      id: 11785,
-      value: "22622",
-      selected: false,
-    },
-    {
-      parent_name: "LE744",
-      is_base: true,
-      isParent: false,
-      sharedmember: true,
-      level: 3,
-      name: "23381-南京市新区华润中心店",
-      is_access: true,
-      pId: 11768,
-      id: 11786,
-      value: "23381",
-      selected: false,
-    },
-    {
-      parent_name: "LE744",
-      is_base: true,
-      isParent: false,
-      sharedmember: true,
-      level: 3,
-      name: "48381-南京市富都金融大楼店",
-      is_access: true,
-      pId: 11768,
-      id: 11787,
-      value: "48381",
-      selected: false,
-    },
-    {
-      parent_name: "LE744",
-      is_base: true,
-      isParent: false,
-      sharedmember: true,
-      level: 3,
-      name: "49703-南京市红星大楼店",
-      is_access: true,
-      pId: 11768,
-      id: 11788,
-      value: "49703",
-      selected: false,
-    },
-    {
-      parent_name: "LE744",
-      is_base: true,
-      isParent: false,
-      sharedmember: true,
-      level: 3,
-      name: "53482-南京市人民路五一金融中心店",
-      is_access: true,
-      pId: 11768,
-      id: 11789,
-      value: "53482",
-      selected: false,
-    },
-    {
-      parent_name: "LE744",
-      is_base: true,
-      isParent: false,
-      sharedmember: true,
-      level: 3,
-      name: "55531-南京市建设路宏润中心店",
-      is_access: true,
-      pId: 11768,
-      id: 11790,
-      value: "55531",
-      selected: false,
-    },
-    {
-      parent_name: "LE744",
-      is_base: true,
-      isParent: false,
-      sharedmember: true,
-      level: 3,
-      name: "59859-南京市绿城Mall店",
-      is_access: true,
-      pId: 11768,
-      id: 11791,
-      value: "59859",
-      selected: false,
-    },
-  ]; //查询条件下拉框数据
-  console.log(sqlSelectData);
-  // 下拉框数据
-  $.each(sqlSelectData, function (k, v) {
-    var selectYearHtml = "<option value=" + v.name + ">" + v.name + "</option>";
-    $("#eq_user_id").append(selectYearHtml);
-  });
 }
 // 字段信息
 function getListData(id) {
@@ -367,84 +30,6 @@ function getListData(id) {
       "</div>";
     $("#assetInformationFiled").append(html);
   });
-}
-// 点击资产编号事件
-function contractChange(id, that) {
-  $(".treeDropdown").removeClass("treeShow"); //下拉框隐藏
-  var this_value = $(that).text();
-  $(that).css("color", "#fff").siblings().css("color", "#333");
-  $(that).css("background-color", "#26a69a").siblings().css("background-color", "#fff");
-  $(".dimensionA").text(this_value);
-  $(".dimensionA").attr("data-contractId", id); //给下拉框赋值id
-}
-// 点击下拉框事件
-function searchList(event, idNum) {
-  $(".treeDropdown").removeClass("treeShow");
-  var ztreeP = getzTreeXY(event, "tree" + idNum);
-  if ($("#tree" + idNum).length > 0) {
-    if (
-      $("#tree" + idNum)
-        .parent()
-        .hasClass("treeShow")
-    ) {
-      return;
-    }
-    $("#tree" + idNum)
-      .parent()
-      .attr("style", ztreeP);
-    $("#tree" + idNum)
-      .parent()
-      .addClass("treeShow");
-    //禁止鼠标滚动
-    // $(document).bind('mousewheel', function(event, delta) {return false;});
-    return;
-  }
-  var container = $('<div class="treeDropdown userListDown treeShow" style="' + ztreeP + '"  />');
-  var ztreeInput = $(
-    '<div class="input-group">' +
-      '<input class="form-control multiselect-search userSearchValue treeSearchValue" type="text" onkeydown="keyup_Search(\'#tree' +
-      idNum +
-      "',1,true," +
-      idNum +
-      ',this);" placeholder="Search" style="padding-left: 0.2rem;width:100%;">' +
-      '<span class="input-group-append">' +
-      "</span>" +
-      '<i class="icon-cross2 cleartreeSearchValue" onclick="clearSearchValue(this,\'' +
-      idNum +
-      '\')" style="right:-0.5rem;"></i>' +
-      "</div>"
-  );
-  var ztreeDom = $(
-    '<div class="ztree userContain" id="tree' +
-      idNum +
-      '"><span class="select2-results"><ul class="select2-results__options scrollEvent"><li class="select2-results__option"><ul class="select2-results__options select2-results__options--nested"/>'
-  );
-  container.append(ztreeInput).append(ztreeDom);
-  $("body").append(container);
-  sendAjaxquestDashBoard("#tree" + idNum);
-}
-// 下拉框渲染
-function sendAjaxquestDashBoard(modal) {
-  var dropListN = "";
-  var defaultValue = $("#eq_user_id option:nth-child(2)").val();
-  sqlSelectData.forEach(function (value, i) {
-    var style_name = "";
-    if (value.value == defaultValue) {
-      style_name = "color:#fff;background-color:#26a69a;";
-    }
-    dropListN +=
-      '<li data-contractId="' +
-      value.name +
-      '"  class="select2-results__option form-check"  aria-selected="false" role="treeitem" style="' +
-      style_name +
-      '" onclick="contractChange(\'' +
-      value.name +
-      "',this);\">" +
-      value.name +
-      "</li>";
-  });
-  $(modal).find(".select2-results__options.select2-results__options--nested").append(dropListN);
-  $(".form-check-input-styled").uniform();
 }
 function r1m2(data, params) {
   var componentId = params.componentId;
@@ -793,6 +378,190 @@ function r1m2(data, params) {
   var myChart = echarts.init(document.getElementById("chart-" + componentId));
   myChart.setOption(option);
 }
+
+function r1m3(data, params) {
+  const componentId = params.componentId;
+
+  const datadetails = [
+    ["product", "销售额", "净利润", "日均交易量"],
+    ["2018-1", "368,091.00", "30,367.51", 301.36],
+    ["2018-2", "510,284.00", "95,678.25", 391.5],
+    ["2018-3", "556,474.00", "83,471.10", 349.74],
+    ["2018-4", "437,018.00", "85,218.51", 341.71],
+    ["2018-5", "358,424.00", "56,451.78", 275.5],
+    ["2018-6", "583,373.00", "87,505.95", 366.69],
+    ["2018-7", "448,525.00", "70,642.69", 356.89],
+    ["2018-8", "427,511.00", "60,920.32", 336.07],
+    ["2018-9", "582,992.00", "91,821.24", 356.2],
+    ["2018-10", "411,826.00", "52,507.82", 331.18],
+    ["2018-11", "425,162.20", "66,963.05", 340.71],
+    ["2018-12", "555,675.98", "75,016.26", 328.77],
+    ["2019-1", "343,444.20", "46,364.97", 271.68],
+    ["2019-2", "486,007.10", "72,901.06", 351.39],
+    ["2019-3", "576,988.59", "82,220.87", 315.89],
+    ["2019-4", "425,574.61", "63,836.19", 298.54],
+    ["2019-5", "348,182.30", "44,393.24", 257.14],
+    ["2019-6", "630,677.49", "85,141.46", 366.26],
+    ["2019-7", "467,504.00", "77,138.16", 361.64],
+    ["2019-8", "416,463.68", "59,346.07", 310.39],
+    ["2019-9", "568,224.32", "89,495.33", 332.49],
+    ["2019-10", "440,273.70", "79,249.27", 330.11],
+    ["2019-11", "458,031.40", "79,010.42", 335.93],
+    ["2019-12", "585,220.60", "79,004.78", 330.89],
+    ["2020-1", "354,523.00", "37,224.92", 250.96],
+    ["2020-2", "477,616.43", "42,985.48", 326.54],
+    ["2020-3", "600,361.04", "81,048.74", 314.69],
+    ["2020-4", "387,035.75", "60,958.13", 276.23],
+    ["2020-5", "31,197.90", "3,509.76", 68.8],
+    ["2020-6", "107,481.60", "18,540.58", 128.72],
+    ["2020-7", "388,016.61", "58,202.49", 280.62],
+    ["2020-8", "380,734.21", "51,399.12", 273.86],
+    ["2020-9", "471,995.99", "67,259.43", 270.82],
+    ["2020-10", "371,030.90", "52,871.90", 265.68],
+    ["2020-11", "364,895.37", "41,050.73", 260.31],
+    ["2020-12", "446,090.81", "66,913.62", 254.01],
+    ["2021-1", "354,523.00", "37,224.92", 250.96],
+    ["2021-2", "477,616.43", "42,985.48", 326.54],
+    ["2021-3", "600,361.04", "81,048.74", 314.69],
+    ["2021-4", "387,035.75", "60,958.13", 276.23],
+    ["2021-5", "31,197.90", "3,509.76", 68.8],
+    ["2021-6", "107,481.60", "18,540.58", 128.72],
+    ["2021-7", "388,016.61", "58,202.49", 280.62],
+    ["2021-8", "380,734.21", "51,399.12", 273.86],
+    ["2021-9", "471,995.99", "67,259.43", 270.82],
+    ["2021-10", "371,030.90", "52,871.90", 265.68],
+    ["2021-11", "364,895.37", "41,050.73", 260.31],
+    ["2021-12", "446,090.81", "66,913.62", 254.01],
+  ];
+
+  const datadetails2 = datadetails.map((val, i) => {
+    let newVal;
+    if (i > 0) {
+      newVal = val.map((cVal, j) => {
+        if (j == 1 || j == 2) {
+          let newCVal = _.join(_.split(cVal, ","), "");
+          return parseInt(newCVal);
+        } else {
+          return cVal;
+        }
+      });
+    } else {
+      return val;
+    }
+    return newVal;
+  });
+
+  const option = {
+    title: {
+      text: "",
+      subtext: "",
+    },
+    tooltip: {
+      trigger: "axis",
+      axisPointer: {
+        type: "shadow",
+      },
+    },
+    toolbox: {
+      show: true,
+    },
+    dataZoom: [
+      {
+        show: true,
+        start: 0,
+        end: 100,
+      },
+      {
+        type: "inside",
+        start: 0,
+        end: 100,
+      },
+    ],
+    dataset: {
+      source: datadetails2,
+    },
+    legend: {},
+    calculable: true,
+    xAxis: { type: "category" },
+    yAxis: [
+      {
+        type: "value",
+      },
+      {
+        type: "value",
+      },
+    ],
+    series: [
+      {
+        name: "销售额",
+        type: "bar",
+        markArea: {
+          silent: true,
+          itemStyle: {
+            color: "#90caf9",
+            opacity: 0.1,
+          },
+          data: [
+            [
+              {
+                xAxis: "2021-1",
+              },
+              {
+                xAxis: "2021-12",
+              },
+            ],
+          ],
+        },
+      },
+      {
+        name: "净利润",
+        type: "bar",
+        markArea: {
+          silent: true,
+          itemStyle: {
+            color: "#90caf9",
+            opacity: 0.1,
+          },
+          data: [
+            [
+              {
+                xAxis: "2021-1",
+              },
+              {
+                xAxis: "2021-12",
+              },
+            ],
+          ],
+        },
+      },
+      {
+        name: "应交税费",
+        type: "line",
+        yAxisIndex: 1,
+        markArea: {
+          silent: true,
+          itemStyle: {
+            color: "#90caf9",
+            opacity: 0.1,
+          },
+          data: [
+            [
+              {
+                xAxis: "2021-1",
+              },
+              {
+                xAxis: "2021-12",
+              },
+            ],
+          ],
+        },
+      },
+    ],
+  };
+  var myChart = echarts.init(document.getElementById("chart-" + componentId));
+  myChart.setOption(option);
+}
+
 //extrajs全局方法
 var cfs = {
   //请求后端数据
