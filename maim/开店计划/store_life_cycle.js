@@ -2,27 +2,40 @@ function r1m1(data, params) {
   var componentId = params.componentId;
   var html = `<div class="inputShow row contractField" id="assetInformationFiled" style="height: 80%;overflow: auto;margin-top:10px;"></div>`;
   $("#chart-" + componentId).html(html);
-  getListData();
+  getListData(JSON.parse(data));
 }
 // 字段信息
-function getListData(id) {
-  let fieldData = {
-    门店名称: "北京市中山中心店",
-    城市: "北京",
-    运营架构: "北区",
-    门店类型: "直营店",
-    商圈信息: "北京万达",
-    开店日期: "2018/5/1",
-    法人信息: "法人726",
-    门店店长: "何晓",
+function getListData(data) {
+  // let fieldData = {
+  //   门店名称: "北京市中山中心店",
+  //   城市: "北京",
+  //   运营架构: "北区",
+  //   门店类型: "直营店",
+  //   商圈信息: "北京万达",
+  //   开店日期: "2018/5/1",
+  //   法人信息: "法人726",
+  //   门店店长: "何晓",
+  // };
+  let mapData = {
+    storecode: "门店编码",
+    storename: "门店名称",
+    status: "门店状态",
+    Class: "门店类型",
+    address: "地址",
+    Territory: "大区",
+    City: "省区",
+    Tradezone: "商区",
+    opendate: "开店时间",
+    b_model: "运营模式",
+    weekend_close: "周末是否闭店",
   };
   // 字段信息
   $("#assetInformationFiled").html("");
-  $.each(fieldData, function (k, v) {
+  $.each(data, function (k, v) {
     var html =
       '<div class="form-group form-group-float col-md-3 input-group-sm mb-2">' +
       '<label class="mb-0 font-weight-bold">' +
-      k +
+      mapData[k] +
       "</label>" +
       '<input type="text" class="form-control" style="padding: 0.25rem 0;" readonly value="' +
       v +
@@ -562,16 +575,18 @@ function r1m3(data, params) {
   myChart.setOption(option);
 }
 
+var Cus_theme = "westeros";
+var Cus_echarts = {};
 //extrajs全局方法
 var cfs = {
   //请求后端数据
   request: {
     /*通用同步请求
-        code为200返回结果在.res内，否则结果在.err内（部分业务错误也会强制返回500或999）
-        type: POST/GET/PUT/DELETE
-        json: TRUE为application/json FALSE为application/x-www-form-urlencoded
-        returnAll：TRUE返回所有结果, FALSE返回.resultObj（有时候结果在resultList里）
-    */
+			code为200返回结果在.res内，否则结果在.err内（部分业务错误也会强制返回500或999）
+			type: POST/GET/PUT/DELETE
+			json: TRUE为application/json FALSE为application/x-www-form-urlencoded
+			returnAll：TRUE返回所有结果, FALSE返回.resultObj（有时候结果在resultList里）
+		*/
     common: {
       sendRequest: function (url, type, paramObj, json = false, returnAll = false) {
         var data = json ? JSON.stringify(paramObj) : paramObj;
@@ -640,7 +655,7 @@ var cfs = {
           },
           cfs.common.userParams
         );
-        return cfs.request.common.sendRequest(url, "POST", paramObj, false, true);
+        return cfs.request.common.sendRequest(url, "POST", paramObj, false);
       },
       //根据表达式查询，不分权限
       selectDimensionMemberByNameFunction: function (dimensionMemberNames) {
@@ -655,7 +670,7 @@ var cfs = {
       },
       //执行自定义sql语句
       runComm: function (comm) {
-        var url = Api.seepln + "sqlparser/run/post2";
+        var url = Api.seepln + "sqlparser/run/post";
         paramObj = $.extend(
           {
             sql: comm,
@@ -685,7 +700,7 @@ var cfs = {
     head: {
       //获取卡片表头jquery dom
       getDom: function (cardName) {
-        return $("#" + cardName).find(".card-header");
+        return $("#" + cardName);
       },
       //删除卡片表右边所有元素
       removeButton: function (dom) {
@@ -693,14 +708,14 @@ var cfs = {
       },
       addSelectButton: function (carHead, buttonInfo) {
         var btn = $(`<div class="list-icons ${buttonInfo.id}">
-                    <label for="" style="width: 60px;margin: 0;margin-bottom:-4px">${buttonInfo.text}</label>
-                    <select
-                        class="form-control select selectXm"
-                        id="${buttonInfo.id}"
-                        data-fouc
-                    >
-                    </select>
-                </div>`);
+						<label for="" style="width: 60px;margin: 0;margin-bottom:-4px">${buttonInfo.text}</label>
+						<select
+							class="form-control select selectXm"
+							id="${buttonInfo.id}"
+							data-fouc
+						>
+						</select>
+					</div>`);
         let sHtml = "";
         buttonInfo.list.forEach(function (v) {
           sHtml += "<option value='" + v.key + "'>" + v.value + "</option>";
@@ -711,13 +726,13 @@ var cfs = {
         return btn;
       },
       /*添加下拉按钮
-            buttonInfo: {
-                id: "UploadButton",
-                text: "上传数据",
-                icon: "mi-file-upload",
-                list: ["增量上传", "全量上传"]
-            },
-        */
+				buttonInfo: {
+					id: "UploadButton",
+					text: "上传数据",
+					icon: "mi-file-upload",
+					list: ["增量上传", "全量上传"]
+				},
+			*/
       addDropdownButton: function (carHead, buttonInfo) {
         var list = buttonInfo.list;
         for (var i = 0; i < list.length; i++) {
@@ -726,7 +741,7 @@ var cfs = {
         var btn = $(
           '<div id="' +
             buttonInfo.id +
-            '" class="dropdown breadcrumb-elements-item mr-1 cursor-pointer">' +
+            '" class="dropdown breadcrumb-elements-item mr-2 cursor-pointer">' +
             '<a class="dropdown-toggle" data-toggle="dropdown"><i class="' +
             buttonInfo.icon +
             ' icon text-default mr-1"></i>' +
@@ -751,15 +766,15 @@ var cfs = {
         return btn;
       },
       /*添加普通按钮
-            buttonInfo: {
-                id: "UploadButton",
-                text: "上传数据",
-                icon: "mi-file-upload",
-            },
-        */
+				buttonInfo: {
+					id: "UploadButton",
+					text: "上传数据",
+					icon: "mi-file-upload",
+				},
+			*/
       addButton: function (carHead, buttonInfo) {
         var btn = $(
-          '<a class="breadcrumb-elements-item mr-1 cursor-pointer" id="' +
+          '<a class="breadcrumb-elements-item mr-2 cursor-pointer" id="' +
             buttonInfo.id +
             '"><div class="customLoader mr-1" style="margin-bottom: 2px; display: none;"></div><i class="' +
             buttonInfo.icon +
@@ -783,13 +798,11 @@ var cfs = {
       disableButton: function (btn) {
         btn.hide();
         $("#" + btn.attr("id") + "_disable").show();
-        cfs.common.unScroll();
       },
       //恢复按钮可用
       enableButton: function (btn) {
         $("#" + btn.attr("id") + "_disable").hide();
         btn.show();
-        cfs.common.removeUnScroll();
       },
     },
     body: {
@@ -817,86 +830,6 @@ var cfs = {
       deleteFileTag: function (dom) {
         dom.parentElement.remove();
       },
-      createTable: function (cardName, data, withHead = true, cls = "table", headCls = "", tableStyle = "") {
-        let headArr = [];
-        let rowArr = [];
-        for (let i = 0; i < data.length; i++) {
-          if (withHead && i === 0) {
-            let tArr = [];
-            for (let key in data[i]) {
-              tArr.push("<th>" + key + "</th>");
-            }
-            headArr.push(`<tr class='${headCls}'>` + tArr.join("") + "<tr>");
-          }
-          let cellArr = [];
-          for (let key in data[i]) {
-            if (cellArr.length == 0) {
-              cellArr.push("<td style='font-weight: bold'>" + data[i][key] + "</td>");
-            } else {
-              cellArr.push("<td>" + data[i][key] + "</td>");
-            }
-          }
-          rowArr.push("<tr>" + cellArr.join("") + "<tr>");
-        }
-        let headHtml = withHead ? "<thead>" + headArr.join("") + "</thead>" : "";
-        let dom = $(`<div class="table-responsive" style="">
-                    <table id="table_${cardName}" class="${cls}" style="${tableStyle}">
-                    ${headHtml}
-                    <tbody class="">
-                                                ${rowArr.join("")}
-                                                </tbody>
-                                            </table>
-                                        </div>`);
-        if (cardName) this.getDom(cardName).append(dom);
-        return dom;
-      },
-      createSimpleTag1: function (cardName, data, iconCls) {
-        let dom = $(`<div class="media">
-                <div class="mr-3 align-self-center">
-                    <i class="${iconCls}"></i>
-                </div>
-                <div class="media-body text-left align-self-center">
-                    <h3 class="font-weight-black mb-0">${data}</h3>
-                </div>
-                </div>`);
-        if (cardName) this.getDom(cardName).append(dom);
-        return dom;
-      },
-    },
-    //自定义初始化卡片
-    cusInit: function (cardName, border = true, removeHead = false, textCenter = true, useEchart = false, hideRef = true) {
-      var cardDom = $(`[data-name='${cardName}']`);
-      //cardDom.addClass("border border-primary");
-      if (border) {
-        if (cardDom.find("#" + cardName).length > 0) {
-          cardDom
-            .find("#" + cardName)
-            .css("border", "3px solid #64b5f6")
-            .css("border-radius", "5px");
-        } else {
-          cardDom.css("border", "3px solid #64b5f6").css("border-radius", "5px");
-        }
-      }
-      var cardBody = cfs.card.body.getDom(cardName);
-      if (!useEchart) {
-        cardBody.html("");
-        cardBody.css("padding", "10px");
-        cardBody.css("overflow", "auto");
-      }
-      var headDom = cardDom.find(".card-header");
-      headDom.css("height", "3rem");
-      //headDom.find("h6").css("padding", "5px");
-      let ref = headDom.find(".freshBS");
-      ref.find("i").css("margin", 10);
-      if (hideRef) ref.hide();
-      if (removeHead) {
-        headDom.remove();
-      } else if (textCenter) {
-        headDom.find("h6").addClass("ml-3").addClass("text-center").css("width", "100%");
-        headDom.removeClass("bg-white");
-        headDom.addClass("bg-primary-300");
-      }
-      return cardBody;
     },
   },
   data: {
@@ -923,7 +856,9 @@ var cfs = {
               var val = arr[c].value;
               columnDimensionMemberMap[colMap[c]] = val;
             }
-            rowDatasArr.push({ columnDimensionMemberMap: columnDimensionMemberMap });
+            rowDatasArr.push({
+              columnDimensionMemberMap: columnDimensionMemberMap,
+            });
           }
         }
         sheetDataObj.rowDatas = rowDatasArr;
@@ -933,21 +868,35 @@ var cfs = {
   },
   //echarts
   echarts: {
-    theme: "westeros",
     init: function (dom, theme, option) {
       var ec = echarts.init(dom.get(0), theme);
-      dom.resize(function () {
+      window.addEventListener("resize", function () {
         ec.resize();
       });
-      /*window.addEventListener('resize', function () {
-            ec.resize();
-        });*/
       this.refresh(ec, option);
       return ec;
     },
     refresh: function (ec, option) {
       ec.clear();
       ec.setOption(option);
+    },
+    correctHeight: function (cardName) {
+      let echartDom = $("#" + cardName)
+        .find(".card-body")
+        .find(".echart");
+      let cardBodyDom = $("#" + cardName).find(".card-body");
+
+      let _height = $(cardBodyDom).height();
+      $(echartDom).height(_height);
+    },
+    mobileHeight: function (cardName, height) {
+      let cardDom = $("#" + cardName).parent();
+      $(cardDom).height(height);
+      let echartDom = $("#" + cardName)
+        .find(".card-body")
+        .find(".echart");
+      let _height = $(echartDom).parent().height();
+      $(echartDom).height(_height);
     },
   },
   //通用方法
@@ -986,76 +935,30 @@ var cfs = {
       date.setDate(date.getDate() + n - 2);
       return date.format();
     },
-    drap: function (obj) {
-      //拖拽移动
-      obj.addEventListener("mousedown", start);
-
-      function start(event) {
-        // 鼠标左键
-        if (event.button == 0) {
-          // getComputedStyle(obj)['margin-left'] return XXpx需要转成整型
-          // 如果有obj有margin值而不加这个数组拖拽会出现位置偏移
-          offsetX = event.pageX - obj.offsetLeft + parseInt(getComputedStyle(obj)["margin-left"]);
-          offsetY = event.pageY - obj.offsetTop + parseInt(getComputedStyle(obj)["margin-top"]);
-          // 绑定事件，同样unbind解绑定，此效果的实现最后必须要解绑定，否则鼠标松开后拖拽效果依然存在
-          //movemove事件必须绑定到$(document)上，鼠标移动是在整个屏幕上的
-          document.addEventListener("mousemove", move);
-          //此处的$(document)可以改为obj
-          document.addEventListener("mouseup", stop);
-        }
-        return false; //阻止默认事件或冒泡
-      }
-
-      function move(event) {
-        obj.style.left = event.pageX - offsetX + "px";
-        obj.style.top = event.pageY - offsetY + "px";
-        return false; //阻止默认事件或冒泡
-      }
-
-      function stop(envet) {
-        document.removeEventListener("mousemove", move);
-        document.removeEventListener("mouseup", stop);
-      }
-    },
-    /**禁用滚动条**/
-    unScroll: function () {
-      var top = $(document).scrollTop();
-      $(document).on("scroll.unable", function (e) {
-        $(document).scrollTop(top);
-      });
-    },
-    /**启用滚动条**/
-    removeUnScroll: function () {
-      $(document).unbind("scroll.unable");
-    },
   },
   //导出文件
   export: {
     /* 导出文件到指定格式 数据大用csv
-        fileName：文件名不带格式
-        dataJson：原始数据 eg. [{Entity: "E001", Year:"2020", Period:"9"},{Entity: "E001", Year:"2020", Period:"10"}]
-        titleArr：导出的列名: eg. [Entity, Year]
-    */
+			fileName：文件名不带格式
+			dataJson：原始数据 eg. [{Entity: "E001", Year:"2020", Period:"9"},{Entity: "E001", Year:"2020", Period:"10"}]
+			titleArr：导出的列名: eg. [Entity, Year]
+		*/
     toCsv: function (fileName, dataJson, titleArr = null) {
       if (!dataJson) return;
       if (dataJson.length == 0 && titleArr == null) return;
       //组标题
       var titleObj = dataJson[0];
       titleArr = titleArr || Object.keys(titleObj);
-      var titleStr = titleArr.join(",");
+      var titleStr = titleArr.join("\t,");
       var dataArr = [];
       for (var i = 0; i < dataJson.length; i++) {
         var rowArr = [];
         for (var j = 0; j < titleArr.length; j++) {
           var cell = dataJson[i][titleArr[j]] || "";
-          cell = cell.toString();
-          cell = cell.replace('"', '""');
-          if (cell.indexOf(",") > -1) {
-            cell = '"' + cell + '"';
-          }
+          if (cell.toString().indexOf(",") > -1) cell = '"' + cell + '"';
           rowArr.push(cell);
         }
-        dataArr.push(rowArr.join(","));
+        dataArr.push(rowArr.join("\t,"));
       }
       var dataStr = titleStr + "\n" + dataArr.join("\n");
       var blob = new Blob([dataStr], { type: "text/plain;charset=utf-8" });
@@ -1081,13 +984,13 @@ var cfs = {
       var dataStr = "<table>" + titleStr + dataArr.join("") + "</table>";
       var uri = "data:application/vnd.ms-excel;base64,";
       var excelHtml = `<html xmlns:o="urn:schemas-microsoft-com:office:office" 
-            xmlns:x="urn:schemas-microsoft-com:office:excel" 
-            xmlns="http://www.w3.org/TR/REC-html40">
-            <head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
-            <x:Name>${fileName}</x:Name>
-            <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
-            </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
-            </head><body>${dataStr}</body></html>`;
+                xmlns:x="urn:schemas-microsoft-com:office:excel" 
+                xmlns="http://www.w3.org/TR/REC-html40">
+                <head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+                <x:Name>${fileName}</x:Name>
+                <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet>
+                </x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+                </head><body>${dataStr}</body></html>`;
       //下载模板
       function base64(s) {
         return window.btoa(unescape(encodeURIComponent(s)));
