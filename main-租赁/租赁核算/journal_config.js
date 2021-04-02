@@ -1,5 +1,7 @@
-/**spread2 = spread对象
+/** 凭证配置复制
+ * v160 2021-03-20 生蚝原作
  */
+
 // 引入样式
 let style = document.createElement("style");
 style.innerHTML = `

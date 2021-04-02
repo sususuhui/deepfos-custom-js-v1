@@ -1,4 +1,6 @@
-/**spread2 = spread对象
+/** 凭证模型增加和删除
+ * v160 2021-03-20 生蚝原作
+ * v160 2021-03-29 乳鸽更新
  */
 
 $(() => {
@@ -13,52 +15,52 @@ $(() => {
 
 let new_journal_model_html = `
 <div class="d-flex flex-column" style="height: 100%">
-  <div class="modal-body" style="width: 60%; margin: 0 auto; margin-top: 3rem">
-    <div class="form-group row" style="margin-left: 0; margin-right: 0">
-      <label class="col-form-label col-lg-4">
-        新建凭证类型
-        <i class="icon-question3 font-size-base ml-2" data-d="0" data-w="2"></i>
-      </label>
-      <div class="col-lg-4">
-        <div class="input-group">
-          <input type="text" data-name="journal_type" class="form-control" placeholder="如：C46" />
-        </div>
-      </div>
-      <div class="col-lg-4">
+<div class="modal-body" style="width: 60%; margin: 0 auto; margin-top: 3rem">
+  <div class="form-group row" style="margin-left: 0; margin-right: 0">
+    <label class="col-form-label col-lg-4">
+      新建凭证类型
+      <i class="icon-question3 font-size-base ml-2" data-d="0" data-w="2"></i>
+    </label>
+    <div class="col-lg-4">
       <div class="input-group">
-        <input type="text" data-name="journal_type_name" class="form-control" placeholder="如：支付差异" />
+        <input type="text" data-name="journal_type" class="form-control" placeholder="如：C46" />
       </div>
     </div>
+    <div class="col-lg-4">
+    <div class="input-group">
+      <input type="text" data-name="journal_type_name" class="form-control" placeholder="如：支付差异" />
     </div>
-    <div class="form-group">
-      <label class="col-form-label col-lg-12">
-        新建凭证类型
-        <i class="icon-question3 font-size-base ml-2" data-d="1" data-w="2"></i>
-        <i class="icon-plus3 ml-2"></i>
-      </label>
-      <div class="col-lg-12">
-        <div class="input-group">
-          <table class="table listTable" id="table_demo">
-            <thead>
-              <tr>
-                <th class="text-center">借贷方</th>
-                <th class="text-center">科目大类(account_type_code)</th>
-                <th class="text-center">功能</th>
-              </tr>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
-        </div>
+  </div>
+  </div>
+  <div class="form-group">
+    <label class="col-form-label col-lg-12">
+      新建凭证类型
+      <i class="icon-question3 font-size-base ml-2" data-d="1" data-w="2"></i>
+      <i class="icon-plus3 ml-2"></i>
+    </label>
+    <div class="col-lg-12">
+      <div class="input-group">
+        <table class="table listTable" id="table_demo">
+          <thead>
+            <tr>
+              <th class="text-center">借贷方</th>
+              <th class="text-center">科目大类(account_type_code)</th>
+              <th class="text-center">功能</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
+</div>
 
-  <div class="modal-footer">
-    <i class="icon-question3 font-size-base mr-4" data-d="2" data-w="1"></i>
-    <button class="btn bg-primary" data-func="close"><i class="icon-cross2 font-size-base mr-1"></i> 取消</button>
-    <button class="btn bg-primary" data-func="save"><i class="icon-checkmark3 font-size-base mr-1"></i> 确认</button>
-  </div>
+<div class="modal-footer">
+  <i class="icon-question3 font-size-base mr-4" data-d="2" data-w="1"></i>
+  <button class="btn bg-primary" data-func="close"><i class="icon-cross2 font-size-base mr-1"></i> 取消</button>
+  <button class="btn bg-primary" data-func="save"><i class="icon-checkmark3 font-size-base mr-1"></i> 确认</button>
+</div>
 </div>
 `;
 
@@ -78,24 +80,27 @@ const new_journal_model = () => {
         layer.close(index);
       });
       $(`button[data-func='save']`, layero).click(async function () {
-        let Journal_line = [];
+        let journal_line = [];
         $("#table_demo tbody tr").each(function (i, tr) {
-          let rowObj = { d_c: null, account_type_code: null };
+          let rowObj = { d_c: null, account_type_code: null, account_type_code_name: null };
           $(tr)
             .find("td")
             .each(function (j, td) {
               if (j == 0) rowObj.d_c = $(td).find("select").val();
-              if (j == 1) rowObj.account_type_code = $(td).find("select").val();
+              if (j == 1) {
+                rowObj.account_type_code = $(td).find("select").val();
+                rowObj.account_type_code_name = _.split($(td).find("option:selected").text(), " - ", 2)[1];
+              }
               if (j == 2) return;
             });
-          Journal_line.push(rowObj);
+          journal_line.push(rowObj);
         });
         let journal_type = $(`input[data-name='journal_type']`, layero).val();
         let journal_type_name = $(`input[data-name='journal_type_name']`, layero).val();
 
         let Journal_line_check = true;
-        if (Journal_line.length > 0) {
-          Journal_line.forEach((val, i) => {
+        if (journal_line.length > 0) {
+          journal_line.forEach((val, i) => {
             if (
               _.isNull(val.d_c) ||
               _.isEmpty(val.d_c) ||
@@ -124,7 +129,7 @@ const new_journal_model = () => {
           let data = {
             journal_type,
             journal_type_name,
-            Journal_line,
+            journal_line,
           };
 
           try {
@@ -195,23 +200,23 @@ const new_journal_model = () => {
 
 const addTableRow = (params) => {
   let table_row = `
-    <tr>
-      <td>
-        <select class="form-control selectedValue otherType" default-value="-">
-            <option></option>
-            <option value="d">借方</option>
-            <option value="c">贷方</option>
-        </select>
-      </td>
-      <td>
-        <select class="form-control selectedValue otherType account_type_code" default-value="-">
-        </select>
-      </td>
-      <td class="text-center">
-        <i class="icon-trash"></i>
-      </td>
-    </tr>
-  `;
+  <tr>
+    <td>
+      <select class="form-control selectedValue otherType" default-value="-">
+          <option></option>
+          <option value="Debit">借方</option>
+          <option value="Credit">贷方</option>
+      </select>
+    </td>
+    <td>
+      <select class="form-control selectedValue otherType account_type_code" default-value="-">
+      </select>
+    </td>
+    <td class="text-center">
+      <i class="icon-trash"></i>
+    </td>
+  </tr>
+`;
   let table_body_html = ``;
   table_body_html += table_row;
 
@@ -222,25 +227,25 @@ const addTableRow = (params) => {
 
 let del_journal_model_html = `
 <div class="d-flex flex-column" style="height: 100%">
-  <div class="modal-body" style="width: 60%; margin: 0 auto; margin-top: 3rem">
-    <div class="form-group row" style="margin-left: 0; margin-right: 0">
-      <label class="col-form-label col-lg-4">
-        删除凭证类型
-      </label>
-      <div class="col-lg-8">
-        <div class="input-group">
-          <select class="form-control selectedValue otherType account_type_code" default-value="-">
-          </select>
-        </div>
+<div class="modal-body" style="width: 60%; margin: 0 auto; margin-top: 3rem">
+  <div class="form-group row" style="margin-left: 0; margin-right: 0">
+    <label class="col-form-label col-lg-4">
+      删除凭证类型
+    </label>
+    <div class="col-lg-8">
+      <div class="input-group">
+        <select class="form-control selectedValue otherType account_type_code" default-value="-">
+        </select>
       </div>
     </div>
   </div>
+</div>
 
-  <div class="modal-footer">
-    <i class="icon-question3 font-size-base mr-4" data-d="3" data-w="2"></i>
-    <button class="btn bg-primary" data-func="close"><i class="icon-cross2 font-size-base mr-1"></i> 取消</button>
-    <button class="btn bg-primary" data-func="save"><i class="icon-checkmark3 font-size-base mr-1"></i> 确认</button>
-  </div>
+<div class="modal-footer">
+  <i class="icon-question3 font-size-base mr-4" data-d="3" data-w="2"></i>
+  <button class="btn bg-primary" data-func="close"><i class="icon-cross2 font-size-base mr-1"></i> 取消</button>
+  <button class="btn bg-primary" data-func="save"><i class="icon-checkmark3 font-size-base mr-1"></i> 确认</button>
+</div>
 </div>
 `;
 const del_journal_model = () => {
@@ -339,68 +344,68 @@ const getSelectData = (dom, dimensionMemberNames) => {
 // 提示弹窗
 const tips = [
   `
-  <div>
-    <pre
-      style="
-        display: block;
-        font-family: monospace;
-        padding: 0;
-        margin: 0;
-        font-size: 13px;
-        line-height: 1.42857143;
-        color: #333;
-        word-break: break-all;
-        word-wrap: break-word;
-        background-color: #f5f5f5;
-        border: 0;
-        border-radius: 4px;
-      "
-    >
+<div>
+  <pre
+    style="
+      display: block;
+      font-family: monospace;
+      padding: 0;
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.42857143;
+      color: #333;
+      word-break: break-all;
+      word-wrap: break-word;
+      background-color: #f5f5f5;
+      border: 0;
+      border-radius: 4px;
+    "
+  >
 自定义凭证类型必须以"C"开头,长度10个字符以内
-    </pre>
-  </div>
-  `,
+  </pre>
+</div>
+`,
   `
-  <div>
-    <pre
-      style="
-        display: block;
-        font-family: monospace;
-        padding: 0;
-        margin: 0;
-        font-size: 13px;
-        line-height: 1.42857143;
-        color: #333;
-        word-break: break-all;
-        word-wrap: break-word;
-        background-color: #f5f5f5;
-        border: 0;
-        border-radius: 4px;
-      "
-    >
+<div>
+  <pre
+    style="
+      display: block;
+      font-family: monospace;
+      padding: 0;
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.42857143;
+      color: #333;
+      word-break: break-all;
+      word-wrap: break-word;
+      background-color: #f5f5f5;
+      border: 0;
+      border-radius: 4px;
+    "
+  >
 1、至少存在两行凭证分录
 2、至少同时存在借方和贷方
-    </pre>
-  </div>
-  `,
+  </pre>
+</div>
+`,
   `
-  <div>
-    <pre
-      style="
-        display: block;
-        font-family: monospace;
-        padding: 0;
-        margin: 0;
-        font-size: 13px;
-        line-height: 1.42857143;
-        color: #333;
-        word-break: break-all;
-        word-wrap: break-word;
-        background-color: #f5f5f5;
-        border: 0;
-        border-radius: 4px;
-      "
-    >
+<div>
+  <pre
+    style="
+      display: block;
+      font-family: monospace;
+      padding: 0;
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.42857143;
+      color: #333;
+      word-break: break-all;
+      word-wrap: break-word;
+      background-color: #f5f5f5;
+      border: 0;
+      border-radius: 4px;
+    "
+  >
 校验:
 1、自定义凭证类型必须以C开头,长度10个字符以内,且不重复;
 2、至少存在两行凭证分录;
@@ -410,41 +415,41 @@ const tips = [
 1. journal mapping 增加相关配置;
 2. JournalType 维度增加该成员
 3. smartlist-journal_type 增加该成员;
-4. journal_info_config 增加相关配置;
-5. journal_mapping_config 增加相关配置;
-    </pre>
-  </div>
-  `,
+4. JournalMappingID 维度增加该配置;
+  </pre>
+</div>
+`,
   `
-  <div>
-    <pre
-      style="
-        display: block;
-        font-family: monospace;
-        padding: 0;
-        margin: 0;
-        font-size: 13px;
-        line-height: 1.42857143;
-        color: #333;
-        word-break: break-all;
-        word-wrap: break-word;
-        background-color: #f5f5f5;
-        border: 0;
-        border-radius: 4px;
-      "
-    >
+<div>
+  <pre
+    style="
+      display: block;
+      font-family: monospace;
+      padding: 0;
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.42857143;
+      color: #333;
+      word-break: break-all;
+      word-wrap: break-word;
+      background-color: #f5f5f5;
+      border: 0;
+      border-radius: 4px;
+    "
+  >
 校验:
 选择的凭证类型为系统预置类，不得删除
 
-处理:
-1. journal mapping 增加相关配置;
-2. JournalType 维度增加该成员
-3. smartlist-journal_type 增加该成员;
-4. journal_info_config 增加相关配置;
-5. journal_mapping_config 增加相关配置;
-    </pre>
-  </div>
-  `,
+处理先后顺序:
+1. journal_mapping_config 删除相关配置;
+2. journal_info_config 删除相关配置;
+3. JournalMappingID 维度删除对应成员;
+4. smartlist-journal_type 删除该成员;
+5. JournalType 删除该成员;
+6. journal_mapping 删除相关配置;
+  </pre>
+</div>
+`,
 ];
 const handleTips = (e) => {
   layer.tips(tips[$(e.currentTarget).attr("data-d")], e.currentTarget, {
@@ -457,8 +462,7 @@ const handleTips = (e) => {
 
 const api_journal_add_model = (params) => {
   return CommonRequest({
-    url: "http://v1.test01.proinnova.com.cn/SeeplnGLedger/drilling-vourcher/journal_add_model",
-    // url: Api.seepln + "SeeplnGLedger/drilling-vourcher/journal_add_model",
+    url: Api.Journal + "drilling-vourcher/journal_add_model",
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -470,8 +474,7 @@ const api_journal_add_model = (params) => {
 };
 const api_journal_del_model = (params) => {
   return CommonRequest({
-    url: "http://v1.test01.proinnova.com.cn/SeeplnGLedger/drilling-vourcher/journal_del_model",
-    // url: Api.seepln + "SeeplnGLedger/drilling-vourcher/journal_del_model",
+    url: Api.Journal + "drilling-vourcher/journal_del_model",
     method: "POST",
     headers: {
       "Content-Type": "application/json",
