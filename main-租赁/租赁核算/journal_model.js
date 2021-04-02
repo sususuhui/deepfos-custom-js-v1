@@ -1,6 +1,6 @@
 /** 凭证模型增加和删除
  * v160 2021-03-20 生蚝原作
- * v160 2021-03-29 乳鸽更新
+ * v160 2021-04-02 生蚝更新
  */
 
 function Init() {
@@ -139,7 +139,7 @@ function init_journal_model() {
               let res = await api_journal_add_model(data);
               console.log(res);
               layer.close(index);
-              $("[name=refresh_all]").trigger("click");
+              $("[name=refresh]").trigger("click");
             } catch (e) {}
           }
         });
@@ -286,7 +286,7 @@ function init_journal_model() {
               let res = await api_journal_del_model(data);
               console.log(res);
               layer.close(index);
-              $("[name=refresh_all]").trigger("click");
+              $("[name=refresh]").trigger("click");
             } catch (e) {}
           }
         });

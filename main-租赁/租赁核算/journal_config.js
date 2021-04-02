@@ -181,7 +181,7 @@ function init_journal_config() {
           }
           console.log(res);
           layer.closeAll();
-          $("[name=refresh_all]").trigger("click");
+          $("[name=refresh]").trigger("click");
         } catch (e) {
           $.jGrowl("", {
             header: e,
