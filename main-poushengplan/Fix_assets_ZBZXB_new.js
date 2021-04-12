@@ -178,18 +178,12 @@ async function handleDirtyCells(sheetInfo) {
 function showLogModal(params) {
   let modal_html = `
   <div class="d-flex flex-column" style="height: 100%">
-    <div class="modal-body" style="width: 60%; margin: 0 auto; margin-top: 3rem">
+    <div class="modal-body" style="width: 80%; margin: 0 auto; margin-top: 3rem">
       <div class="log_jobDatable">
       </div>
     </div>
   </div>
   `;
-
-  let testData = [
-    ["测试行1列1", "测试行1列2", "测试行1列3", "测试行1列4", "测试行1列5", "测试行1列6"],
-    ["测试行2列1", "测试行2列2", "测试行2列3", "测试行2列4", "测试行2列5", "测试行2列6"],
-    ["测试行3列1", "测试行3列2", "测试行3列3", "测试行3列4", "测试行3列5", "测试行3列6"],
-  ];
 
   layer.open({
     zIndex: 9999,
@@ -203,72 +197,59 @@ function showLogModal(params) {
     content: modal_html,
     success: function (layero, index) {
       console.log(params);
-      //   debugger;
-      //   // 初始化datatable
-      //   $(".log_jobDatable").html("");
-      //   let html =
-      //     '<table class="table text-nowrap" id="log_jobContentTable">' +
-      //     '<thead class="headerteader">' +
-      //     "<tr></tr>" +
-      //     "</thead>" +
-      //     '<tbody class="tbodyHeader">' +
-      //     "</tbody>" +
-      //     "</table>";
-      //   $(".log_jobDatable").html(html);
+      // 初始化datatable
+      $(".log_jobDatable").html("");
+      let html =
+        '<table class="table text-nowrap" id="log_jobContentTable">' +
+        '<thead class="log_headerteader">' +
+        "<tr></tr>" +
+        "</thead>" +
+        '<tbody class="log_tbodyHeader">' +
+        "</tbody>" +
+        "</table>";
+      $(".log_jobDatable").html(html);
 
-      //   $("#log_jobContentTable").DataTable({
-      //     processing: true,
-      //     serverSide: true,
-      //     destroy: true,
-      //     searching: false,
-      //     bLengthChange: false,
-      //     paging: true,
-      //     dom: "Rlfrtip", //可调整列宽
-      //     bSort: false, //是否启动各个字段的排序功能
-      //     fixedHeader: true,
-      //     iDisplayLength: 10, //每页显示条数
-      //     // ajax: function (datas, callback, settings) {
-      //     //   //封装请求参数
-      //     //   let param = {};
-      //     //   param.pageSize = datas.length; //页面显示记录条数，在页面显示每页显示多少项的时候
-      //     //   param.pageNum = datas.start / datas.length + 1; //当前页码
-      //     //   $.ajax({
-      //     //     type: "GET",
-      //     //     url: Api.userlog + "job-content/page/" + id,
-      //     //     async: false,
-      //     //     data: $.extend(
-      //     //       {
-      //     //         status: $("#jobStatus").val(),
-      //     //         param: $("#jobNameValue").val(),
-      //     //       },
-      //     //       userinfoParams2,
-      //     //       param
-      //     //     ),
-      //     //     dataType: "json",
-      //     //     success: function (result) {
-      //     //       debugger;
-      //     //       var returnData = {};
-      //     //       returnData.draw = result.draw; //这里直接自行返回了draw计数器,应该由后台返回
-      //     //       returnData.recordsTotal = result.total; //返回数据全部记录
-      //     //       returnData.recordsFiltered = result.total; //后台不实现过滤功能，每次查询均视作全部结果
-      //     //       returnData.data = result.list; //返回的数据列表
-      //     //       //调用DataTables提供的callback方法，代表数据已封装完成并传回DataTables进行渲染
-      //     //       //此时的数据需确保正确无误，异常判断应在执行此回调前自行处理完毕
-      //     //       callback(returnData);
-      //     //     },
-      //     //   });
-      //     // },
+      $("#log_jobContentTable").DataTable({
+        processing: true,
+        destroy: true,
+        searching: false,
+        bLengthChange: false,
+        paging: true,
+        dom: "Rlfrtip", //可调整列宽
+        bSort: false, //是否启动各个字段的排序功能
+        fixedHeader: true,
+        iDisplayLength: 10, //每页显示条数
 
-      //     // data: testData,
-      //     columns: [
-      //       { title: "我是列1", data: 0 },
-      //       { title: "我是列2", data: 1 },
-      //       { title: "我是列3", data: 2 },
-      //       { title: "我是列4", data: 3 },
-      //       { title: "我是列5", data: 4 },
-      //     ],
-      //     dom: '<"datatable-header"fl><"datatable-scroll"t><"datatable-footer"ip>',
-      //   });
+        ajax: {
+          url: "http://rap2api.taobao.org/app/mock/267950/datatable",
+          type: "GET",
+          dataSrc: "result",
+          data: function () {
+            return {};
+          },
+        },
+        columns: [
+          { title: "我是列1", data: "col1" },
+          { title: "我是列2", data: "col2" },
+          { title: "我是列3", data: "col3" },
+          { title: "我是列4", data: "col4" },
+        ],
+        language: {
+          search: '<span id="user">' + getLanguage("search") + ":</span> _INPUT_",
+          searchPlaceholder: getLanguage("PleaseEnterInfo"),
+          lengthMenu: "<span>Show:</span> _MENU_",
+          info:
+            getLanguage("showPaging") + " _START_ " + getLanguage("to") + " _END_ " + getLanguage("StudyResults") + "，" + getLanguage("total") + " _TOTAL_ " + getLanguage("item"),
+          oPaginate: {
+            sFirst: getLanguage("homePage"),
+            sPrevious: getLanguage("previous"),
+            sNext: getLanguage("next"),
+            sLast: getLanguage("tailPage"),
+          },
+          infoEmpty: getLanguage("showPaging") + "0" + getLanguage("to") + "0 " + getLanguage("StudyResults") + "，" + getLanguage("total") + " _TOTAL_ " + getLanguage("item"),
+          sEmptyTable: getLanguage("noData"),
+        },
+      });
     },
   });
 }
