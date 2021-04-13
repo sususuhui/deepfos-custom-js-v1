@@ -19,44 +19,21 @@ var sheetInfo = [
   },
 ];
 
-function currentSheetInfo() {}
-
-function AfterRefresh() {
-  debugger
-  let activeSheetName = "Fix_assets_ZBZXB_new2";
-  let activeSheetName = "test111";
-
-  if (GlobalChangeSave.includes(activeSheetName)) {
-    let activeSheetInfo = sheetInfo.filter((val, i) => {
-      return val.sheetName === activeSheetName;
-    })[0];
-
-    handleDirtyCells(activeSheetInfo);
-  }
-}
-
 function BeforeSave() {
-  debugger
+  // let activeSheetName = spread.getActiveSheet().name();
   let activeSheetName = "Fix_assets_ZBZXB_new2";
   let activeSheetName = "test111";
 
-  const sheet = spread.getSheetFromName(activeSheetName);
-  // spreadJS 更新值
-  const changedAllCell = sheet.getDirtyCells();
+  let activeSheetInfo = sheetInfo.filter((val, i) => {
+    return val.sheetName === activeSheetName;
+  })[0];
 
-  GlobalDirtyCells = {
-    ...GlobalDirtyCells,
-    [activeSheetName]: changedAllCell,
-  };
-
-  GlobalChangeSave = [...GlobalChangeSave, activeSheetName];
+  handleDirtyCells(activeSheetInfo);
 }
 
 // 共用缓存数据
-var GlobalChangeSave = [];
 var GlobalCacheData = [];
 var GlobalActiveSheetName = "";
-var GlobalDirtyCells = {};
 function Init() {
   initSpreadEvent();
   initGlobalEvent();
@@ -131,15 +108,12 @@ function initGlobalEvent() {
  * @param {*} sheetName
  */
 async function handleDirtyCells(sheetInfo) {
-  debugger;
   const { floatingTableName, sheetID, sheetName } = sheetInfo;
 
   const sheet = spread.getSheetFromName(sheetName);
 
-  // // spreadJS 更新值
-  // const changedAllCell = sheet.getDirtyCells();
-
-  const changedAllCell = GlobalDirtyCells[sheetName];
+  // spreadJS 更新值
+  const changedAllCell = sheet.getDirtyCells();
 
   // 过滤初始值相同的单元格修改
   let changedCell = [];
@@ -199,11 +173,6 @@ async function handleDirtyCells(sheetInfo) {
   let result = await getData("dataaudit_savedata", JSON.stringify(params), "1");
 
   console.log("result: ", result);
-
-  _.pull(GlobalChangeSave, sheetName);
-
-  initSpreadEvent();
-  initGlobalEvent();
 }
 
 function showLogModal(params) {
