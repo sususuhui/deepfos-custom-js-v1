@@ -83,6 +83,7 @@ function initGlobalEvent() {
 
     const colNum = sheet.getColumnCount();
     const colSelectedName = sheet.getArray(0, 0, 1, colNum)[0][activeColumnIndex];
+    const colAllName = sheet.getArray(0, 0, 1, colNum)[0];
     const rowData = sheet.getArray(activeRowIndex, 0, 1, colNum)[0];
 
     const activeSheetInfo = sheetInfo.filter((val, i) => {
@@ -94,6 +95,7 @@ function initGlobalEvent() {
       floatingTableName,
       sheetID,
       colSelectedName,
+      colAllName,
       rowData,
     };
 
@@ -175,33 +177,62 @@ async function handleDirtyCells(sheetInfo) {
   console.log("result: ", result);
 }
 
-function showLogModal(params) {
+async function showLogModal(params) {
   let modal_html = `
   <div class="d-flex flex-column" style="height: 100%">
-    <div class="modal-body" style="width: 80%; margin: 0 auto; margin-top: 3rem">
+    <div class="modal-body" style="padding: 1.25rem;">
+      <div class="log_jobInfo  mb-3">
+        <div class="card-body row pt-0 pb-0" style="border-top: 0">
+        </div>
+      </div>
       <div class="log_jobDatable">
       </div>
     </div>
   </div>
   `;
 
+  // 引入样式
+  let style = document.createElement("style");
+  style.innerHTML = `
+  .layer-custom-class .layui-layer-title {
+    background: #069b9d;
+    color: #fff;
+  }
+  `;
+  document.head.appendChild(style);
+
   layer.open({
+    skin: "layer-custom-class",
     zIndex: 9999,
     type: 1,
     area: ["50%", "60%"],
-    title: "单元格修改记录",
+    title: "数据审计",
     // move: false,
     resize: false,
     // scrollbar: false,
     closeBtn: 1,
     content: modal_html,
-    success: function (layero, index) {
+    success: async function (layero, index) {
+      let res = await getData("dataaudit_selectdata", JSON.stringify(params), "1");
+
+      let log_jobInfo_html = ``;
+      let pov_page = res.pov_page;
+      Object.keys(pov_page).forEach((val, i) => {
+        log_jobInfo_html += `
+        <div class="form-group col-md-3 mb-3 ">
+          <label class="mb-0 font-weight-bold">${val}</label>
+          <input type="text" class="form-control" id="a" readonly="readonly" value='${pov_page[val]}'/>
+        </div>
+        `;
+      });
+      $(".log_jobInfo .card-body").html(log_jobInfo_html);
+
       console.log(params);
       // 初始化datatable
       $(".log_jobDatable").html("");
       let html =
         '<table class="table text-nowrap" id="log_jobContentTable">' +
-        '<thead class="log_headerteader">' +
+        '<thead class="log_headerteader" style="background-color: #F5F5F5;">' +
         "<tr></tr>" +
         "</thead>" +
         '<tbody class="log_tbodyHeader">' +
@@ -220,19 +251,12 @@ function showLogModal(params) {
         fixedHeader: true,
         iDisplayLength: 10, //每页显示条数
 
-        ajax: {
-          url: "http://rap2api.taobao.org/app/mock/267950/datatable",
-          type: "GET",
-          dataSrc: "result",
-          data: function () {
-            return {};
-          },
-        },
+        data: res.result,
         columns: [
-          { title: "我是列1", data: "col1" },
-          { title: "我是列2", data: "col2" },
-          { title: "我是列3", data: "col3" },
-          { title: "我是列4", data: "col4" },
+          { title: "时间", data: "timestamp" },
+          { title: "用户", data: "real_name" },
+          { title: "对象", data: "account" },
+          { title: "修改值", data: "data" },
         ],
         language: {
           search: '<span id="user">' + getLanguage("search") + ":</span> _INPUT_",
