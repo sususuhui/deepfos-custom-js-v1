@@ -19,17 +19,29 @@ var sheetInfo = [
   },
 ];
 
-function BeforeSave() {
-  // let activeSheetName = spread.getActiveSheet().name();
-  let activeSheetName = "Fix_assets_ZBZXB_new2";
-  let activeSheetName = "test111";
+function dataSheetAfterSaveCustomFunction() {
+  sheetInfo.forEach((val, i) => {
+    let activeSheetName = val.sheetName;
 
-  let activeSheetInfo = sheetInfo.filter((val, i) => {
-    return val.sheetName === activeSheetName;
-  })[0];
+    let activeSheetInfo = sheetInfo.filter((val, i) => {
+      return val.sheetName === activeSheetName;
+    })[0];
 
-  handleDirtyCells(activeSheetInfo);
+    handleDirtyCells(activeSheetInfo);
+  });
 }
+
+// function BeforeSave() {
+//   // let activeSheetName = spread.getActiveSheet().name();
+//   let activeSheetName = "Fix_assets_ZBZXB_new2";
+//   let activeSheetName = "test111";
+
+//   let activeSheetInfo = sheetInfo.filter((val, i) => {
+//     return val.sheetName === activeSheetName;
+//   })[0];
+
+//   handleDirtyCells(activeSheetInfo);
+// }
 
 // 共用缓存数据
 var GlobalCacheData = [];
@@ -75,6 +87,10 @@ function initGlobalEvent() {
     GlobalActiveSheetName = activeSheetName;
   }
 
+  // const sheet = spread.getSheetFromName(GlobalActiveSheetName);
+  // const colNum = sheet.getColumnCount();
+  // spread.getActiveSheet().setColumnVisible(colNum - 1, false);
+
   $(`[name='check_log']`).off("click");
   $(`[name='check_log']`).click(function () {
     const sheet = spread.getSheetFromName(GlobalActiveSheetName);
@@ -91,12 +107,19 @@ function initGlobalEvent() {
     })[0];
     const { floatingTableName, sheetID } = activeSheetInfo;
 
+    // 1.5.4
+    let activeSheetInfoDetail = Object.values(dataSheet.floatRowTable).filter((val) => {
+      return val.Sid == sheetID;
+    })[0];
+    let pov_page = Object.keys(activeSheetInfoDetail.pageObjs);
+
     const params = {
       floatingTableName,
       sheetID,
       colSelectedName,
       colAllName,
       rowData,
+      pov_page
     };
 
     showLogModal(params);
@@ -109,7 +132,7 @@ function initGlobalEvent() {
  * @param {*} sheetID
  * @param {*} sheetName
  */
-async function handleDirtyCells(sheetInfo) {
+async function handleDirtyCells(sheetInfo, pov_page) {
   const { floatingTableName, sheetID, sheetName } = sheetInfo;
 
   const sheet = spread.getSheetFromName(sheetName);
