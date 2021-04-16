@@ -119,7 +119,7 @@ function initGlobalEvent() {
       colSelectedName,
       colAllName,
       rowData,
-      pov_page
+      pov_page,
     };
 
     showLogModal(params);
