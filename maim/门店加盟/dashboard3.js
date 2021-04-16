@@ -11,38 +11,44 @@ const renderMap = async () => {
 
   cfs.card.body.getDom(cardName).css({ padding: 0 });
 
-  const data1 = [
-    { name: "锦江之星", value: [120.33, 36.07] },
-    { name: "郁锦香", value: [120.13, 33.38] },
-    { name: "喆啡", value: [118.58, 24.93] },
-    { name: "维也纳", value: [120.1, 30.86] },
-    { name: "希岸酒店", value: [122.18, 40.65] },
-    { name: "希尔顿欢朋", value: [113.38, 22.52] },
+  let data1 = [
+    ["7天酒店-西安钟鼓楼店", 108.969, 34.285],
+    ["非繁城品-深圳宝安机场店", 114.109, 22.544],
+    ["麗枫-深圳世界之窗店", 114.115, 22.55],
+    ["丽笙酒店-上海迪士尼乐园店", 121.483, 31.417],
+    ["维也纳-上海中山公园店", 121.19, 31.029],
+    ["康铂-南宁阳朔西街店", 107.45, 23.13],
+    ["IU-广州珠江新城店", 113.265, 23.108],
+    ["铂涛-北京国贸店", 116.341, 39.727],
   ];
 
-  const data2 = [
-    { name: "7天酒店", value: [121.05, 32.08] },
-    { name: "IU", value: [112.02, 22.93] },
-    { name: "ZMAX系列", value: [116.69, 23.39] },
-    { name: "铂涛", value: [122.1, 37.5] },
+  let data2 = [
+    ["锦江白玉兰-重庆解放碑店", 106.649, 28.821],
+    ["昆仑-浙江杭州西湖店", 120.165, 30.319],
+    ["凯里亚德酒店-深圳华强北店", 114.111, 22.546],
+    ["丽亭-上海五角场万达店", 121.712, 31.007],
+    ["派-山东八大关风景区店", 117, 36.65],
+    ["ZMAX系列-湖南株洲体育馆店", 108.9, 24.9],
   ];
 
-  const data3 = [
-    { name: "非繁城品", value: [121.48, 31.22] },
-    { name: "锦江白玉兰", value: [101.74, 36.56] },
-    { name: "锦江都城", value: [113.06, 22.61] },
-    { name: "凯里亚德酒店", value: [120.76, 30.77] },
-    { name: "康铂", value: [123.38, 41.8] },
-    { name: "昆仑", value: [113.3, 40.12] },
-    { name: "丽芮", value: [110.479191, 29.117096] },
-    { name: "丽笙酒店", value: [108.72, 34.36] },
-    { name: "丽亭", value: [117.2, 39.13] },
-    { name: "丽怡", value: [121.1, 31.45] },
-    { name: "麗枫", value: [118.1, 24.46] },
-    { name: "卢浮酒店", value: [122.05, 37.2] },
-    { name: "欧暇·地中海", value: [104.56, 29.77] },
-    { name: "派", value: [102.52, 24.35] },
+  let data3 = [
+    ["希岸酒店-四川成都锦里店", 104.071, 30.67],
+    ["丽芮-深圳宝安机场店", 114.113, 22.548],
+    ["欧暇·地中海-深圳深圳野生动物园店", 114.117, 22.552],
+    ["锦江之星-上海同济大学店", 121.445, 31.213],
+    ["丽怡-上海锦江乐园店", 121.087, 31.115],
+    ["郁锦香-南宁阳朔西街店", "108°51", 23.32],
+    ["喆啡-湖南株洲体育馆店", 113.2, 30],
+    ["卢浮酒店-广州沙湾古镇店", 113.738, 23.359],
+    ["锦江都城-北京奥林匹克公园店", 116.443, 39.922],
+    ["希尔顿欢朋-北京国贸店", 116.657, 39.91],
   ];
+
+  const transformData = (data) => {
+    return data.map((val) => {
+      return { name: val[0], value: [val[1], val[2]] };
+    });
+  };
 
   let option = {
     legend: {
@@ -74,7 +80,7 @@ const renderMap = async () => {
         name: "亏损门店",
         type: "scatter",
         coordinateSystem: "geo",
-        data: data1,
+        data: transformData(data1),
         symbolSize: 8,
         label: {
           normal: {
@@ -88,7 +94,7 @@ const renderMap = async () => {
         },
         itemStyle: {
           normal: {
-            color: "#f5222d",
+            color: "#D95850",
           },
         },
       },
@@ -96,7 +102,7 @@ const renderMap = async () => {
         name: "预警门店",
         type: "scatter",
         coordinateSystem: "geo",
-        data: data2,
+        data: transformData(data2),
         symbolSize: 8,
         label: {
           normal: {
@@ -110,7 +116,7 @@ const renderMap = async () => {
         },
         itemStyle: {
           normal: {
-            color: "#fadb14",
+            color: "#F2D643",
           },
         },
       },
@@ -118,7 +124,7 @@ const renderMap = async () => {
         name: "正常门店",
         type: "scatter",
         coordinateSystem: "geo",
-        data: data3,
+        data: transformData(data3),
         symbolSize: 8,
         label: {
           normal: {
@@ -132,9 +138,61 @@ const renderMap = async () => {
         },
         itemStyle: {
           normal: {
-            color: "#52c41a",
+            color: "#7BD9A5",
           },
         },
+      },
+    ],
+  };
+
+  if (!Cus_echarts[cardName]) {
+    Cus_echarts[cardName] = cfs.echarts.init(echartDom, cfs.echarts.theme, option);
+  } else {
+    cfs.echarts.refresh(Cus_echarts[cardName], option);
+  }
+};
+
+const opportunityPoints = async () => {
+  const cardName = "机会点分析";
+  const echartDom = cfs.card.body.getDom(cardName).find(".echart");
+  option = {
+    xAxis: {},
+    yAxis: {},
+    series: [
+      {
+        data: [
+          [1, 4],
+          [15, 9],
+        ],
+        type: "line",
+      },
+      {
+        symbolSize: 20,
+        data: [
+          [10.0, 8.04],
+          [8.07, 6.95],
+          [13.0, 7.58],
+          [9.05, 8.81],
+          [11.0, 8.33],
+          [14.0, 7.66],
+          [13.4, 6.81],
+          [10.0, 6.33],
+          [14.0, 8.96],
+          [12.5, 6.82],
+          [9.15, 7.2],
+          [11.5, 7.2],
+          [3.03, 4.23],
+          [12.2, 7.83],
+          [2.02, 4.47],
+          [1.05, 3.33],
+          [4.05, 4.96],
+          [6.03, 7.24],
+          [12.0, 6.26],
+          [12.0, 8.84],
+          [7.08, 5.82],
+          [5.02, 5.68],
+        ],
+        type: "scatter",
       },
     ],
   };
