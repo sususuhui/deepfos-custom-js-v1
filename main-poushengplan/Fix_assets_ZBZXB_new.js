@@ -31,18 +31,6 @@ function dataSheetAfterSaveCustomFunction() {
   });
 }
 
-// function BeforeSave() {
-//   // let activeSheetName = spread.getActiveSheet().name();
-//   let activeSheetName = "Fix_assets_ZBZXB_new2";
-//   let activeSheetName = "test111";
-
-//   let activeSheetInfo = sheetInfo.filter((val, i) => {
-//     return val.sheetName === activeSheetName;
-//   })[0];
-
-//   handleDirtyCells(activeSheetInfo);
-// }
-
 // 共用缓存数据
 var GlobalCacheData = [];
 var GlobalActiveSheetName = "";
@@ -96,6 +84,13 @@ function initGlobalEvent() {
     const sheet = spread.getSheetFromName(GlobalActiveSheetName);
     const activeColumnIndex = sheet.getActiveColumnIndex();
     const activeRowIndex = sheet.getActiveRowIndex();
+
+    if (sheet.getCell(activeRowIndex, activeColumnIndex).locked()) {
+      $.jGrowl("不可编辑列无法查看审计情况", {
+        theme: "alert-styled-left bg-danger",
+      });
+      return;
+    }
 
     const colNum = sheet.getColumnCount();
     const colSelectedName = sheet.getArray(0, 0, 1, colNum)[0][activeColumnIndex];
