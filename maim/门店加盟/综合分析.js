@@ -32,17 +32,21 @@ $(() => {
 
   let html = `
     <div class="row">
-      <div style="width:60%">
+      <div style="width:55%">
         <div style="margin-bottom: 1.25rem;">
-          <div class="row" id="new_positioning_signs" style="padding-bottom: 2px;"></div>
+          <div class="row" id="new_positioning_signs" style="padding-bottom: 2px;margin-left: 0;margin-right: 0;"></div>
         </div>
-        <div class="row" id="new_positioning_table1">${table1_dom.prop("outerHTML")}</div>
-        <div class="row">
-          <div style="width:50%;height:300px" id="new_positioning_table2">${table2_dom.prop("outerHTML")}</div>
-          <div style="width:50%;height:300px" id="new_positioning_chart1">${chart1_dom.prop("outerHTML")}</div>
+        <div>
+          <div class="row" id="new_positioning_table1" style="margin-left: 0;margin-right: 0;">${table1_dom.prop("outerHTML")}</div>
+        </div>
+        <div>
+          <div class="row" style="margin-left: 0;margin-right: 0;">
+            <div style="width:50%;height:300px" id="new_positioning_table2">${table2_dom.prop("outerHTML")}</div>
+            <div style="width:50%;height:300px" id="new_positioning_chart1">${chart1_dom.prop("outerHTML")}</div>
+          </div>
         </div>
       </div>
-      <div style="width:40%" id="new_positioning_map">${map_dom.prop("outerHTML")}</div>
+      <div style="width:45%" id="new_positioning_map">${map_dom.prop("outerHTML")}</div>
     </div>
     `;
 
