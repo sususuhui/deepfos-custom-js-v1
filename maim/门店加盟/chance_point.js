@@ -56,7 +56,6 @@ function dealSheetData(data) {
 
 function renderBarEchart(data, params) {
   var componentId = params.componentId;
-  debugger;
   var chartData = dealSheetData(data);
   var arr2 = [];
   for (var i = 0; i < 22; i++) {
