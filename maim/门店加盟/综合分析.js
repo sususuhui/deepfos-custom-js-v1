@@ -27,6 +27,7 @@ $(() => {
   let table2_dom = $(`[data-name='table2']`);
   let chart1_dom = $(`[data-name='chart1']`);
   let map_dom = $(`[data-name='map']`);
+  let pl_dom = $(`[data-name='pl']`);
 
   $(".dashBoardContent").html("");
 
@@ -40,13 +41,14 @@ $(() => {
           <div class="row" id="new_positioning_table1" style="margin-left: 0;margin-right: 0;">${table1_dom.prop("outerHTML")}</div>
         </div>
         <div>
-          <div class="row" style="margin-left: 0;margin-right: 0;">
-            <div style="width:50%;height:300px" id="new_positioning_table2">${table2_dom.prop("outerHTML")}</div>
-            <div style="width:50%;height:300px" id="new_positioning_chart1">${chart1_dom.prop("outerHTML")}</div>
-          </div>
+          <div class="row" id="new_positioning_pl" style="margin-left: 0;margin-right: 0;height: 200px;">${pl_dom.prop("outerHTML")}</div>
         </div>
       </div>
       <div style="width:45%" id="new_positioning_map">${map_dom.prop("outerHTML")}</div>
+    </div>
+    <div class="row" style="margin-top: 1.25rem;margin-left: 0;margin-right: 0;">
+      <div class="col" style="height:300px;padding: 0;" id="new_positioning_table2">${table2_dom.prop("outerHTML")}</div>
+      <div class="col" style="height:300px;padding: 0;" id="new_positioning_chart1">${chart1_dom.prop("outerHTML")}</div>
     </div>
     `;
 
@@ -72,6 +74,9 @@ $(() => {
   //   `;
 
   $(".dashBoardContent").html(html);
+
+  $(`[data-name='table2']`).removeClass('pl-2');
+  $(`[data-name='chart1']`).removeClass('pr-2');
 
   $("#showDashBoard")
     .find(".freshBS")
@@ -565,7 +570,6 @@ const renderChart1 = async () => {
   //         type: "bar",
   //         barWidth: 50,
   //         stack: "总量",
-  //         data: data.reduce,
   //         data: arrToFixed(data.reduce),
   //         label: {
   //           show: true,
@@ -1714,11 +1718,11 @@ const renderCharts1 = async () => {
     grid: {
       top: "5%",
       bottom: "20%",
-      left: "5%",
-      right: "5%",
+      left: "10%",
+      right: "10%",
     },
     legend: {
-      x: "40%",
+      x: "30%",
       y: "90%",
       show: true,
     },
@@ -1759,6 +1763,8 @@ const renderCharts1 = async () => {
     ],
   };
   let echartDom = $(`<div class="card-body" id="chart1" style="height: 100%; width: 100%"></div>`);
-  $("#chart1").find(".card-body").append(echartDom);
-  let ec3 = cfs.echarts.init(echartDom, Cus_theme, option);
+  if ($("#chart1").find("canvas").length === 0) {
+    $("#chart1").find(".card-body").append(echartDom);
+    let ec3 = cfs.echarts.init(echartDom, Cus_theme, option);
+  }
 };
