@@ -24,7 +24,7 @@ const handleInit = () => {
 
       switch (activeColumnIndex) {
         case 19:
-          window.open(`form-list-view?id=LSTECB0H32MPCI&name=JournalEntry_List&sign=${paramObj.sign}`);
+          window.open(`form-list-view?id=LSTECASRE7SB3H&sign=${paramObj.sign}`);
           break;
         case 20:
           window.open(`form-list-view?id=LSTECH4QBI8Q08&name=Reconciliation_report&sign=${paramObj.sign}`);
