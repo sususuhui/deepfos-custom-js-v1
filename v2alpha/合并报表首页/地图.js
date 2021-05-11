@@ -51,7 +51,7 @@ const Init = () => {
               let toolTiphtml = "";
               mapData.forEach((val) => {
                 if (val.name === params.name) {
-                  toolTiphtml += val.name + "：" + val.attr3;
+                  toolTiphtml += val.name + "：" + numFormat(val.attr3);
                 }
               });
               return toolTiphtml;
@@ -223,6 +223,17 @@ const convertData = function (geoCoordMap, data) {
     }
   }
   return res;
+};
+
+/**
+ * 千分符
+ * @param {*} num
+ * @returns
+ */
+const numFormat = (num) => {
+  let RNum = Number(num);
+  let c = RNum.toString().indexOf(".") !== -1 ? RNum.toLocaleString() : RNum.toString().replace(/(\d)(?=(?:\d{3})+$)/g, "$1,");
+  return c;
 };
 
 return {

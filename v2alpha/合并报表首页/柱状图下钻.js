@@ -35,11 +35,11 @@ const Charts = () => {
             children: [
               {
                 name: "当年份货品",
-                value: 6232425.37,
+                value: 6232425,
               },
               {
                 name: "去年秋冬货品（1-3月）",
-                value: 2192959.75,
+                value: 2192959,
               },
             ],
           },

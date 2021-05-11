@@ -441,11 +441,35 @@ const renderChart = () => {
     }
   };
 
-  return <Calendar dateCellRender={dateCellRender} />;
+  const onSelect = (date) => {
+    if (date.format("YYYY-MM-DD") === "2021-05-01") {
+      window.open(`http://47.103.113.21:8819/data-integration/`);
+    }
+  };
+
+  return <Calendar dateCellRender={dateCellRender} onSelect={onSelect} />;
 };
 
 return {
   run() {
     handleInit();
+  },
+};
+
+////////////////////////////////////////////////////////////////
+
+const linkTo = () => {
+  const configureBtnWrap = document.querySelector(".title___1YQDE");
+
+  let linkTo = document.createElement("button");
+  linkTo.setAttribute("class", "ant-btn ant-btn-sm");
+  linkTo.setAttribute("type", "button");
+  linkTo.innerHTML = "<span>跳转</span>";
+  configureBtnWrap.append(linkTo);
+};
+
+return {
+  run() {
+    linkTo();
   },
 };
