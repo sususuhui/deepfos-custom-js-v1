@@ -36,7 +36,7 @@ const Charts = () => {
     if (name === "壹方城店") {
       let paramObj = getUrlParams();
 
-      window.open(`/data-sheet?id=GRDECBHKD8MA97&sign=${paramObj.sign}`);
+      window.open(`/data-sheet?id=GRDECL5JBD8B7S&sign=${paramObj.sign}`);
     }
   };
 
