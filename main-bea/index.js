@@ -8,7 +8,6 @@ var sheetInfo = [
 ];
 
 function dataSheetAfterSaveCustomFunction() {
-  debugger;
   sheetInfo.forEach((val, i) => {
     let activeSheetName = val.sheetName;
 
@@ -25,11 +24,161 @@ var GlobalCacheData = [];
 var GlobalActiveSheetName = "";
 
 function Init() {
+  InitSave();
+
   initSpreadEvent();
   initGlobalEvent();
-  //查询数据库，设置POV之间的关联
-  //   a();
-  bindSubentityShowEvents();
+}
+
+function InitSave() {
+  workbook.btn.saveCurrent = async () => {
+    // 如果当前保存,刷新等数据操作行为未结束,则不保存
+    if (!workbook.btn.status) {
+      return;
+    }
+    // 将操作状态置成正在操作,不允许其他操作同时进行
+    workbook.btn.status = false;
+    // 显示loading显示
+    loadingShow(".dataSheet");
+    // checkResult:获取校验结果
+    // floatRowTableSaveData:浮动行表保存数据
+    const { checkResult, floatRowTableSaveData } = await workbook.btn.checkBeforeSave("saveCurrent");
+    // 如果校验通过则执行保存当前逻辑
+    if (checkResult) {
+      // 当前活跃sheet的下标值
+      const sheetIndex = spread.getActiveSheetIndex();
+      // saveAfterAsyncPython:当前sheet保存后需要运行的异步python
+      // saveAfterSynchronizePython:当前sheet保存后需要运行的同步python
+      const { saveAfterAsyncPython, saveAfterSynchronizePython } = workbook.python.getSheetPython(sheetIndex);
+      // 设置保存当前时运行脚本的预设参数
+      workbook.python.setScriptParameterPythonList([...saveAfterAsyncPython, ...saveAfterSynchronizePython], async () => {
+        // saveDataArr: 当前静态表或者动态表需要保存的数据
+        // saveAnnotationList:静态表需要保存的单元格批注的值
+        const { saveAnnotationList, saveDataArr } = workbook.btn.dirtyDataProcess(sheetIndex);
+
+        // 获取保存sheet的单元格批注的结果
+        const saveAnnotationResult = await workbook.annotation.saveCellListAnnotation(saveAnnotationList);
+        // 如果存在批注内容
+        if (saveAnnotationList.length !== 0) {
+          // 提示保存结果
+          ForSwal(saveAnnotationResult ? "备注保存成功" : "备注保存失败", saveAnnotationResult);
+        }
+        // 保存单元格数据 saveStatus:保存结果 saveResultList:每个sheet的保存结果信息
+        const { saveStatus, saveResultList } = await workbook.btn.saveData([...floatRowTableSaveData, ...saveDataArr]);
+        // 如果所有sheet都保存成功
+        if (saveStatus) {
+          dataSheetAfterSaveCustomFunction();
+
+          // 提示成功信息
+          $.jGrowl("", {
+            header: getLanguage("sheetSaveSuccess"),
+            theme: "bg-teal alert-success alert-styled-left alert-styled-custom",
+          });
+
+          // 加载前异步python的调用执行
+          workbook.python.asyncPythonRun();
+          // 加载前同步python调用执行
+          await workbook.python.syncPythonRun();
+          // 刷新当前
+          workbook.btn.refreshPart();
+
+          // 如果存在sheet保存不成功的情况
+        } else {
+          // 处理每个sheet的保存结果
+          workbook.btn.handleSaveResultList(saveResultList);
+          // 关闭加载动画
+          loadingHide(".dataSheet");
+        }
+
+        // 保存结束,将是否允许保存、刷新的状态置为可以
+        workbook.btn.status = true;
+      });
+      // 否则如果校验不通过
+    } else {
+      // 关闭加载动画
+      loadingHide(".dataSheet");
+      // 保存结束,将是否允许保存,刷新状态置为可以
+      workbook.btn.status = true;
+    }
+  };
+
+  workbook.btn.saveAll = async () => {
+    // 如果当前保存,刷新等数据操作行为未结束,则不保存
+    if (!workbook.btn.status) {
+      return;
+    }
+    // 将操作状态置成正在操作,不允许其他操作同时进行
+    workbook.btn.status = false;
+    // 显示loading显示
+    loadingShow(".dataSheet");
+    // checkResult:获取校验结果
+    // floatRowTableSaveData:浮动行表保存数据
+    const { checkResult, floatRowTableSaveData } = await workbook.btn.checkBeforeSave("saveAll");
+    // 如果校验通过则执行保存全部逻辑
+    if (checkResult) {
+      // saveAfterAsyncPython:保存后所有sheet需要运行的异步python
+      // saveAfterSynchronizePython:保存后所有sheet需要运行的同步python
+      const { saveAfterAsyncPython, saveAfterSynchronizePython } = dataSheet.pythonList;
+      // 设置保存全部时运行脚本的预设参数
+      workbook.python.setScriptParameterPythonList([...saveAfterAsyncPython, ...saveAfterSynchronizePython], async () => {
+        // 获取sheet的数量
+        const sheetCount = spread.getSheetCount();
+        // 需要保存的数据
+        let saveDataList = [];
+        // 需要保存的批注数据
+        let annotationList = [];
+        // 遍历获取每个sheet的保存数据
+        for (let sheetIndex = 0; sheetIndex < sheetCount; sheetIndex += 1) {
+          // saveDataArr: 当前静态表或者动态表需要保存的数据
+          // saveAnnotationList:静态表需要保存的单元格批注的值
+          const { saveAnnotationList, saveDataArr } = workbook.btn.dirtyDataProcess(sheetIndex);
+          // 融合当前sheet的单元格保存数据
+          saveDataList.push(...saveDataArr);
+          // 融合当前sheet需要保存的批注数据
+          annotationList.push(...saveAnnotationList);
+        }
+        // 获取保存sheet的单元格批注的结果
+        const saveAnnotationResult = await workbook.annotation.saveCellListAnnotation(annotationList);
+        // 如果存在批注内容
+        if (annotationList.length !== 0) {
+          // 提示保存结果
+          ForSwal(saveAnnotationResult ? "备注保存成功" : "备注保存失败", saveAnnotationResult);
+        }
+        // 保存单元格数据 saveStatus:保存结果 saveResultList:每个sheet的保存结果信息
+        const { saveStatus, saveResultList } = await workbook.btn.saveData([...floatRowTableSaveData, ...saveDataList]);
+        // 如果所有sheet都保存成功
+        if (saveStatus) {
+          dataSheetAfterSaveCustomFunction();
+
+          // 提示成功信息
+          $.jGrowl("", {
+            header: getLanguage("sheetSaveSuccess"),
+            theme: "bg-teal alert-success alert-styled-left alert-styled-custom",
+          });
+          // 加载前异步python的调用执行
+          workbook.python.asyncPythonRun();
+          // 加载前同步python调用执行
+          await workbook.python.syncPythonRun();
+          // 刷新当前
+          dataSheet.refreshAll();
+          // 如果存在sheet保存不成功的情况
+        } else {
+          // 处理每个sheet的保存结果
+          workbook.btn.handleSaveResultList(saveResultList);
+          // 关闭加载动画
+          loadingHide(".dataSheet");
+        }
+
+        // 保存结束,将是否允许保存、刷新的状态置为可以
+        workbook.btn.status = true;
+      });
+    } else {
+      // 关闭加载动画
+      loadingHide(".dataSheet");
+      // 保存结束,将是否允许保存,刷新状态置为可以
+      workbook.btn.status = true;
+    }
+  };
 }
 
 /**
@@ -184,7 +333,6 @@ async function handleDirtyCells(sheetInfo, pov_page) {
   console.log("params: ", params);
 
   let result = await getData("dataaudit_savedata", JSON.stringify(params), "1");
-  debugger;
   console.log("result: ", result);
 }
 
@@ -303,145 +451,4 @@ function getData(pythonName, parameter, runType) {
       ...userinfoParams2,
     }),
   });
-}
-
-const a = () => {
-  $("select[aname='Entity']").eq(0).parent().css("width", "180px");
-  $("select[aname='Sub_entity']").eq(0).parent().css("width", "180px");
-  $("select[aname='Misc']").eq(0).parent().css("width", "180px");
-  //   $("select[aname='Sub_entity']").eq(0).parent().find(".multiselect-container").hide();
-  var cfs = new DevCustomFuncTools();
-  let comm = "SELECT parent_name, `name` FROM `app4_di_sub_entity_table_dimension`";
-  let res = cfs.request.foundation.runComm(comm);
-  if (res.err) {
-    ForSwal("读取数据失败：" + res.err.Message);
-  } else {
-    data = res.res;
-  }
-  let entityGroup = {};
-  //添加元素
-  for (i = 0; i < data.length; i++) {
-    parentName = data[i].parent_name;
-    Name = data[i].name;
-    // 如果之前没有声明过了entityGroup[parentName]数组，就需要先声明一个这样的数组
-    if (!entityGroup.hasOwnProperty(parentName)) {
-      entityGroup[parentName] = [];
-    }
-    //把当前的Name加到entityGroup.parentName数组中
-    entityGroup[parentName].push(Name);
-    // dict.add(data[i].parent_name, data[i].name);
-  }
-};
-
-//创建一个字典类，来源:https://www.jianshu.com/p/eece86baec10
-function Dictionary() {
-  this.dataStore = [];
-  this.add = add; // 添加元素
-  this.find = find; // 查找元素
-  this.remove = remove; // 删除元素
-  this.count = count; // 字典中元素个数
-  this.showAll = showAll; // 显示字典元素
-  this.clear = clear; // 清空字典
-}
-//向字典添加元素，格式：add(键,值)
-function add(key, value) {
-  this.dataStore[key] = value;
-}
-//根据键，去查找字典中的值，格式：find(键)
-function find(key) {
-  return this.dataStore[key];
-}
-//删除一个元素，格式：remove(键)
-function remove(key) {
-  if (this.dataStore[key]) delete this.dataStore[key];
-  else return "Not Found";
-}
-//查看字典中元素的个数
-function count() {
-  var n = 0;
-  for (var key in this.dataStore) {
-    ++n;
-  }
-  return n;
-}
-//清空字典
-function clear() {
-  for (var key in this.dataStore) {
-    delete this.dataStore[key];
-  }
-}
-//改造后的showAll
-function showAll() {
-  var sortKeys = Object.keys(this.dataStore).sort();
-  for (var key in sortKeys) {
-    console.log(sortKeys[key] + "->" + this.dataStore[sortKeys[key]]);
-  }
-}
-
-//在Entity选到总部稽核室时，Sub_entity只能选总部稽核一处、二处、三处，把其他选项全部删除
-const bindSubentityShowEvents = () => {
-  debugger;
-  $(".dataSheetCon")
-    .find('[aname="Entity"]')
-    .off("change")
-    .on("change", function () {
-      debugger;
-      if ($(".dataSheetCon").find('[aname="Entity"]').val() === "HQEO02") {
-        let dropdownLength = $('[aname="Sub_entity"]').parent().find("input").length;
-        for (let k = 0; k < dropdownLength; k++) {
-          debugger;
-          let inputValue = $('[aname="Sub_entity"]').parent().find("label").eq(k).find("input").val();
-          let inputArr = ["HQEOAA", "HQEOAB", "HQEOAC"];
-          if (!inputArr.includes(inputValue)) {
-            $('[aname="Sub_entity"]').parent().find("label").eq(k).parent().hide();
-            debugger;
-          }
-          if (inputValue === "HQEOAA") {
-            $('[aname="Sub_entity"]').parent().find("label").eq(k).parent().addClass("active");
-            $(".dataSheetCon").find('[aname="Sub_entity"]').parent().find("span").eq(0).html("总部稽核一处");
-            debugger;
-          }
-        }
-      }
-    });
-};
-
-function beforeSaveInit() {
-  var sheet = spread.getActiveSheet();
-  return dateCalibration(sheet);
-}
-
-//------------------------   校验预计开始时间不得早于2021年7月，开始时间小于等于结束时间 -------------------------
-function dateCalibration(sheet) {
-  let letSave = true;
-  for (let k = 1; k < sheet.getRowCount(); k++) {
-    startDate = new Date(sheet.getValue(k, 9));
-    endDate = new Date(sheet.getValue(k, 10));
-    earliestDate = new Date("2021-7");
-    if (sheet.getValue(k, 9) === null || sheet.getValue(k, 10) === null) {
-      continue;
-    }
-    if (startDate > endDate) {
-      style1 = new GC.Spread.Sheets.Style();
-      style1.backColor = "pink";
-      // sheet.comments.add(k, 8, '预计开始时间不得晚于预计结束时间，请重新输入！');
-      ForSwal("预计开始时间不得晚于预计结束时间，请重新输入！");
-      sheet.setStyle(k, 9, style1, GC.Spread.Sheets.SheetArea.viewport);
-      sheet.setStyle(k, 10, style1, GC.Spread.Sheets.SheetArea.viewport);
-      letSave = false;
-    }
-    if (startDate <= earliestDate) {
-      console.log(k);
-      style1 = new GC.Spread.Sheets.Style();
-      style1.backColor = "pink";
-      // sheet.comments.add(k, 13, '预计开始时间不得早于2021年7月，请重新输入！');
-      ForSwal("预计开始时间不得早于2021年7月，请重新输入！");
-      sheet.setStyle(k, 9, style1, GC.Spread.Sheets.SheetArea.viewport);
-      letSave = false;
-    }
-    if (!letSave) {
-      debugger;
-      return false;
-    }
-  }
 }
