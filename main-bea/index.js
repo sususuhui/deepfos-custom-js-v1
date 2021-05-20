@@ -354,7 +354,7 @@ async function showLogModal(params) {
   let style = document.createElement("style");
   style.innerHTML = `
   .layer-custom-class .layui-layer-title {
-    background: #069b9d;
+    background: #f5222d;
     color: #fff;
   }
   `;
