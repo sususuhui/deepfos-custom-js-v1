@@ -5,8 +5,6 @@ const { Column } = Table;
 
 let myChart;
 
-// 动态加载 js
-
 const Charts = () => {
   const [loadScriptStatus, setLoadScriptStatus] = React.useState(false);
 
