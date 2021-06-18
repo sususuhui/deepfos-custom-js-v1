@@ -185,12 +185,16 @@ function L2(data, params) {
       <p style="text-align:center;" class="mb-0">待审核合同</p>
       <div style="width: 100%;height:150px;margin:0 auto" id="echarts2"></div>
       <div class="row" style="text-align:center;">
-          <div class="col-lg-6">
+          <div class="col-lg-4">
               <div><span style="display:inline-block;width: 12px;height: 12px;background:#edafda;border-radius: 3px;margin-right: 3px;"></span>合同数量</div>
               <div class="num4">2336</div>
           </div>
-          <div class="col-lg-6" onclick="a1ClickContractList(1);" style="cursor: pointer;">
-              <div><span style="display:inline-block;width: 12px;height: 12px;background:#59c4e6;border-radius: 3px;margin-right: 3px;"></span>待审核数量</div>
+          <div class="col-lg-4" onclick="a1ClickContractList(3);" style="cursor: pointer;">
+              <div><span style="display:inline-block;width: 12px;height: 12px;background:#59c4e6;border-radius: 3px;margin-right: 3px;"></span>未提交数量</div>
+              <div class="num6">2336</div>
+          </div>
+          <div class="col-lg-4" onclick="a1ClickContractList(1);" style="cursor: pointer;">
+              <div><span style="display:inline-block;width: 12px;height: 12px;background:#93b7e3;border-radius: 3px;margin-right: 3px;"></span>待审核数量</div>
               <div class="num5">2336</div>
           </div>
       </div>
@@ -228,6 +232,20 @@ function L2(data, params) {
           AND info.contract_process = 2) a`;
   var resSQL2 = cfs.request.foundation.runComm(SQL2);
   $(".num5").text(resSQL2.res[0].totalCount);
+  // 未提交数量
+  const SQL3 = `
+    SELECT
+      COUNT(0) AS totalCount
+    FROM
+    (SELECT
+    contract_no
+    FROM
+      app1_contract_info
+    WHERE
+      contract_process = 1)a`;
+  const resSQL3 = cfs.request.foundation.runComm(SQL3);
+  $(".num6").text(resSQL3.res[0].totalCount);
+
   let option = {
     width: "100%",
     height: 150,
@@ -250,7 +268,7 @@ function L2(data, params) {
         }
       },
     },
-    color: ["#edafda", "#59c4e6"],
+    color: ["#edafda", "#59c4e6", "#93b7e3"],
     series: [
       {
         // top: "20%",
@@ -273,7 +291,8 @@ function L2(data, params) {
           show: false,
         },
         data: [
-          { value: 100 - (resSQL2.res[0].totalCount / resCurSQL.res[0].totalCount) * 100, name: "合同总量" },
+          { value: 100 - (resSQL2.res[0].totalCount / resCurSQL.res[0].totalCount) * 100 - (resSQL3.res[0].totalCount / resCurSQL.res[0].totalCount) * 100, name: "合同总量" },
+          { value: (resSQL3.res[0].totalCount / resCurSQL.res[0].totalCount) * 100, name: "未提交数量" },
           { value: (resSQL2.res[0].totalCount / resCurSQL.res[0].totalCount) * 100, name: "待审核数量" },
         ],
       },
@@ -452,7 +471,7 @@ function a1ClickContractList(type) {
         theme: "alert-styled-left bg-danger",
       });
     }
-  } else {
+  } else if (type == 2) {
     var sql2 = `SELECT
       contract_no
 FROM
@@ -513,6 +532,33 @@ WHERE
     } else {
       $.jGrowl("", {
         header: resSQL2.res.Message,
+        theme: "alert-styled-left bg-danger",
+      });
+    }
+  } else {
+    const sql = `
+    SELECT
+      contract_no
+    FROM
+      app1_contract_info
+    WHERE
+      contract_process = 1`;
+    const resSQL = cfs.request.foundation.runComm(sql);
+    if (resSQL.res.code == undefined) {
+      var newArray = [];
+      $.each(resSQL.res, function (k, v) {
+        newArray.push(v.contract_no);
+      });
+      var chart2_contarctNo = newArray;
+      var code = escape(chart2_contarctNo.join());
+      if (code == "") {
+        window.location.href = "../contract1/contract.html";
+      } else {
+        window.location.href = "../contract1/contract.html?contract_no=" + code;
+      }
+    } else {
+      $.jGrowl("", {
+        header: resSQL.res.Message,
         theme: "alert-styled-left bg-danger",
       });
     }
