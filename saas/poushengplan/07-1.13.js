@@ -1,9 +1,9 @@
 // 全局 sheet 信息
 var sheetInfo = [
   {
-    floatingTableName: "IT_project_list",
-    sheetID: "EEC3UHD0BQVN",
-    sheetName: "IT_project_list",
+    floatingTableName: "GRDECJJCG1DGR4",
+    sheetID: "EEC4F2F6E6NC",
+    sheetName: "技术服务费",
   },
 ];
 
