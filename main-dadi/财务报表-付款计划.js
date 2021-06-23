@@ -19,9 +19,9 @@ $("#contractList_table").on("init.dt", async function () {
     ${extraComZ}
   `;
 
-  let data_a = null,
-    data_b = null,
-    data_c = null;
+  let data_a = 0,
+    data_b = 0,
+    data_c = 0;
   let res = cfs.request.foundation.runComm(comm);
   if (res.err) {
     ForSwal("读取数据失败：" + res.err.Message);
@@ -36,9 +36,9 @@ $("#contractList_table").on("init.dt", async function () {
 
   let html = `
   <div style="display: flex; float: left; margin: 0.625rem 0 0 0">
-    <div class="mr-3">本期应付：${data_a}</div>
-    <div class="mr-3">本期已付：${data_b}</div>
-    <div>本期应付未付：${data_c}</div>
+    <div class="mr-3">本期应付：${data_a} 元</div>
+    <div class="mr-3">本期已付：${data_b} 元</div>
+    <div>本期应付未付：${data_c} 元</div>
   </div>
   `;
 
@@ -48,7 +48,6 @@ $("#contractList_table").on("init.dt", async function () {
 const getFormListSql = (params) => {
   return CommonRequest({
     url: `${ApiFn.getOrigin()}/DynamicForm/formlist/formListSql`,
-    // url: `http://dev.seepln.com/DynamicFormformlist/formListSql`,
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
