@@ -35,10 +35,10 @@ $("#contractList_table").on("init.dt", async function () {
   }
 
   let html = `
-  <div style="display: flex; float: left; margin: 0.625rem 0 0 0">
-    <div class="mr-3">本期应付：${data_a} 元</div>
-    <div class="mr-3">本期已付：${data_b} 元</div>
-    <div>本期应付未付：${data_c} 元</div>
+  <div style="display: flex; float: left; margin: 0.325rem 0 0 0; border: 1px solid;">
+    <div style="border-right: 1px solid; padding: 4px 10px 4px 10px">本期应付：${data_a} 元</div>
+    <div style="border-right: 1px solid; padding: 4px 10px 4px 10px">本期已付：${data_b} 元</div>
+    <div style="padding: 4px 10px 4px 10px">本期应付未付：${data_c} 元</div>
   </div>
   `;
 
