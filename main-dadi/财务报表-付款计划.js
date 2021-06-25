@@ -12,11 +12,9 @@ $("#contractList_table").on("init.dt", async function () {
   let comm = `
   SELECT
     sum(
-      IFNULL(cf.cf_amount, 0) - IFNULL(deduct.a1, 0) - IFNULL(deduct.a2, 0) - IFNULL(deduct.a3, 0)
-    ) kpi1,
-    sum(
       IFNULL(cf.cf_amount, 0) - IFNULL(deduct.total_amount, 0)
-    ) kpi2
+    ) kpi1,
+    sum(IFNULL(pay.actual_amount,0)) kpi2
   FROM
     ${extraComZ}
   `;
