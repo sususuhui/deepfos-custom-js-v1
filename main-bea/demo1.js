@@ -391,12 +391,33 @@ const MapBlock = async () => {
     mapChart.setOption(option, true);
     mapChart.off("click");
     mapChart.on("click", async (params) => {
+      $("[data-name=MapBlock] .card-body .row")
+        .children()
+        .eq(1)
+        .block({
+          message: '<i class="icon-spinner4 spinner"></i>',
+          overlayCSS: {
+            backgroundColor: "#fff",
+            opacity: 1,
+            cursor: "wait",
+          },
+          css: {
+            border: 0,
+            padding: 0,
+            backgroundColor: "transparent",
+          },
+        });
+
       let areaMapCode = params.value[2].MapCode;
       const data = await getMapTableData(areaMapCode);
-      mapOperationArray.push(areaMapCode);
+      if (mapOperationArray.length < 3) {
+        mapOperationArray.push(areaMapCode);
+      }
 
       $("#select2_pov_account").val("PL06").select2();
       renderTable(data.TableData);
+
+      $("[data-name=MapBlock] .card-body .row").children().eq(1).unblock();
     });
     let bmap = mapChart.getModel().getComponent("bmap").getBMap();
     bmap.setMapStyleV2({
@@ -491,6 +512,20 @@ const MapBlock = async () => {
 
   const mapBack = async () => {
     if (mapOperationArray.length >= 2) {
+      $("[data-name=MapBlock] .card-body").block({
+        message: '<i class="icon-spinner4 spinner"></i>',
+        overlayCSS: {
+          backgroundColor: "#fff",
+          opacity: 1,
+          cursor: "wait",
+        },
+        css: {
+          border: 0,
+          padding: 0,
+          backgroundColor: "transparent",
+        },
+      });
+
       mapChart.dispose();
 
       let Entity = mapOperationArray[mapOperationArray.length - 2];
@@ -516,14 +551,30 @@ const MapBlock = async () => {
 
         mapOperationArray.pop();
       }
+
+      $("[data-name=MapBlock] .card-body").unblock();
     }
   };
 
+  $("[data-name=MapBlock] .card-body").block({
+    message: '<i class="icon-spinner4 spinner"></i>',
+    overlayCSS: {
+      backgroundColor: "#fff",
+      opacity: 1,
+      cursor: "wait",
+    },
+    css: {
+      border: 0,
+      padding: 0,
+      backgroundColor: "transparent",
+    },
+  });
   const data = await getMapTableData();
   const { MapData, TableData } = data;
   mapLevelRenderer("China", "Branch", MapData);
   mapOperationArray.push("Branch");
   renderTable(TableData);
+  $("[data-name=MapBlock] .card-body").unblock();
 };
 
 const ChartBlock = () => {
