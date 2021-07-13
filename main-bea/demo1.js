@@ -85,7 +85,7 @@ $(() => {
   });
 
   // 添加地图后退按钮
-  const btn = `<button type="button" class="btn btn-primary legitRipple btn-sm">back</button>`;
+  const btn = `<button id="mapBack" type="button" class="btn btn-primary legitRipple btn-sm">back</button>`;
   $("[data-name=MapBlock]").find(".header-elements").append(btn);
 
   LoadBaiduMapScript();
@@ -157,7 +157,6 @@ const MapBlock = async () => {
 </div>
 
   `;
-
   $("[data-name=MapBlock]").find(".echart").html(html);
 
   // 设置中间滚动table得最大高度
@@ -167,7 +166,13 @@ const MapBlock = async () => {
   });
   $("#select2_pov_account").select2();
 
-  const getMapTableData = async () => {
+  $("#mapBack")
+    .off("click")
+    .on("click", () => {
+      mapBack();
+    });
+
+  const getMapTableData = async (Entity = "Branch") => {
     let pov = showDashBoard.globalCurrentPovObj;
     let tableAccount = $("#select2_pov_account").val();
 
@@ -175,6 +180,7 @@ const MapBlock = async () => {
       "BeaChina_map_branch_income_data",
       JSON.stringify({
         ...pov,
+        Entity,
         Account: tableAccount,
       }),
       "1"
@@ -214,8 +220,6 @@ const MapBlock = async () => {
     let mapData = MapData.map((v) => {
       return { value: v.Income, name: v.name, MapData: v };
     });
-    console.log("mapData: ", mapData);
-    console.log("geoJson: ", geoJson);
 
     let valueArr = [];
     mapData.forEach((val) => {
@@ -247,13 +251,15 @@ const MapBlock = async () => {
         text: ["高", "低"], // 文本，默认为数值文本
         calculable: true,
         inRange: {
-          color: ["#edf3f6", "#04a1f6"],
+          color: ["#F3E3A0", "#C34D53"],
         },
       },
       series: [
         {
           type: "map",
           map: MapCode,
+          zoom: 1.5,
+          top: 120,
           itemStyle: {
             normal: {
               borderColor: "rgba(0, 0, 0, 0.2)",
@@ -296,55 +302,43 @@ const MapBlock = async () => {
     };
     mapChart.setOption(option, true);
 
-    // 解绑click事件
+    $(window).on("resize", () => {
+      mapChart.resize();
+    });
+
     mapChart.off("click");
-    //给地图添加监听事件
     mapChart.on("click", async (params) => {
       let { MapData } = params.data;
 
       if (MapData.level === "Area") {
-        // mapOperationArray.push({ level: MapData.level, MapCode: MapData.MapCode });
-        // mapOperationArray.push(MapData.MapCode);
-        bmapRenderer(MapData.MapCode);
+        $("#select2_pov_account").val("PL06").select2();
+
+        let areaMapCode = MapData.MapCode;
+        const data = await getMapTableData(areaMapCode);
+
+        renderTable(data.TableData);
+        bmapRenderer(areaMapCode, data.MapData);
+        mapOperationArray.push(areaMapCode);
       }
     });
   };
 
-  const bmapRenderer = async (MapCode) => {
-    // $("#map").block({
-    //   message: '<i class="icon-spinner4 spinner"></i>',
-    //   overlayCSS: {
-    //     backgroundColor: "#fff",
-    //     opacity: 0.8,
-    //     cursor: "wait",
-    //   },
-    //   css: {
-    //     border: 0,
-    //     padding: 0,
-    //     backgroundColor: "transparent",
-    //   },
-    // });
+  const bmapRenderer = async (MapCode, data) => {
+    const areaPoint = {
+      HBQ: { lat: 39.125596, lng: 117.190182 },
+      HDQ: { lat: 32.065922, lng: 118.799309 },
+      HNQ: { lat: 22.549053, lng: 114.062499 },
+      ZXQ: { lat: 30.580774, lng: 104.069372 },
+    };
 
-    // // 获取 区 定位点
-    // let allAdCode = await getGeoJson("all.json");
-    // let mapInfo = allAdCode.filter((val) => {
-    //   return val.adcode === parseInt(MapCode);
-    // });
-    // let point = { lng: mapInfo[0].lng, lat: mapInfo[0].lat };
+    const newMapData = data.map((val) => {
+      return {
+        name: val.Name,
+        value: [parseInt(val.Lat), parseInt(val.Lng), { MapCode: val.MapCode }],
+      };
+    });
 
-    // // 获取 市 店铺信息
-    // let pyData = await getData("synthesis_analysis_part5", { Entity: MapCode });
-    // let resultData = JSON.parse(pyData.result);
-    // let newStoreMap = resultData.Form.map((val) => {
-    //   return {
-    //     name: val.Name,
-    //     value: [val.Lng, val.Lat],
-    //   };
-    // });
-
-    // $("#map").unblock();
-
-    initBmapEcharts(point, newStoreMap);
+    initBmapEcharts(areaPoint[MapCode], newMapData);
   };
 
   const initBmapEcharts = (point, data) => {
@@ -354,7 +348,7 @@ const MapBlock = async () => {
         // 百度地图中心经纬度
         center: [point.lng, point.lat],
         // 百度地图缩放
-        zoom: 12,
+        zoom: 6,
         // 是否开启拖拽缩放，可以只设置 'scale' 或者 'move'
         roam: true,
         // 百度地图的自定义样式，见 http://developer.baidu.com/map/jsdevelop-11.htm
@@ -370,24 +364,15 @@ const MapBlock = async () => {
         {
           type: "scatter",
           // 使用百度地图坐标系
-          name: "店铺",
+          name: "支行",
           coordinateSystem: "bmap",
           // 数据格式跟在 geo 坐标系上一样，每一项都是 [经度，纬度，数值大小，其它维度...]
           data: data,
           symbolSize: function (val) {
-            // if (val[2] > 100000) {
-
-            // 	return val[2] / 10000
-            // } else {
-            // 	return val[2] / 2000
-            // }
-            return 15;
+            return 14;
           },
           label: {
             normal: {
-              // formatter: function (data) {
-              //   return data.name + ':' + format(parseInt(data.value[2] / 10000));
-              // },
               position: "right",
               show: false,
             },
@@ -405,12 +390,17 @@ const MapBlock = async () => {
     };
     mapChart.setOption(option, true);
     mapChart.off("click");
-    mapChart.on("click", function (params) {
-      showStoreDetail(params.data);
+    mapChart.on("click", async (params) => {
+      let areaMapCode = params.value[2].MapCode;
+      const data = await getMapTableData(areaMapCode);
+      mapOperationArray.push(areaMapCode);
+
+      $("#select2_pov_account").val("PL06").select2();
+      renderTable(data.TableData);
     });
     let bmap = mapChart.getModel().getComponent("bmap").getBMap();
     bmap.setMapStyleV2({
-      styleId: "be9e79ac5f78998b25fcb5ca44bcc6f7",
+      styleId: "b3de43d148daeed903ac7f0fef3a1f8c",
     });
   };
 
@@ -499,9 +489,40 @@ const MapBlock = async () => {
     return res.data;
   };
 
+  const mapBack = async () => {
+    if (mapOperationArray.length >= 2) {
+      mapChart.dispose();
+
+      let Entity = mapOperationArray[mapOperationArray.length - 2];
+
+      if (Entity === "Branch") {
+        $("#select2_pov_account").val("PL06").select2();
+
+        const data = await getMapTableData();
+        const { MapData, TableData } = data;
+        mapLevelRenderer("China", "Branch", MapData);
+        renderTable(TableData);
+
+        mapOperationArray.pop();
+      } else {
+        $("#select2_pov_account").val("PL06").select2();
+        mapChart = echarts.init(document.getElementById("mainMapView"));
+
+        const areaMapCode = Entity;
+        const data = await getMapTableData(areaMapCode);
+
+        renderTable(data.TableData);
+        bmapRenderer(areaMapCode, data.MapData);
+
+        mapOperationArray.pop();
+      }
+    }
+  };
+
   const data = await getMapTableData();
   const { MapData, TableData } = data;
-  mapLevelRenderer("China", 1000000, MapData);
+  mapLevelRenderer("China", "Branch", MapData);
+  mapOperationArray.push("Branch");
   renderTable(TableData);
 };
 
@@ -578,7 +599,7 @@ const ChartBlock = () => {
 
   $(".tabulDom li").click(function () {
     const id = $(this).children().attr("href");
-    console.log(id);
+
     $(this).children().css("background-color", "#FF9800");
     $(this).siblings().children().css("background-color", "#999");
     renderEcharts(id);
@@ -654,6 +675,20 @@ const ChartBlock = () => {
         renderTab3chart3(chartData2);
       }, 300);
     }
+
+    $(window).on("resize", () => {
+      tab1chart1.resize();
+      tab1chart21.resize();
+      tab1chart22.resize();
+
+      tab2chart1.resize();
+      tab2chart2.resize();
+      tab2chart3.resize();
+
+      tab3chart1.resize();
+      tab3chart2.resize();
+      tab3chart3.resize();
+    });
   };
 
   const renderTab1chart1 = (chartData) => {
@@ -1308,7 +1343,7 @@ const getData = (pythonName, parameter, runType) => {
  * 加载百度地图 API
  */
 const LoadBaiduMapScript = () => {
-  //console.log("初始化百度地图脚本...");
+  //
   const AK = "NiGaA3XdWH2IqZB0ohynxvB9yh492DY2";
   const BMap_URL = "https://api.map.baidu.com/api?v=3.0&ak=" + AK + "&s=1&callback=onBMapCallback";
   return new Promise((resolve, reject) => {
@@ -1319,7 +1354,6 @@ const LoadBaiduMapScript = () => {
     }
     // 百度地图异步加载回调处理
     window.onBMapCallback = function () {
-      console.log("百度地图脚本初始化成功...");
       resolve(BMap);
     };
     // 插入script脚本
