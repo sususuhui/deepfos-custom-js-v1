@@ -273,7 +273,7 @@ const MapBlock = async () => {
             },
           },
           showLegendSymbol: false,
-          roam: true,
+          roam: "move",
           label: {
             normal: {
               show: false,
@@ -350,7 +350,7 @@ const MapBlock = async () => {
         // 百度地图缩放
         zoom: 6,
         // 是否开启拖拽缩放，可以只设置 'scale' 或者 'move'
-        roam: true,
+        roam: "move",
         // 百度地图的自定义样式，见 http://developer.baidu.com/map/jsdevelop-11.htm
         mapStyle: {},
       },
@@ -556,6 +556,8 @@ const MapBlock = async () => {
     }
   };
 
+  const pov = showDashBoard.globalCurrentPovObj;
+
   $("[data-name=MapBlock] .card-body").block({
     message: '<i class="icon-spinner4 spinner"></i>',
     overlayCSS: {
@@ -569,11 +571,29 @@ const MapBlock = async () => {
       backgroundColor: "transparent",
     },
   });
-  const data = await getMapTableData();
-  const { MapData, TableData } = data;
-  mapLevelRenderer("China", "Branch", MapData);
-  mapOperationArray.push("Branch");
-  renderTable(TableData);
+
+  if (pov.Entity === "Branch") {
+    $("#select2_pov_account").val("PL06").select2();
+
+    const data = await getMapTableData();
+    const { MapData, TableData } = data;
+    mapLevelRenderer("China", "Branch", MapData);
+    renderTable(TableData);
+
+    mapOperationArray.push("Branch");
+  } else {
+    $("#select2_pov_account").val("PL06").select2();
+    mapChart = echarts.init(document.getElementById("mainMapView"));
+
+    const areaMapCode = pov.Entity;
+    const data = await getMapTableData(areaMapCode);
+
+    renderTable(data.TableData);
+    bmapRenderer(areaMapCode, data.MapData);
+
+    mapOperationArray.push(pov.Entity);
+  }
+
   $("[data-name=MapBlock] .card-body").unblock();
 };
 
