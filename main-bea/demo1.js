@@ -1,14 +1,19 @@
-// 引入bmap
+// 引入 bmap
 let bmap_Script = document.createElement("script");
 bmap_Script.setAttribute("type", "text/javascript");
 bmap_Script.setAttribute("src", "../js/common/bmap.min.js");
 document.head.appendChild(bmap_Script);
 
-// 解除限制（datav）
-let metaReferrer = document.createElement("meta");
-metaReferrer.setAttribute("name", "referrer");
-metaReferrer.setAttribute("content", "no-referrer");
-document.head.appendChild(metaReferrer);
+// 引入 百度地图离线api
+let mapInit_Script = document.createElement("script");
+mapInit_Script.setAttribute("type", "text/javascript");
+mapInit_Script.setAttribute("src", "../js/StbDemo/map/bmap-offline/map3.0_init.js");
+document.head.appendChild(mapInit_Script);
+
+let map_Script = document.createElement("script");
+map_Script.setAttribute("type", "text/javascript");
+map_Script.setAttribute("src", "../js/StbDemo/map/bmap-offline/map3.0.js");
+document.head.appendChild(map_Script);
 
 // 引入样式
 let style = document.createElement("style");
@@ -51,33 +56,154 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
-$(() => {
-  let html = `
-<div class="row dataSheet mb-3" style="height: 600px">
-  <div data-name="MapBlock" style="width: 100%" class="pr-2 pl-2 componentCard height100">
-    <div class="card spreadCard mb-0" id="MapBlock">
-      <div class="card-header bg-white header-elements-inline">
-        <div class="header-elements">
-          <div class="dataSheetCon sheetPovPart"></div>
+$(async () => {
+  const html = `
+  <div class="row globalPovRow">
+  <div class="col-lg-12">
+    <div class="card">
+      <div class="card-header header-elements-inline pt-0 pb-0" id="dataHead">
+        <div class="dataSheetCon pl-3" style="display: inline-block; width: 100%">
+          <div id="globalPovPart" style="display: flex; flex-wrap: wrap">
+            <div class="pr-2 d-flex searchSeleteStyle">
+              <span
+                class="
+                  badge badge-light badge-striped badge-striped-left
+                  border-left-primary
+                  seachText
+                "
+              >
+                Entity
+              </span>
+              <select id="select2_pov_Entity"></select>
+            </div>
+            <div class="pr-2 d-flex searchSeleteStyle">
+              <span
+                class="
+                  badge badge-light badge-striped badge-striped-left
+                  border-left-primary
+                  seachText
+                "
+              >
+                Year
+              </span>
+              <select id="select2_pov_Year"></select>
+            </div>
+            <div class="pr-2 d-flex searchSeleteStyle">
+              <span
+                class="
+                  badge badge-light badge-striped badge-striped-left
+                  border-left-primary
+                  seachText
+                "
+              >
+                Period
+              </span>
+              <select id="select2_pov_Period"></select>
+            </div>
+            <div class="pr-2 d-flex searchSeleteStyle">
+              <span
+                class="
+                  badge badge-light badge-striped badge-striped-left
+                  border-left-primary
+                  seachText
+                "
+              >
+                View
+              </span>
+              <select id="select2_pov_View"></select>
+            </div>
+            <div class="pr-2 d-flex searchSeleteStyle">
+              <span class="freshBS" style="cursor: pointer">
+                <i class="icon-loop3 icon mr-2" style="font-size: 13px; margin-top: 10px"></i>
+                <span></span
+              ></span>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="card-body">
-        <div class="echart height100"></div>
+    </div>
+  </div>
+</div>
+<div class="dashBoardContent">
+  <div class="row dataSheet mb-3" style="height: 600px">
+    <div data-name="MapBlock" style="width: 100%" class="pr-2 pl-2 componentCard height100">
+      <div class="card spreadCard mb-0" id="MapBlock">
+        <div class="card-header bg-white header-elements-inline">
+          <div class="header-elements">
+            <div class="dataSheetCon sheetPovPart"></div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="echart height100"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row dataSheet mb-3" style="height: 600px">
+    <div data-name="ChartBlock" style="width: 100%" class="pr-2 pl-2 componentCard height100">
+      <div class="card spreadCard mb-0" id="ChartBlock">
+        <div class="card-body">
+          <div class="echart height100"></div>
+        </div>
       </div>
     </div>
   </div>
 </div>
-<div class="row dataSheet mb-3" style="height: 600px">
-  <div data-name="ChartBlock" style="width: 100%" class="pr-2 pl-2 componentCard height100">
-    <div class="card spreadCard mb-0" id="ChartBlock">
-      <div class="card-body">
-        <div class="echart height100"></div>
-      </div>
-    </div>
-  </div>
-</div>
+
   `;
-  $(".dashBoardContent").html(html);
+  $("#showDashBoard").html(html);
+
+  const initData = await getInitData();
+
+  const { Entity, Year, Period, View } = initData;
+
+  const EntityData = Entity.data.map((val) => {
+    return {
+      id: Object.keys(val)[0],
+      text: Object.values(val)[0],
+    };
+  });
+
+  const YearData = Year.data.map((val) => {
+    return {
+      id: Object.keys(val)[0],
+      text: Object.values(val)[0],
+    };
+  });
+
+  const PeriodData = Period.data.map((val) => {
+    return {
+      id: Object.keys(val)[0],
+      text: Object.values(val)[0],
+    };
+  });
+
+  const ViewData = View.data.map((val) => {
+    return {
+      id: Object.keys(val)[0],
+      text: Object.values(val)[0],
+    };
+  });
+
+  $("#select2_pov_Entity").select2({
+    data: EntityData,
+  });
+  $("#select2_pov_Entity").val(Entity.default).select2();
+
+  $("#select2_pov_Year").select2({
+    data: YearData,
+  });
+  $("#select2_pov_Year").val(Year.default).select2();
+
+  $("#select2_pov_Period").select2({
+    data: PeriodData,
+  });
+  $("#select2_pov_Period").val(Period.default).select2();
+
+  $("#select2_pov_View").select2({
+    data: ViewData,
+  });
+  $("#select2_pov_View").val(View.default).select2();
 
   $(".freshBS").on("click", () => {
     MapBlock();
@@ -88,75 +214,80 @@ $(() => {
   const btn = `<button id="mapBack" type="button" class="btn btn-primary legitRipple btn-sm">back</button>`;
   $("[data-name=MapBlock]").find(".header-elements").append(btn);
 
-  LoadBaiduMapScript();
+  $("#mapBack")
+    .off("click")
+    .on("click", () => {
+      mapBack();
+    });
+
+  // LoadBaiduMapScript();
   MapBlock();
   ChartBlock();
 });
 
 const MapBlock = async () => {
-  let mapChart,
-    mapOperationArray = [];
+  let mapChart;
 
   const html = `
   <div class="row" style="width: 100%; height: 100%">
-  <div class="col-lg-6" style="height: 100%">
-    <div class="echartWrap" style="height: 100%">
-      <div id="mainMapView" style="height: 100%"></div>
+    <div class="col-lg-6" style="height: 100%">
+      <div class="echartWrap" style="height: 100%">
+        <div id="mainMapView" style="height: 100%"></div>
+      </div>
+    </div>
+
+    <div class="col-lg-6" style="height: 100%">
+      <div style="display: flex">
+        <label class="d-block mr-2">Account</label>
+        <div style="width: 200px">
+          <select id="select2_pov_account">
+            <option value="PL06">Net Profit</option>
+            <option value="PL03">Pre-provision Profit</option>
+            <option value="PL01">Total operating income</option>
+            <option value="PL02">Operating Expense</option>
+            <option value="A0201">Net Interest Income</option>
+            <option value="A0204">Non Net Interest Income</option>
+            <option value="A0106">Loan ending balance</option>
+            <option value="A0108">Deposit ending balance</option>
+          </select>
+        </div>
+        <div>
+          <span class="freshBS2" style="cursor: pointer">
+            <i class="icon-loop3 icon ml-2 mt-1" style="font-size: 13px"></i>
+          </span>
+        </div>
+      </div>
+      <div class="card tableHeight">
+        <div class="customAreaWrap">
+          <div class="customAreaHeaderBox">
+            <table class="table customAreaHeader">
+              <tbody>
+                <tr>
+                  <td>Branch</td>
+                  <td>Ranking</td>
+                  <td>Actual_LY</td>
+                  <td>Budget</td>
+                  <td>Actual</td>
+                  <td>Diff</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="scrollTable">
+            <table class="table customAreaContent">
+              <thead>
+                <tr></tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="col-lg-6" style="height: 100%">
-    <div style="display: flex">
-      <label class="d-block mr-2">Account</label>
-      <div style="width: 200px">
-        <select id="select2_pov_account">
-          <option value="PL06">Net Profit</option>
-          <option value="PL03">Pre-provision Profit</option>
-          <option value="PL01">Total operating income</option>
-          <option value="PL02">Operating Expense</option>
-          <option value="A0201">Net Interest Income</option>
-          <option value="A0204">Non Net Interest Income</option>
-          <option value="A0106">Loan ending balance</option>
-          <option value="A0108">Deposit ending balance</option>
-        </select>
-      </div>
-      <div>
-        <span style="cursor: pointer">
-          <i class="icon-loop3 icon ml-2 mt-1" style="font-size: 13px"></i>
-        </span>
-      </div>
-    </div>
-    <div class="card tableHeight">
-      <div class="customAreaWrap">
-        <div class="customAreaHeaderBox">
-          <table class="table customAreaHeader">
-            <tbody>
-              <tr>
-                <td>Branch</td>
-                <td>Ranking</td>
-                <td>Actual_LY</td>
-                <td>Budget</td>
-                <td>Actual</td>
-                <td>Diff</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="scrollTable">
-          <table class="table customAreaContent">
-            <thead>
-              <tr></tr>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-  `;
+    `;
   $("[data-name=MapBlock]").find(".echart").html(html);
 
   // 设置中间滚动table得最大高度
@@ -166,26 +297,127 @@ const MapBlock = async () => {
   });
   $("#select2_pov_account").select2();
 
-  $("#mapBack")
+  $(".freshBS2")
     .off("click")
-    .on("click", () => {
-      mapBack();
+    .on("click", async () => {
+      $("[data-name=MapBlock] .card-body .row")
+        .children()
+        .eq(1)
+        .block({
+          message: '<i class="icon-spinner4 spinner"></i>',
+          overlayCSS: {
+            backgroundColor: "#fff",
+            opacity: 1,
+            cursor: "wait",
+          },
+          css: {
+            border: 0,
+            padding: 0,
+            backgroundColor: "transparent",
+          },
+        });
+
+      const data = await getMapTableData();
+      const { TableData } = data;
+      renderTable(TableData);
+
+      $("[data-name=MapBlock] .card-body .row").children().eq(1).unblock();
     });
 
-  const getMapTableData = async (Entity = "Branch") => {
-    let pov = showDashBoard.globalCurrentPovObj;
-    let tableAccount = $("#select2_pov_account").val();
+  const getMapTableData = async () => {
+    const pov = {
+      Entity: $("#select2_pov_Entity").val(),
+      Year: $("#select2_pov_Year").val(),
+      Period: $("#select2_pov_Period").val(),
+      View: $("#select2_pov_View").val(),
+    };
+    const tableAccount = $("#select2_pov_account").val();
 
-    let result = await getData(
+    const result = await getData(
       "BeaChina_map_branch_income_data",
       JSON.stringify({
         ...pov,
-        Entity,
         Account: tableAccount,
       }),
       "1"
     );
     return result;
+  };
+
+  const getGeoJson = async () => {
+    const url = "../js/StbDemo/map/json/geo_datav_100000_full.json";
+
+    let config = {
+      method: "GET",
+      url: url,
+    };
+    let res = await axios(config);
+    return res.data;
+  };
+
+  const mergeProvinces = (chinaJson) => {
+    let refactorFormat = {
+      areaDivide: ["华北区", "华东区", "华南区", "中西区"],
+      areaChildren: [
+        // 把各个大区的省份用二维数组分开
+        ["北京", "天津", "河北", "山西", "内蒙古", "黑龙江", "吉林", "辽宁", "山东"],
+        ["江苏", "安徽", "江西", "浙江", "福建", "上海", "台湾", "河南", "湖北"],
+        ["广东", "广西", "海南", "香港", "澳门", "湖南"],
+        ["陕西", "甘肃", "青海", "宁夏", "新疆", "重庆", "四川", "云南", "西藏", "贵州"],
+      ],
+    };
+
+    let newChinaJson = {
+      features: [
+        {
+          geometry: { type: "MultiPolygon", coordinates: [] },
+          properties: { name: "华北区", level: "area" },
+          type: "Feature",
+        },
+        {
+          geometry: { type: "MultiPolygon", coordinates: [] },
+          properties: { name: "华东区", level: "area" },
+          type: "Feature",
+        },
+        {
+          geometry: { type: "MultiPolygon", coordinates: [] },
+          properties: { name: "华南区", level: "area" },
+          type: "Feature",
+        },
+        {
+          geometry: { type: "MultiPolygon", coordinates: [] },
+          properties: { name: "中西区", level: "area" },
+          type: "Feature",
+        },
+      ],
+      type: "FeatureCollection",
+    };
+    chinaJson.features.forEach((val, i) => {
+      refactorFormat.areaDivide.forEach((_, j) => {
+        if (
+          refactorFormat.areaChildren[j].toString().indexOf(val.properties.name.slice(0, 2)) !=
+            -1 &&
+          val.properties.name != "" &&
+          val.properties.name.slice(0, 2) === "内蒙"
+        ) {
+          newChinaJson.features[j].geometry.coordinates = [
+            ...newChinaJson.features[j].geometry.coordinates,
+            [...val.geometry.coordinates],
+          ];
+        } else if (
+          refactorFormat.areaChildren[j].toString().indexOf(val.properties.name.slice(0, 2)) !=
+            -1 &&
+          val.properties.name != ""
+        ) {
+          newChinaJson.features[j].geometry.coordinates = [
+            ...newChinaJson.features[j].geometry.coordinates,
+            ...val.geometry.coordinates,
+          ];
+        }
+      });
+    });
+
+    return newChinaJson;
   };
 
   const renderTable = (TableData) => {
@@ -210,7 +442,7 @@ const MapBlock = async () => {
 
     let chinaJson;
     if (level === "China") {
-      let chinaGeoJson = await getGeoJson("100000_full.json");
+      let chinaGeoJson = await getGeoJson();
       chinaJson = mergeProvinces(chinaGeoJson);
       initMapEcharts(chinaJson, MapCode, MapData);
     }
@@ -310,20 +542,18 @@ const MapBlock = async () => {
     mapChart.on("click", async (params) => {
       let { MapData } = params.data;
 
-      if (MapData.level === "Area") {
-        $("#select2_pov_account").val("PL06").select2();
+      $("#select2_pov_account").val("PL06").select2();
+      let areaMapCode = MapData.MapCode;
+      $("#select2_pov_Entity").val(areaMapCode).select2();
 
-        let areaMapCode = MapData.MapCode;
-        const data = await getMapTableData(areaMapCode);
-
-        renderTable(data.TableData);
-        bmapRenderer(areaMapCode, data.MapData);
-        mapOperationArray.push(areaMapCode);
-      }
+      MapBlock();
+      ChartBlock();
     });
   };
 
   const bmapRenderer = async (MapCode, data) => {
+    let bmapPoint;
+
     const areaPoint = {
       HBQ: { lat: 39.125596, lng: 117.190182 },
       HDQ: { lat: 32.065922, lng: 118.799309 },
@@ -331,14 +561,20 @@ const MapBlock = async () => {
       ZXQ: { lat: 30.580774, lng: 104.069372 },
     };
 
+    if (typeof areaPoint[MapCode] === "undefined") {
+      bmapPoint = { lat: data[0].Lat, lng: data[0].Lng };
+    } else {
+      bmapPoint = areaPoint[MapCode];
+    }
+
     const newMapData = data.map((val) => {
       return {
         name: val.Name,
-        value: [parseInt(val.Lat), parseInt(val.Lng), { MapCode: val.MapCode }],
+        value: [parseInt(val.Lng), parseInt(val.Lat), { MapCode: val.MapCode }],
       };
     });
 
-    initBmapEcharts(areaPoint[MapCode], newMapData);
+    initBmapEcharts(bmapPoint, newMapData);
   };
 
   const initBmapEcharts = (point, data) => {
@@ -352,7 +588,122 @@ const MapBlock = async () => {
         // 是否开启拖拽缩放，可以只设置 'scale' 或者 'move'
         roam: "move",
         // 百度地图的自定义样式，见 http://developer.baidu.com/map/jsdevelop-11.htm
-        mapStyle: {},
+        mapStyle: {
+          styleJson: [
+            {
+              featureType: "water",
+              elementType: "all",
+              stylers: {
+                color: "#d1d1d1",
+              },
+            },
+            {
+              featureType: "land",
+              elementType: "all",
+              stylers: {
+                color: "#f3f3f3",
+              },
+            },
+            {
+              featureType: "railway",
+              elementType: "all",
+              stylers: {
+                visibility: "off",
+              },
+            },
+            {
+              featureType: "highway",
+              elementType: "all",
+              stylers: {
+                color: "#fdfdfd",
+              },
+            },
+            {
+              featureType: "highway",
+              elementType: "labels",
+              stylers: {
+                visibility: "off",
+              },
+            },
+            {
+              featureType: "arterial",
+              elementType: "geometry",
+              stylers: {
+                color: "#fefefe",
+              },
+            },
+            {
+              featureType: "arterial",
+              elementType: "geometry.fill",
+              stylers: {
+                color: "#fefefe",
+              },
+            },
+            {
+              featureType: "poi",
+              elementType: "all",
+              stylers: {
+                visibility: "off",
+              },
+            },
+            {
+              featureType: "green",
+              elementType: "all",
+              stylers: {
+                visibility: "off",
+              },
+            },
+            {
+              featureType: "subway",
+              elementType: "all",
+              stylers: {
+                visibility: "off",
+              },
+            },
+            {
+              featureType: "manmade",
+              elementType: "all",
+              stylers: {
+                color: "#d1d1d1",
+              },
+            },
+            {
+              featureType: "local",
+              elementType: "all",
+              stylers: {
+                color: "#d1d1d1",
+              },
+            },
+            {
+              featureType: "arterial",
+              elementType: "labels",
+              stylers: {
+                visibility: "off",
+              },
+            },
+            {
+              featureType: "boundary",
+              elementType: "all",
+              stylers: {
+                color: "#fefefe",
+              },
+            },
+            {
+              featureType: "building",
+              elementType: "all",
+              stylers: {
+                color: "#d1d1d1",
+              },
+            },
+            {
+              featureType: "label",
+              elementType: "labels.text.fill",
+              stylers: {
+                color: "#999999",
+              },
+            },
+          ],
+        },
       },
       tooltip: {
         trigger: "item",
@@ -391,172 +742,22 @@ const MapBlock = async () => {
     mapChart.setOption(option, true);
     mapChart.off("click");
     mapChart.on("click", async (params) => {
-      $("[data-name=MapBlock] .card-body .row")
-        .children()
-        .eq(1)
-        .block({
-          message: '<i class="icon-spinner4 spinner"></i>',
-          overlayCSS: {
-            backgroundColor: "#fff",
-            opacity: 1,
-            cursor: "wait",
-          },
-          css: {
-            border: 0,
-            padding: 0,
-            backgroundColor: "transparent",
-          },
-        });
+      $("#select2_pov_account").val("PL06").select2();
 
       let areaMapCode = params.value[2].MapCode;
-      const data = await getMapTableData(areaMapCode);
-      if (mapOperationArray.length < 3) {
-        mapOperationArray.push(areaMapCode);
-      }
+      $("#select2_pov_Entity").val(areaMapCode).select2();
 
-      $("#select2_pov_account").val("PL06").select2();
-      renderTable(data.TableData);
-
-      $("[data-name=MapBlock] .card-body .row").children().eq(1).unblock();
-    });
-    let bmap = mapChart.getModel().getComponent("bmap").getBMap();
-    bmap.setMapStyleV2({
-      styleId: "b3de43d148daeed903ac7f0fef3a1f8c",
+      MapBlock();
+      ChartBlock();
     });
   };
 
-  /**
-   * 首层合并省份为四大区
-   * @param {*} chinaJson
-   */
-  const mergeProvinces = (chinaJson) => {
-    let refactorFormat = {
-      areaDivide: ["华北区", "华东区", "华南区", "中西区"],
-      areaChildren: [
-        // 把各个大区的省份用二维数组分开
-        ["北京", "天津", "河北", "山西", "内蒙古", "黑龙江", "吉林", "辽宁", "山东"],
-        ["江苏", "安徽", "江西", "浙江", "福建", "上海", "台湾", "河南", "湖北"],
-        ["广东", "广西", "海南", "香港", "澳门", "湖南"],
-        ["陕西", "甘肃", "青海", "宁夏", "新疆", "重庆", "四川", "云南", "西藏", "贵州"],
-      ],
-    };
-
-    let newChinaJson = {
-      features: [
-        {
-          geometry: { type: "MultiPolygon", coordinates: [] },
-          properties: { name: "华北区", level: "area" },
-          type: "Feature",
-        },
-        {
-          geometry: { type: "MultiPolygon", coordinates: [] },
-          properties: { name: "华东区", level: "area" },
-          type: "Feature",
-        },
-        {
-          geometry: { type: "MultiPolygon", coordinates: [] },
-          properties: { name: "华南区", level: "area" },
-          type: "Feature",
-        },
-        {
-          geometry: { type: "MultiPolygon", coordinates: [] },
-          properties: { name: "中西区", level: "area" },
-          type: "Feature",
-        },
-      ],
-      type: "FeatureCollection",
-    };
-    chinaJson.features.forEach((val, i) => {
-      refactorFormat.areaDivide.forEach((_, j) => {
-        if (
-          refactorFormat.areaChildren[j].toString().indexOf(val.properties.name.slice(0, 2)) !=
-            -1 &&
-          val.properties.name != "" &&
-          val.properties.name.slice(0, 2) === "内蒙"
-        ) {
-          newChinaJson.features[j].geometry.coordinates = [
-            ...newChinaJson.features[j].geometry.coordinates,
-            [...val.geometry.coordinates],
-          ];
-        } else if (
-          refactorFormat.areaChildren[j].toString().indexOf(val.properties.name.slice(0, 2)) !=
-            -1 &&
-          val.properties.name != ""
-        ) {
-          newChinaJson.features[j].geometry.coordinates = [
-            ...newChinaJson.features[j].geometry.coordinates,
-            ...val.geometry.coordinates,
-          ];
-        }
-      });
-    });
-
-    return newChinaJson;
+  const pov = {
+    Entity: $("#select2_pov_Entity").val(),
+    Year: $("#select2_pov_Year").val(),
+    Period: $("#select2_pov_Period").val(),
+    View: $("#select2_pov_View").val(),
   };
-
-  /**
-   * datav geo 接口
-   * @param {*} jsonName
-   */
-  const getGeoJson = async (jsonName) => {
-    const publicUrl = "https://geo.datav.aliyun.com/areas_v2/bound/";
-
-    let url = publicUrl + jsonName;
-    let config = {
-      method: "GET",
-      url: url,
-    };
-    let res = await axios(config);
-    return res.data;
-  };
-
-  const mapBack = async () => {
-    if (mapOperationArray.length >= 2) {
-      $("[data-name=MapBlock] .card-body").block({
-        message: '<i class="icon-spinner4 spinner"></i>',
-        overlayCSS: {
-          backgroundColor: "#fff",
-          opacity: 1,
-          cursor: "wait",
-        },
-        css: {
-          border: 0,
-          padding: 0,
-          backgroundColor: "transparent",
-        },
-      });
-
-      mapChart.dispose();
-
-      let Entity = mapOperationArray[mapOperationArray.length - 2];
-
-      if (Entity === "Branch") {
-        $("#select2_pov_account").val("PL06").select2();
-
-        const data = await getMapTableData();
-        const { MapData, TableData } = data;
-        mapLevelRenderer("China", "Branch", MapData);
-        renderTable(TableData);
-
-        mapOperationArray.pop();
-      } else {
-        $("#select2_pov_account").val("PL06").select2();
-        mapChart = echarts.init(document.getElementById("mainMapView"));
-
-        const areaMapCode = Entity;
-        const data = await getMapTableData(areaMapCode);
-
-        renderTable(data.TableData);
-        bmapRenderer(areaMapCode, data.MapData);
-
-        mapOperationArray.pop();
-      }
-
-      $("[data-name=MapBlock] .card-body").unblock();
-    }
-  };
-
-  const pov = showDashBoard.globalCurrentPovObj;
 
   $("[data-name=MapBlock] .card-body").block({
     message: '<i class="icon-spinner4 spinner"></i>',
@@ -574,24 +775,17 @@ const MapBlock = async () => {
 
   if (pov.Entity === "Branch") {
     $("#select2_pov_account").val("PL06").select2();
-
     const data = await getMapTableData();
     const { MapData, TableData } = data;
     mapLevelRenderer("China", "Branch", MapData);
     renderTable(TableData);
-
-    mapOperationArray.push("Branch");
   } else {
     $("#select2_pov_account").val("PL06").select2();
     mapChart = echarts.init(document.getElementById("mainMapView"));
-
     const areaMapCode = pov.Entity;
     const data = await getMapTableData(areaMapCode);
-
     renderTable(data.TableData);
     bmapRenderer(areaMapCode, data.MapData);
-
-    mapOperationArray.push(pov.Entity);
   }
 
   $("[data-name=MapBlock] .card-body").unblock();
@@ -641,7 +835,7 @@ const ChartBlock = () => {
 </ul>
 <div class="tab-content mt-4">
   <div class="tab-pane active fade show" id="tab1">
-    <div class="row">
+    <div class="row" style="display: flex;justify-content: center;">
       <div class="col-lg-6" style="width: 100%; height: 500px" id="tab1chart1"></div>
       <div class="col-lg-6" style="width: 100%; height: 500px" id="tab1chart2">
         <div class="row" style="width: 100%; height: 50%" id="tab1chart2-1"></div>
@@ -676,75 +870,105 @@ const ChartBlock = () => {
     renderEcharts(id);
   });
 
+  const getChartData = async (py) => {
+    const pov = {
+      Entity: $("#select2_pov_Entity").val(),
+      Year: $("#select2_pov_Year").val(),
+      Period: $("#select2_pov_Period").val(),
+      View: $("#select2_pov_View").val(),
+    };
+
+    const result = await getData(
+      py,
+      JSON.stringify({
+        ...pov,
+        Entity: "BeaChina",
+      }),
+      "1"
+    );
+    return result;
+  };
+
   let tab1chart1, tab1chart21, tab1chart22;
   let tab2chart1, tab2chart2, tab2chart3;
   let tab3chart1, tab3chart2, tab3chart3;
-  const renderEcharts = (id) => {
+  const renderEcharts = async (id) => {
     if (id == "#tab1") {
-      let chartData1 = [
-        [
-          "product",
-          "CB-Loan",
-          "PB-Loan",
-          "Other-Loan",
-          "CB-Deposit",
-          "PB-Deposit",
-          "Other-Deposit",
-        ],
-        ["Last Year", 120, 132, 101, 134, 90, 230, 210],
-        ["Last M", 120, 132, 101, 134, 90, 230, 210],
-        ["Yesterday", 220, 182, 191, 234, 290, 330, 310],
-        ["Today", 220, 182, 191, 234, 290, 330, 310],
-        ["Budget", 220, 182, 191, 234, 290, 330, 310],
-      ];
+      $("[data-name=ChartBlock] .card-body .tab-content").block({
+        message: '<i class="icon-spinner4 spinner"></i>',
+        overlayCSS: {
+          backgroundColor: "#fff",
+          opacity: 1,
+          cursor: "wait",
+        },
+        css: {
+          border: 0,
+          padding: 0,
+          backgroundColor: "transparent",
+        },
+      });
 
-      let chartData2 = [
-        ["product", "1", "2", "3", "4", "5"],
-        ["a", 123, 123, 435, 657, 768],
-        ["b", 543, 324, 123, 472, 213],
-      ];
+      const { tab1chart1, tab1chart21, tab1chart22 } = await getChartData(
+        "BeaChina_map_Portofolio_rate"
+      );
 
-      let chartData3 = [
-        ["product", "1", "2", "3", "4", "5"],
-        ["a", 123, 123, 435, 657, 768],
-      ];
+      $("[data-name=ChartBlock] .card-body .tab-content").unblock();
 
-      renderTab1chart1(chartData1);
-      renderTab1chart21(chartData2);
-      renderTab1chart22(chartData3);
+      if (_.isEmpty(tab1chart21)) {
+        $("#tab1chart2").hide();
+      }
+
+      renderTab1chart1(tab1chart1);
+      renderTab1chart21(tab1chart21);
+      renderTab1chart22(tab1chart22);
     } else if (id == "#tab2") {
-      setTimeout(function () {
-        let chartData = [
-          ["product", "2019销售", "存量店增长", "新开店增长", "关店损失", "2020销售"],
-          ["汇总", 97776906, "-", "-", "-", 103242635],
-          ["辅助", "-", 97776906, 102352413, 103242635, "-"],
-          ["增加", "-", 4575507, 1464162, "-", "-"],
-          ["减少", "-", "-", "-", 573940, "-"],
-        ];
+      $("[data-name=ChartBlock] .card-body .tab-content").block({
+        message: '<i class="icon-spinner4 spinner"></i>',
+        overlayCSS: {
+          backgroundColor: "#fff",
+          opacity: 1,
+          cursor: "wait",
+        },
+        css: {
+          border: 0,
+          padding: 0,
+          backgroundColor: "transparent",
+        },
+      });
 
-        renderTab2chart1(chartData);
+      const { tab2chart1, tab2chart2, tab2chart3 } = await getChartData(
+        "BeaChina_map_Ppop_Analysis"
+      );
 
-        renderTab2chart2(chartData);
+      $("[data-name=ChartBlock] .card-body .tab-content").unblock();
 
-        renderTab2chart3(chartData);
-      }, 300);
+      renderTab2chart1(tab2chart1);
+      renderTab2chart2(tab2chart2);
+      renderTab2chart3(tab2chart3);
     } else {
-      setTimeout(function () {
-        let chartData = [
-          ["面积模式", "a", "b", "c", "d"],
-          ["xxx", "4", "5", "6", "7"],
-        ];
+      $("[data-name=ChartBlock] .card-body .tab-content").block({
+        message: '<i class="icon-spinner4 spinner"></i>',
+        overlayCSS: {
+          backgroundColor: "#fff",
+          opacity: 1,
+          cursor: "wait",
+        },
+        css: {
+          border: 0,
+          padding: 0,
+          backgroundColor: "transparent",
+        },
+      });
 
-        let chartData2 = [
-          ["product", "1月", "2月", "3月", "4月", "5月", "6月"],
-          ["Actual", 120, 132, 101, "-", "-", "-", "-"],
-          ["Budget", 120, 178, 70, 134, 90, 230, 210],
-        ];
+      const { tab3chart1, tab3chart2, tab3chart3 } = await getChartData(
+        "BeaChina_map_Operating_Expense"
+      );
 
-        renderTab3chart1(chartData);
-        renderTab3chart2(chartData);
-        renderTab3chart3(chartData2);
-      }, 300);
+      $("[data-name=ChartBlock] .card-body .tab-content").unblock();
+
+      renderTab3chart1(tab3chart1);
+      renderTab3chart2(tab3chart2);
+      renderTab3chart3(tab3chart3);
     }
 
     $(window).on("resize", () => {
@@ -773,11 +997,18 @@ const ChartBlock = () => {
           type: "shadow", // 'shadow' as default; can also be 'line' or 'shadow'
         },
       },
-      legend: {},
+      title: {
+        text: "Loan & Deposit(Ending)",
+        left: "left",
+      },
+      legend: {
+        y: "10%",
+      },
       grid: {
         left: "3%",
         right: "4%",
         bottom: "3%",
+        top: "25%",
         containLabel: true,
       },
       yAxis: {
@@ -828,14 +1059,8 @@ const ChartBlock = () => {
           label: {
             show: true,
           },
-        },
-        {
-          xAxisIndex: 0,
-          type: "bar",
-          barWidth: "30%",
-          stack: "total",
-          label: {
-            show: true,
+          itemStyle: {
+            color: "#ff9d30",
           },
         },
         {
@@ -846,15 +1071,20 @@ const ChartBlock = () => {
           label: {
             show: true,
           },
+          itemStyle: {
+            color: "#999999",
+          },
         },
         {
-          xAxisIndex: 1,
-          barGap: "-200%",
+          xAxisIndex: 0,
           type: "bar",
           barWidth: "30%",
-          stack: "total2",
+          stack: "total",
           label: {
             show: true,
+          },
+          itemStyle: {
+            color: "#FFDC2F",
           },
         },
         {
@@ -866,6 +1096,9 @@ const ChartBlock = () => {
           label: {
             show: true,
           },
+          itemStyle: {
+            color: "#85082C",
+          },
         },
         {
           xAxisIndex: 1,
@@ -875,6 +1108,22 @@ const ChartBlock = () => {
           stack: "total2",
           label: {
             show: true,
+          },
+          itemStyle: {
+            color: "#BEBEBE",
+          },
+        },
+        {
+          xAxisIndex: 1,
+          barGap: "-200%",
+          type: "bar",
+          barWidth: "30%",
+          stack: "total2",
+          label: {
+            show: true,
+          },
+          itemStyle: {
+            color: "#F10F1D",
           },
         },
         {
@@ -901,6 +1150,10 @@ const ChartBlock = () => {
       tooltip: {
         trigger: "axis",
       },
+      title: {
+        text: "NIM & NIS (Last 12 M)",
+        left: "left",
+      },
       dataset: {
         source: chartData,
       },
@@ -909,22 +1162,47 @@ const ChartBlock = () => {
       },
       yAxis: {
         type: "value",
+        axisLine: {
+          show: false,
+        },
+        axisTick: {
+          show: false,
+        },
       },
       series: [
         {
           type: "line",
           smooth: true,
           seriesLayoutBy: "row",
+          itemStyle: {
+            color: "#FBBE67",
+          },
         },
         {
           type: "line",
           smooth: true,
           seriesLayoutBy: "row",
+          itemStyle: {
+            color: "#EF3D44",
+          },
         },
       ],
     };
 
     tab1chart21.setOption(option);
+
+    tab1chart21.off("click");
+    tab1chart21.on("click", async (params) => {
+      const arr = _.split(params.name, "-");
+      const clickYear = parseInt(arr[0]).toString();
+      const clickPeriod = parseInt(arr[1]).toString();
+
+      $("#select2_pov_Year").val(clickYear).select2();
+      $("#select2_pov_Period").val(clickPeriod).select2();
+
+      MapBlock();
+      ChartBlock();
+    });
   };
   const renderTab1chart22 = (chartData) => {
     tab1chart22 = echarts.init(document.getElementById("tab1chart2-2"));
@@ -933,6 +1211,10 @@ const ChartBlock = () => {
       tooltip: {
         trigger: "axis",
       },
+      title: {
+        text: "CIR (Last 12 M)",
+        left: "left",
+      },
       dataset: {
         source: chartData,
       },
@@ -941,17 +1223,39 @@ const ChartBlock = () => {
       },
       yAxis: {
         type: "value",
+        axisLine: {
+          show: false,
+        },
+        axisTick: {
+          show: false,
+        },
       },
       series: [
         {
           type: "line",
           smooth: true,
           seriesLayoutBy: "row",
+          itemStyle: {
+            color: "#EF3D44",
+          },
         },
       ],
     };
 
     tab1chart22.setOption(option);
+
+    tab1chart22.off("click");
+    tab1chart22.on("click", async (params) => {
+      const arr = _.split(params.name, "-");
+      const clickYear = parseInt(arr[0]).toString();
+      const clickPeriod = parseInt(arr[1]).toString();
+
+      $("#select2_pov_Year").val(clickYear).select2();
+      $("#select2_pov_Period").val(clickPeriod).select2();
+
+      MapBlock();
+      ChartBlock();
+    });
   };
 
   const renderTab2chart1 = (chartData) => {
@@ -962,7 +1266,7 @@ const ChartBlock = () => {
         source: chartData,
       },
       title: {
-        text: "阶梯瀑布图",
+        text: "PPOP Waterfall analysis",
         left: "left",
       },
       tooltip: {
@@ -1008,19 +1312,30 @@ const ChartBlock = () => {
       },
       yAxis: {
         type: "value",
+        axisLine: {
+          show: false,
+        },
+        axisTick: {
+          show: false,
+        },
       },
       series: [
         {
           type: "bar",
+          barWidth: "30%",
           stack: "total",
           label: {
             show: true,
             position: "top",
           },
+          itemStyle: {
+            color: "#ff4d4f",
+          },
           seriesLayoutBy: "row",
         },
         {
           type: "bar",
+          barWidth: "30%",
           stack: "total",
           itemStyle: {
             barBorderColor: "rgba(0,0,0,0)",
@@ -1036,19 +1351,27 @@ const ChartBlock = () => {
         },
         {
           type: "bar",
+          barWidth: "30%",
           stack: "total",
           label: {
             show: true,
             position: "top",
           },
+          itemStyle: {
+            color: "#cf1322",
+          },
           seriesLayoutBy: "row",
         },
         {
           type: "bar",
+          barWidth: "30%",
           stack: "total",
           label: {
             show: true,
             position: "bottom",
+          },
+          itemStyle: {
+            color: "#bfbfbf",
           },
           seriesLayoutBy: "row",
         },
@@ -1065,7 +1388,7 @@ const ChartBlock = () => {
         source: chartData,
       },
       title: {
-        text: "阶梯瀑布图",
+        text: "NII Waterfall analysis",
         left: "left",
       },
       tooltip: {
@@ -1111,6 +1434,12 @@ const ChartBlock = () => {
       },
       yAxis: {
         type: "value",
+        axisLine: {
+          show: false,
+        },
+        axisTick: {
+          show: false,
+        },
       },
       series: [
         {
@@ -1119,6 +1448,9 @@ const ChartBlock = () => {
           label: {
             show: true,
             position: "top",
+          },
+          itemStyle: {
+            color: "#ff4d4f",
           },
           seriesLayoutBy: "row",
         },
@@ -1144,6 +1476,9 @@ const ChartBlock = () => {
             show: true,
             position: "top",
           },
+          itemStyle: {
+            color: "#cf1322",
+          },
           seriesLayoutBy: "row",
         },
         {
@@ -1152,6 +1487,9 @@ const ChartBlock = () => {
           label: {
             show: true,
             position: "bottom",
+          },
+          itemStyle: {
+            color: "#bfbfbf",
           },
           seriesLayoutBy: "row",
         },
@@ -1168,7 +1506,7 @@ const ChartBlock = () => {
         source: chartData,
       },
       title: {
-        text: "阶梯瀑布图",
+        text: "NFI Waterfall analysis",
         left: "left",
       },
       tooltip: {
@@ -1214,6 +1552,12 @@ const ChartBlock = () => {
       },
       yAxis: {
         type: "value",
+        axisLine: {
+          show: false,
+        },
+        axisTick: {
+          show: false,
+        },
       },
       series: [
         {
@@ -1222,6 +1566,9 @@ const ChartBlock = () => {
           label: {
             show: true,
             position: "top",
+          },
+          itemStyle: {
+            color: "#ff4d4f",
           },
           seriesLayoutBy: "row",
         },
@@ -1247,6 +1594,9 @@ const ChartBlock = () => {
             show: true,
             position: "top",
           },
+          itemStyle: {
+            color: "#cf1322",
+          },
           seriesLayoutBy: "row",
         },
         {
@@ -1255,6 +1605,9 @@ const ChartBlock = () => {
           label: {
             show: true,
             position: "bottom",
+          },
+          itemStyle: {
+            color: "#bfbfbf",
           },
           seriesLayoutBy: "row",
         },
@@ -1272,14 +1625,36 @@ const ChartBlock = () => {
       dataset: {
         source: chartData,
       },
+      title: {
+        text: "OE by Item",
+        left: "left",
+      },
+      color: [
+        "#b86978",
+        "#dab2b2",
+        "#e4c4c4",
+        "#cc9294",
+        "#ce979e",
+        "#e1bcc4",
+        "#c4858d",
+        "#d4a4a4",
+      ],
       series: [
         {
           type: "pie",
-          radius: [30, 70],
+          radius: [15, 90],
           center: ["50%", "50%"],
-          roseType: "area",
+          roseType: "radius",
           itemStyle: {
-            borderRadius: 8,
+            borderRadius: 5,
+          },
+          label: {
+            show: false,
+          },
+          emphasis: {
+            label: {
+              show: true,
+            },
           },
           seriesLayoutBy: "row",
         },
@@ -1296,14 +1671,36 @@ const ChartBlock = () => {
       dataset: {
         source: chartData,
       },
+      title: {
+        text: "OE by Segment",
+        left: "left",
+      },
+      color: [
+        "#e4696d",
+        "#ec9c9c",
+        "#f4c8c8",
+        "#ec8d94",
+        "#f2b1b2",
+        "#e4767c",
+        "#ec8d94",
+        "#f9e2e3",
+      ],
       series: [
         {
           type: "pie",
-          radius: [30, 70],
+          radius: [15, 90],
           center: ["50%", "50%"],
-          roseType: "area",
+          roseType: "radius",
           itemStyle: {
-            borderRadius: 8,
+            borderRadius: 5,
+          },
+          label: {
+            show: false,
+          },
+          emphasis: {
+            label: {
+              show: true,
+            },
           },
           seriesLayoutBy: "row",
         },
@@ -1322,15 +1719,28 @@ const ChartBlock = () => {
           type: "shadow",
         },
       },
-      legend: {},
+      legend: {
+        y: "10%",
+      },
+      title: {
+        text: "OE tracking",
+        left: "left",
+      },
       grid: {
         left: "3%",
         right: "4%",
         bottom: "3%",
+        top: "20%",
         containLabel: true,
       },
       yAxis: {
         type: "value",
+        axisLine: {
+          show: false,
+        },
+        axisTick: {
+          show: false,
+        },
       },
       xAxis: [
         {
@@ -1394,6 +1804,23 @@ const ChartBlock = () => {
   renderEcharts("#tab1");
 };
 
+const getInitData = async () => {
+  let result = await getData("BeaChina_init_data", JSON.stringify({}), "1");
+  return result;
+};
+
+const mapBack = async () => {
+  $("#select2_pov_account").val("PL06").select2();
+  let areaMapCode = $("#select2_pov_Entity").val();
+
+  let result = await getData("BeaChina_map_back", JSON.stringify({ Entity: areaMapCode }), "1");
+
+  $("#select2_pov_Entity").val(result.Entity).select2();
+
+  MapBlock();
+  ChartBlock();
+};
+
 const getData = (pythonName, parameter, runType) => {
   return CommonRequest({
     url: `${Api.pythonWeb}doPythonWeb`,
@@ -1409,7 +1836,6 @@ const getData = (pythonName, parameter, runType) => {
     }),
   });
 };
-
 /**
  * 加载百度地图 API
  */
