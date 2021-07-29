@@ -210,14 +210,25 @@ $(async () => {
     ChartBlock();
   });
 
+  $("[data-name=MapBlock]").find(".card-header").css({ "justify-content": "flex-end" });
   // 添加地图后退按钮
-  const btn = `<button id="mapBack" type="button" class="btn btn-primary legitRipple btn-sm">back</button>`;
+  const btn = `<button id="mapBack" type="button" class="btn btn-primary legitRipple btn-sm">MapBack</button>`;
   $("[data-name=MapBlock]").find(".header-elements").append(btn);
+
+  // 添加地图后退按钮
+  const btn2 = `<button id="chart-modal-btn" type="button" class="btn btn-primary legitRipple btn-sm ml-4">弹窗</button>`;
+  $("[data-name=MapBlock]").find(".header-elements").append(btn2);
 
   $("#mapBack")
     .off("click")
     .on("click", () => {
       mapBack();
+    });
+
+  $("#chart-modal-btn")
+    .off("click")
+    .on("click", () => {
+      extraChartModal();
     });
 
   // LoadBaiduMapScript();
@@ -264,6 +275,7 @@ const MapBlock = async () => {
               <tbody>
                 <tr>
                   <td>Branch</td>
+                  <td>Area</td>
                   <td>Ranking</td>
                   <td>Actual_LY</td>
                   <td>Budget</td>
@@ -426,6 +438,7 @@ const MapBlock = async () => {
       html += `
       <tr>
         <td>${val.Branch}</td>
+        <td>${val.Area}</td>
         <td>${val.Ranking}</td>
         <td>${val.Actual_LY}</td>
         <td>${val.Budget}</td>
@@ -792,6 +805,8 @@ const MapBlock = async () => {
 };
 
 const ChartBlock = () => {
+  const activeTab = $("[data-name=ChartBlock] .tabulDom li .active").attr("href");
+
   const html = `
 <ul
   class="
@@ -808,7 +823,7 @@ const ChartBlock = () => {
     <a
       href="#tab1"
       class="nav-link font-size-sm active"
-      style="background-color: #ff9800; font-weight: bold; font-size: 16px"
+      style="background-color: #999; font-weight: bold; font-size: 16px"
       data-toggle="tab"
       >Portofolio & Rate</a
     >
@@ -823,6 +838,7 @@ const ChartBlock = () => {
       >PPOP Analysis</a
     >
   </li>
+
   <li class="nav-item" style="margin-right: 10px; font-size: bold">
     <a
       href="#tab3"
@@ -858,6 +874,28 @@ const ChartBlock = () => {
     </div>
   </div>
 </div>
+<div
+  id="extra-chart-modal"
+  class="modal fade"
+  tabindex="-1"
+  aria-hidden="true"
+  style="z-index: 9999"
+>
+  <div class="modal-dialog modal-lg" style="margin-top: 5%">
+    <div class="modal-content">
+      <div class="modal-header bg-teal-400">
+        <h5 class="modal-title">什么标题</h5>
+        <button type="button" class="close legitRipple" data-dismiss="modal">×</button>
+      </div>
+      <div
+        class="modal-body pl-0 pr-0 modal_scroll"
+        style="height: 600px; width: 100%; overflow-y: auto; overflow-x: hidden; padding: 0"
+      >
+        <div style="height: 100%; width: 100%" id="modalExtraChart"></div>
+      </div>
+    </div>
+  </div>
+</div>
   `;
 
   $("[data-name=ChartBlock]").find(".echart").html(html);
@@ -869,25 +907,6 @@ const ChartBlock = () => {
     $(this).siblings().children().css("background-color", "#999");
     renderEcharts(id);
   });
-
-  const getChartData = async (py) => {
-    const pov = {
-      Entity: $("#select2_pov_Entity").val(),
-      Year: $("#select2_pov_Year").val(),
-      Period: $("#select2_pov_Period").val(),
-      View: $("#select2_pov_View").val(),
-    };
-
-    const result = await getData(
-      py,
-      JSON.stringify({
-        ...pov,
-        Entity: "BeaChina",
-      }),
-      "1"
-    );
-    return result;
-  };
 
   let tab1chart1, tab1chart21, tab1chart22;
   let tab2chart1, tab2chart2, tab2chart3;
@@ -1060,7 +1079,7 @@ const ChartBlock = () => {
             show: true,
           },
           itemStyle: {
-            color: "#ff9d30",
+            color: "#893448",
           },
         },
         {
@@ -1072,7 +1091,7 @@ const ChartBlock = () => {
             show: true,
           },
           itemStyle: {
-            color: "#999999",
+            color: "#d95850",
           },
         },
         {
@@ -1084,7 +1103,7 @@ const ChartBlock = () => {
             show: true,
           },
           itemStyle: {
-            color: "#FFDC2F",
+            color: "#b5b0b0",
           },
         },
         {
@@ -1097,7 +1116,7 @@ const ChartBlock = () => {
             show: true,
           },
           itemStyle: {
-            color: "#85082C",
+            color: "#ffb248",
           },
         },
         {
@@ -1110,7 +1129,7 @@ const ChartBlock = () => {
             show: true,
           },
           itemStyle: {
-            color: "#BEBEBE",
+            color: "#f2d643",
           },
         },
         {
@@ -1123,7 +1142,7 @@ const ChartBlock = () => {
             show: true,
           },
           itemStyle: {
-            color: "#F10F1D",
+            color: "#cccccc",
           },
         },
         {
@@ -1142,6 +1161,11 @@ const ChartBlock = () => {
     };
 
     tab1chart1.setOption(option);
+
+    tab1chart1.off("click");
+    tab1chart1.on("click", async (params) => {
+      toPage(1);
+    });
   };
   const renderTab1chart21 = (chartData) => {
     tab1chart21 = echarts.init(document.getElementById("tab1chart2-1"));
@@ -1379,6 +1403,11 @@ const ChartBlock = () => {
     };
 
     tab2chart1.setOption(option);
+
+    tab2chart1.off("click");
+    tab2chart1.on("click", async (params) => {
+      toPage(2);
+    });
   };
   const renderTab2chart2 = (chartData) => {
     tab2chart2 = echarts.init(document.getElementById("tab2chart2"));
@@ -1497,6 +1526,11 @@ const ChartBlock = () => {
     };
 
     tab2chart2.setOption(option);
+
+    tab2chart2.off("click");
+    tab2chart2.on("click", async (params) => {
+      toPage(2);
+    });
   };
   const renderTab2chart3 = (chartData) => {
     tab2chart3 = echarts.init(document.getElementById("tab2chart3"));
@@ -1615,6 +1649,11 @@ const ChartBlock = () => {
     };
 
     tab2chart3.setOption(option);
+
+    tab2chart3.off("click");
+    tab2chart3.on("click", async (params) => {
+      toPage(2);
+    });
   };
 
   const renderTab3chart1 = (chartData) => {
@@ -1628,6 +1667,11 @@ const ChartBlock = () => {
       title: {
         text: "OE by Item",
         left: "left",
+      },
+      legend: {
+        orient: "vertical",
+        left: "left",
+        top: "bottom",
       },
       color: [
         "#b86978",
@@ -1662,15 +1706,17 @@ const ChartBlock = () => {
     };
 
     tab3chart1.setOption(option);
+
+    tab3chart1.off("click");
+    tab3chart1.on("click", async (params) => {
+      toPage(3);
+    });
   };
   const renderTab3chart2 = (chartData) => {
     tab3chart2 = echarts.init(document.getElementById("tab3chart2"));
 
     let option = {
       tooltip: {},
-      dataset: {
-        source: chartData,
-      },
       title: {
         text: "OE by Segment",
         left: "left",
@@ -1685,26 +1731,14 @@ const ChartBlock = () => {
         "#ec8d94",
         "#f9e2e3",
       ],
-      series: [
-        {
-          type: "pie",
-          radius: [15, 90],
-          center: ["50%", "50%"],
-          roseType: "radius",
-          itemStyle: {
-            borderRadius: 5,
-          },
-          label: {
-            show: false,
-          },
-          emphasis: {
-            label: {
-              show: true,
-            },
-          },
-          seriesLayoutBy: "row",
+      series: {
+        type: "sunburst",
+        data: chartData,
+        radius: [0, "45%"],
+        label: {
+          rotate: "radial",
         },
-      ],
+      },
     };
 
     tab3chart2.setOption(option);
@@ -1799,9 +1833,20 @@ const ChartBlock = () => {
     };
 
     tab3chart3.setOption(option);
+
+    tab3chart3.off("click");
+    tab3chart3.on("click", async (params) => {
+      toPage(3);
+    });
   };
 
-  renderEcharts("#tab1");
+  if (typeof activeTab !== "undefined") {
+    $(`[data-name=ChartBlock] .tabulDom li [href='${activeTab}']`).tab("show");
+    $(`[data-name=ChartBlock] .tabulDom li [href='${activeTab}']`).parent().trigger("click");
+  } else {
+    $(`[data-name=ChartBlock] .tabulDom li [href='#tab1']`).tab("show");
+    $(`[data-name=ChartBlock] .tabulDom li [href='#tab1']`).parent().trigger("click");
+  }
 };
 
 const getInitData = async () => {
@@ -1836,6 +1881,7 @@ const getData = (pythonName, parameter, runType) => {
     }),
   });
 };
+
 /**
  * 加载百度地图 API
  */
@@ -1858,5 +1904,216 @@ const LoadBaiduMapScript = () => {
     scriptNode.setAttribute("type", "text/javascript");
     scriptNode.setAttribute("src", BMap_URL);
     document.body.appendChild(scriptNode);
+  });
+};
+
+const getChartData = async (py) => {
+  const pov = {
+    Entity: $("#select2_pov_Entity").val(),
+    Year: $("#select2_pov_Year").val(),
+    Period: $("#select2_pov_Period").val(),
+    View: $("#select2_pov_View").val(),
+  };
+
+  const result = await getData(
+    py,
+    JSON.stringify({
+      ...pov,
+      Entity: "BeaChina",
+    }),
+    "1"
+  );
+  return result;
+};
+
+const extraChartModal = async () => {
+  $("#extra-chart-modal").modal("show");
+
+  let modalExtraChart;
+  const { tab1chart1: modalExtraChartData } = await getChartData("BeaChina_map_Portofolio_rate");
+
+  const renderModalExtraChart = (chartData) => {
+    modalExtraChart = echarts.init(document.getElementById("modalExtraChart"));
+
+    let option = {
+      tooltip: {
+        trigger: "axis",
+        axisPointer: {
+          // Use axis to trigger tooltip
+          type: "shadow", // 'shadow' as default; can also be 'line' or 'shadow'
+        },
+      },
+      title: {
+        text: "Loan & Deposit(Ending)",
+        left: "left",
+      },
+      legend: {
+        y: "10%",
+      },
+      grid: {
+        left: "3%",
+        right: "4%",
+        bottom: "3%",
+        top: "25%",
+        containLabel: true,
+      },
+      yAxis: {
+        type: "value",
+      },
+      xAxis: [
+        {
+          type: "category",
+          boundaryGap: true,
+          axisLabel: {
+            interval: 0,
+          },
+          axisLine: {
+            show: true,
+          },
+          axisTick: {
+            show: false,
+          },
+        },
+        {
+          type: "category",
+          axisLine: {
+            show: false,
+          },
+          axisTick: {
+            show: false,
+          },
+          axisLabel: {
+            show: false,
+          },
+          splitArea: {
+            show: false,
+          },
+          splitLine: {
+            show: false,
+          },
+        },
+      ],
+      dataset: {
+        source: chartData,
+      },
+      series: [
+        {
+          xAxisIndex: 0,
+          type: "bar",
+          barWidth: "30%",
+          stack: "total",
+          label: {
+            show: true,
+          },
+          itemStyle: {
+            color: "#893448",
+          },
+        },
+        {
+          xAxisIndex: 0,
+          type: "bar",
+          barWidth: "30%",
+          stack: "total",
+          label: {
+            show: true,
+          },
+          itemStyle: {
+            color: "#d95850",
+          },
+        },
+        {
+          xAxisIndex: 0,
+          type: "bar",
+          barWidth: "30%",
+          stack: "total",
+          label: {
+            show: true,
+          },
+          itemStyle: {
+            color: "#b5b0b0",
+          },
+        },
+        {
+          xAxisIndex: 1,
+          barGap: "-200%",
+          type: "bar",
+          barWidth: "30%",
+          stack: "total2",
+          label: {
+            show: true,
+          },
+          itemStyle: {
+            color: "#ffb248",
+          },
+        },
+        {
+          xAxisIndex: 1,
+          barGap: "-200%",
+          type: "bar",
+          barWidth: "30%",
+          stack: "total2",
+          label: {
+            show: true,
+          },
+          itemStyle: {
+            color: "#f2d643",
+          },
+        },
+        {
+          xAxisIndex: 1,
+          barGap: "-200%",
+          type: "bar",
+          barWidth: "30%",
+          stack: "total2",
+          label: {
+            show: true,
+          },
+          itemStyle: {
+            color: "#cccccc",
+          },
+        },
+        {
+          xAxisIndex: 0,
+          type: "bar",
+          barWidth: "30%",
+          data: [],
+        },
+        {
+          xAxisIndex: 1,
+          type: "bar",
+          barWidth: "30%",
+          data: [],
+        },
+      ],
+    };
+
+    modalExtraChart.setOption(option);
+  };
+
+  renderModalExtraChart(modalExtraChartData);
+};
+
+const toPage = (sign) => {
+  let urls;
+
+  if (sign === 1) {
+    urls = `../dataSheet/dataSheet.html?appid=4&isLayer=true&param1=GRDEE2HQI2L1F3&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%2C%7B%22name%22%3A%22%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%20%20Dashboard%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%22%2C%22foldId%22%3A%228784544%22%2C%22elementId%22%3A%22DIREDVIL4DIPL1%22%7D%5D&elementType=GRD&elementId=GRDEE2HQI2L1F3&folderId=8784549&elementTitle=d_data_portfolio&pageName=d_data_portfolio`;
+  }
+  if (sign === 2) {
+    urls = `../dataSheet/dataSheet.html?appid=4&isLayer=true&param1=GRDEE2IDQU3B8R&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%2C%7B%22name%22%3A%22%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%20%20Dashboard%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%22%2C%22foldId%22%3A%228784544%22%2C%22elementId%22%3A%22DIREDVIL4DIPL1%22%7D%5D&elementType=GRD&elementId=GRDEE2IDQU3B8R&folderId=8784550&elementTitle=d_data_PPOP&pageName=d_data_PPOP`;
+  }
+  if (sign === 3) {
+    urls = `../dataSheet/dataSheet.html?appid=4&isLayer=true&param1=GRDEE2IM8NUVE2&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%2C%7B%22name%22%3A%22%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%20%20Dashboard%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%22%2C%22foldId%22%3A%228784544%22%2C%22elementId%22%3A%22DIREDVIL4DIPL1%22%7D%5D&elementType=GRD&elementId=GRDEE2IM8NUVE2&folderId=8784551&elementTitle=d_data_Expense&pageName=d_data_Expense`;
+  }
+
+  parent.layer.open({
+    type: 2,
+    title: false,
+    area: ["100%", "100%"],
+    move: false,
+    resize: false,
+    scrollbar: false,
+    content: urls,
+    closeBtn: 0,
   });
 };
