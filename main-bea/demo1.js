@@ -216,7 +216,7 @@ $(async () => {
   $("[data-name=MapBlock]").find(".header-elements").append(btn);
 
   // 添加地图后退按钮
-  const btn2 = `<button id="chart-modal-btn" type="button" class="btn btn-primary legitRipple btn-sm ml-4">弹窗</button>`;
+  const btn2 = `<button id="chart-modal-btn" type="button" class="btn btn-primary legitRipple btn-sm ml-4">Daily</button>`;
   $("[data-name=MapBlock]").find(".header-elements").append(btn2);
 
   $("#mapBack")
@@ -241,14 +241,14 @@ const MapBlock = async () => {
 
   const html = `
   <div class="row" style="width: 100%; height: 100%">
-    <div class="col-lg-6" style="height: 100%">
+    <div class="col-lg-5" style="height: 100%">
       <div class="echartWrap" style="height: 100%">
         <div id="mainMapView" style="height: 100%"></div>
       </div>
     </div>
 
-    <div class="col-lg-6" style="height: 100%">
-      <div style="display: flex">
+    <div class="col-lg-7" style="height: 100%">
+      <div style="display: flex;margin-bottom: 16px;">
         <label class="d-block mr-2">Account</label>
         <div style="width: 200px">
           <select id="select2_pov_account">
@@ -268,7 +268,7 @@ const MapBlock = async () => {
           </span>
         </div>
       </div>
-      <div class="card tableHeight">
+      <div class="card tableHeight" style="font-family: 'Microsoft Yahei';font-size: 1rem;">
         <div class="customAreaWrap">
           <div class="customAreaHeaderBox">
             <table class="table customAreaHeader">
@@ -290,8 +290,7 @@ const MapBlock = async () => {
               <thead>
                 <tr></tr>
               </thead>
-              <tbody>
-              </tbody>
+              <tbody></tbody>
             </table>
           </div>
         </div>
@@ -450,18 +449,36 @@ const MapBlock = async () => {
     $(".customAreaContent tbody").html(html);
   };
 
-  const mapLevelRenderer = async (level, MapCode, MapData) => {
+  const mapLevelRenderer = async (level, MapData) => {
     mapChart = echarts.init(document.getElementById("mainMapView"));
 
     let chinaJson;
     if (level === "China") {
       let chinaGeoJson = await getGeoJson();
       chinaJson = mergeProvinces(chinaGeoJson);
-      initMapEcharts(chinaJson, MapCode, MapData);
+      initMapEcharts(chinaJson, MapData, []);
+    }
+
+    if (level === "BeaChina") {
+      let chinaGeoJson = await getGeoJson();
+      chinaJson = mergeProvinces(chinaGeoJson);
+
+      const extraData = MapData.Branch.map((val) => {
+        return {
+          name: val.Name,
+          value: [
+            parseInt(val.Lng),
+            parseInt(val.Lat),
+            { MapCode: val.MapCode, Income: val.Income, Name: val.name },
+          ],
+        };
+      });
+
+      initMapEcharts(chinaJson, MapData.Area, extraData);
     }
   };
 
-  const initMapEcharts = (geoJson, MapCode, MapData) => {
+  const initMapEcharts = (geoJson, MapData, extraData) => {
     let mapData = MapData.map((v) => {
       return { value: v.Income, name: v.name, MapData: v };
     });
@@ -480,7 +497,7 @@ const MapBlock = async () => {
       Math.ceil(maxValue / Math.pow(10, maxValue.toString().length - 1)) *
       Math.pow(10, maxValue.toString().length - 1);
 
-    echarts.registerMap(MapCode, geoJson);
+    echarts.registerMap("CustomMap", geoJson);
     let option = {
       tooltip: {},
 
@@ -499,16 +516,37 @@ const MapBlock = async () => {
           color: ["#F3E3A0", "#C34D53"],
         },
       },
+
+      geo: {
+        show: true,
+        map: "CustomMap",
+        zoom: 1.5,
+        top: 120,
+        itemStyle: {
+          normal: {
+            borderColor: "rgba(0, 0, 0, 0.2)",
+          },
+          emphasis: {
+            shadowOffsetX: 0,
+            shadowOffsetY: 0,
+            shadowBlur: 20,
+            borderWidth: 0,
+            shadowColor: "rgba(0, 0, 0, 0.5)",
+          },
+        },
+        showLegendSymbol: false,
+        roam: "move",
+      },
       series: [
         {
+          name: "China",
           type: "map",
-          map: MapCode,
+          map: "CustomMap",
           zoom: 1.5,
           top: 120,
+          geoIndex: 0,
           itemStyle: {
-            normal: {
-              borderColor: "rgba(0, 0, 0, 0.2)",
-            },
+            borderColor: "rgba(0, 0, 0, 0.2)",
             emphasis: {
               shadowOffsetX: 0,
               shadowOffsetY: 0,
@@ -520,21 +558,19 @@ const MapBlock = async () => {
           showLegendSymbol: false,
           roam: "move",
           label: {
-            normal: {
-              show: false,
-              rotate: 40,
-              formatter: "{b}：{value|{c}}",
-              backgroundColor: "#fff",
-              padding: [3, 5],
-              borderRadius: 3,
-              borderWidth: 1,
-              borderColor: "rgba(0,0,0,0.5)",
-              color: "#777",
-              rich: {
-                value: {
-                  color: "#019D2D",
-                  fontSize: 14,
-                },
+            show: false,
+            rotate: 40,
+            formatter: "{b}：{value|{c}}",
+            backgroundColor: "#fff",
+            padding: [3, 5],
+            borderRadius: 3,
+            borderWidth: 1,
+            borderColor: "rgba(0,0,0,0.5)",
+            color: "#777",
+            rich: {
+              value: {
+                color: "#019D2D",
+                fontSize: 14,
               },
             },
             emphasis: {
@@ -542,6 +578,24 @@ const MapBlock = async () => {
             },
           },
           data: mapData,
+        },
+        {
+          type: "scatter",
+          coordinateSystem: "geo",
+          symbol: "pin",
+          itemStyle: {
+            color: "#59C3E5",
+          },
+          symbolSize: 32,
+          tooltip: {
+            formatter: function (params) {
+              const { Name, Income } = params.data.value[2];
+
+              return Name + " : " + Income;
+            },
+          },
+          zlevel: 6,
+          data: extraData,
         },
       ],
     };
@@ -553,14 +607,27 @@ const MapBlock = async () => {
 
     mapChart.off("click");
     mapChart.on("click", async (params) => {
-      let { MapData } = params.data;
+      const { seriesType } = params;
 
-      $("#select2_pov_account").val("PL06").select2();
-      let areaMapCode = MapData.MapCode;
-      $("#select2_pov_Entity").val(areaMapCode).select2();
+      if (seriesType === "map") {
+        const { MapData } = params.data;
+        $("#select2_pov_account").val("PL06").select2();
+        const areaMapCode = MapData.MapCode;
+        $("#select2_pov_Entity").val(areaMapCode).select2();
 
-      MapBlock();
-      ChartBlock();
+        MapBlock();
+        ChartBlock();
+      }
+
+      if (seriesType === "scatter") {
+        $("#select2_pov_account").val("PL06").select2();
+
+        let areaMapCode = params.value[2].MapCode;
+        $("#select2_pov_Entity").val(areaMapCode).select2();
+
+        MapBlock();
+        ChartBlock();
+      }
     });
   };
 
@@ -786,11 +853,17 @@ const MapBlock = async () => {
     },
   });
 
-  if (pov.Entity === "Branch") {
+  if (pov.Entity === "Branch" || pov.Entity === "T1" || pov.Entity === "T2") {
     $("#select2_pov_account").val("PL06").select2();
     const data = await getMapTableData();
     const { MapData, TableData } = data;
-    mapLevelRenderer("China", "Branch", MapData);
+    mapLevelRenderer("China", MapData);
+    renderTable(TableData);
+  } else if (pov.Entity === "BeaChina") {
+    $("#select2_pov_account").val("PL06").select2();
+    const data = await getMapTableData();
+    const { MapData, TableData } = data;
+    mapLevelRenderer("BeaChina", MapData);
     renderTable(TableData);
   } else {
     $("#select2_pov_account").val("PL06").select2();
@@ -861,9 +934,9 @@ const ChartBlock = () => {
   </div>
   <div class="tab-pane fade" id="tab2">
     <div class="row">
-      <div class="col-lg-6" style="width: 100%; height: 500px" id="tab2chart1"></div>
-      <div class="col-lg-3" style="width: 100%; height: 500px" id="tab2chart2"></div>
-      <div class="col-lg-3" style="width: 100%; height: 500px" id="tab2chart3"></div>
+      <div class="col-lg-4" style="width: 100%; height: 500px" id="tab2chart1"></div>
+      <div class="col-lg-4" style="width: 100%; height: 500px" id="tab2chart2"></div>
+      <div class="col-lg-4" style="width: 100%; height: 500px" id="tab2chart3"></div>
     </div>
   </div>
   <div class="tab-pane fade" id="tab3">
@@ -884,7 +957,7 @@ const ChartBlock = () => {
   <div class="modal-dialog modal-lg" style="margin-top: 5%">
     <div class="modal-content">
       <div class="modal-header bg-teal-400">
-        <h5 class="modal-title">什么标题</h5>
+        <h5 class="modal-title">Daily</h5>
         <button type="button" class="close legitRipple" data-dismiss="modal">×</button>
       </div>
       <div
@@ -1346,11 +1419,15 @@ const ChartBlock = () => {
       series: [
         {
           type: "bar",
-          barWidth: "30%",
+          barWidth: "50%",
           stack: "total",
           label: {
             show: true,
             position: "top",
+            formatter: function (params) {
+              const val = params.value[params.encode.y[0]];
+              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+            },
           },
           itemStyle: {
             color: "#ff4d4f",
@@ -1359,7 +1436,7 @@ const ChartBlock = () => {
         },
         {
           type: "bar",
-          barWidth: "30%",
+          barWidth: "50%",
           stack: "total",
           itemStyle: {
             barBorderColor: "rgba(0,0,0,0)",
@@ -1375,11 +1452,15 @@ const ChartBlock = () => {
         },
         {
           type: "bar",
-          barWidth: "30%",
+          barWidth: "50%",
           stack: "total",
           label: {
             show: true,
             position: "top",
+            formatter: function (params) {
+              const val = params.value[params.encode.y[0]];
+              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+            },
           },
           itemStyle: {
             color: "#cf1322",
@@ -1388,11 +1469,15 @@ const ChartBlock = () => {
         },
         {
           type: "bar",
-          barWidth: "30%",
+          barWidth: "50%",
           stack: "total",
           label: {
             show: true,
             position: "bottom",
+            formatter: function (params) {
+              const val = params.value[params.encode.y[0]];
+              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+            },
           },
           itemStyle: {
             color: "#bfbfbf",
@@ -1473,10 +1558,15 @@ const ChartBlock = () => {
       series: [
         {
           type: "bar",
+          barWidth: "50%",
           stack: "total",
           label: {
             show: true,
             position: "top",
+            formatter: function (params) {
+              const val = params.value[params.encode.y[0]];
+              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+            },
           },
           itemStyle: {
             color: "#ff4d4f",
@@ -1485,6 +1575,7 @@ const ChartBlock = () => {
         },
         {
           type: "bar",
+          barWidth: "50%",
           stack: "total",
           itemStyle: {
             barBorderColor: "rgba(0,0,0,0)",
@@ -1500,10 +1591,15 @@ const ChartBlock = () => {
         },
         {
           type: "bar",
+          barWidth: "50%",
           stack: "total",
           label: {
             show: true,
             position: "top",
+            formatter: function (params) {
+              const val = params.value[params.encode.y[0]];
+              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+            },
           },
           itemStyle: {
             color: "#cf1322",
@@ -1512,10 +1608,15 @@ const ChartBlock = () => {
         },
         {
           type: "bar",
+          barWidth: "50%",
           stack: "total",
           label: {
             show: true,
             position: "bottom",
+            formatter: function (params) {
+              const val = params.value[params.encode.y[0]];
+              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+            },
           },
           itemStyle: {
             color: "#bfbfbf",
@@ -1596,10 +1697,15 @@ const ChartBlock = () => {
       series: [
         {
           type: "bar",
+          barWidth: "50%",
           stack: "total",
           label: {
             show: true,
             position: "top",
+            formatter: function (params) {
+              const val = params.value[params.encode.y[0]];
+              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+            },
           },
           itemStyle: {
             color: "#ff4d4f",
@@ -1608,6 +1714,7 @@ const ChartBlock = () => {
         },
         {
           type: "bar",
+          barWidth: "50%",
           stack: "total",
           itemStyle: {
             barBorderColor: "rgba(0,0,0,0)",
@@ -1623,10 +1730,15 @@ const ChartBlock = () => {
         },
         {
           type: "bar",
+          barWidth: "50%",
           stack: "total",
           label: {
             show: true,
             position: "top",
+            formatter: function (params) {
+              const val = params.value[params.encode.y[0]];
+              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+            },
           },
           itemStyle: {
             color: "#cf1322",
@@ -1635,10 +1747,15 @@ const ChartBlock = () => {
         },
         {
           type: "bar",
+          barWidth: "50%",
           stack: "total",
           label: {
             show: true,
             position: "bottom",
+            formatter: function (params) {
+              const val = params.value[params.encode.y[0]];
+              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+            },
           },
           itemStyle: {
             color: "#bfbfbf",
@@ -1673,20 +1790,11 @@ const ChartBlock = () => {
         left: "left",
         top: "bottom",
       },
-      color: [
-        "#b86978",
-        "#dab2b2",
-        "#e4c4c4",
-        "#cc9294",
-        "#ce979e",
-        "#e1bcc4",
-        "#c4858d",
-        "#d4a4a4",
-      ],
+      color: ["#C34D53", "#CD6B62", "#DC9C7C", "#E6BB8B", "#EED498", "#F2E19E"],
       series: [
         {
           type: "pie",
-          radius: [15, 90],
+          radius: [20, 160],
           center: ["50%", "50%"],
           roseType: "radius",
           itemStyle: {
@@ -1697,7 +1805,7 @@ const ChartBlock = () => {
           },
           emphasis: {
             label: {
-              show: true,
+              show: false,
             },
           },
           seriesLayoutBy: "row",
@@ -1721,20 +1829,29 @@ const ChartBlock = () => {
         text: "OE by Segment",
         left: "left",
       },
-      color: [
-        "#e4696d",
-        "#ec9c9c",
-        "#f4c8c8",
-        "#ec8d94",
-        "#f2b1b2",
-        "#e4767c",
-        "#ec8d94",
-        "#f9e2e3",
-      ],
+      // color: [
+      //   "#e4696d",
+      //   "#ec9c9c",
+      //   "#f4c8c8",
+      //   "#ec8d94",
+      //   "#f2b1b2",
+      //   "#e4767c",
+      //   "#ec8d94",
+      //   "#f9e2e3",
+      // ],
+      color: ["#C34D53", "#CD6B62", "#DC9C7C", "#E6BB8B", "#EED498", "#F2E19E"],
+      // visualMap: {
+      //   type: "continuous",
+      //   min: 12000,
+      //   max: 200000,
+      //   inRange: {
+      //     color: ["#F2E19E", "#EED498", "#E6BB8B", "#DC9C7C", "#CD6B62", "#C34D53"],
+      //   },
+      // },
       series: {
         type: "sunburst",
         data: chartData,
-        radius: [0, "45%"],
+        radius: [0, "85%"],
         label: {
           rotate: "radial",
         },
@@ -1816,18 +1933,18 @@ const ChartBlock = () => {
         {
           xAxisIndex: 0,
           type: "bar",
-          barWidth: "30%",
-          seriesLayoutBy: "row",
-        },
-
-        {
-          xAxisIndex: 1,
-          type: "bar",
           barWidth: "40%",
           seriesLayoutBy: "row",
           itemStyle: {
             color: "rgba(155, 155, 155, 0.5)",
           },
+        },
+
+        {
+          xAxisIndex: 1,
+          type: "bar",
+          barWidth: "30%",
+          seriesLayoutBy: "row",
         },
       ],
     };
@@ -1919,7 +2036,7 @@ const getChartData = async (py) => {
     py,
     JSON.stringify({
       ...pov,
-      Entity: "BeaChina",
+      // Entity: "BeaChina",
     }),
     "1"
   );
