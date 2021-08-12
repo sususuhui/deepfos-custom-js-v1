@@ -133,7 +133,7 @@ $(async () => {
           style="
             justify-content: space-between;
             font-size: 22px;
-            font-weight: 500;
+            font-weight: bold;
             font-family: 'Microsoft Yahei';
           "
         >
@@ -1021,7 +1021,7 @@ const ChartBlock = () => {
 
       renderTab1chart1(tab1chart1);
       renderTab1chart21(tab1chart21.data, tab1chart21.extradata);
-      renderTab1chart22(tab1chart22.data, tab1chart21.extradata);
+      renderTab1chart22(tab1chart22.data, tab1chart22.extradata);
     } else if (id == "#tab2") {
       $("[data-name=ChartBlock] .card-body .tab-content").block({
         message: '<i class="icon-spinner4 spinner"></i>',
@@ -1300,11 +1300,11 @@ const ChartBlock = () => {
           type: "line",
           yAxisIndex: 1,
           xAxisIndex: 2,
-          symbolSize: 12,
+          symbolSize: 8,
           itemStyle: {
             normal: {
               lineStyle: {
-                width: 4,
+                width: 3,
               },
             },
           },
@@ -2039,7 +2039,15 @@ const ChartBlock = () => {
     tab3chart2 = echarts.init(document.getElementById("tab3chart2"));
 
     let option = {
-      tooltip: {},
+      tooltip: {
+        formatter: (params) => {
+          const { marker, name, value } = params;
+
+          return `${marker} ${name}: ${value.toLocaleString("zh", {
+            maximumFractionDigits: 2,
+          })} `;
+        },
+      },
       title: {
         text: "OE by Segment",
         left: "left",
@@ -2095,7 +2103,9 @@ const ChartBlock = () => {
             if (i === 0) html += `${axisValueLabel} <br>`;
             value = (value * 100).toFixed(2) + "%";
 
-            let extraValue = extraData[seriesName][axisValueLabel];
+            let extraValue = extraData[seriesName][axisValueLabel].toLocaleString("zh", {
+              maximumFractionDigits: 2,
+            });
 
             html += `${marker} ${seriesName}: ${extraValue} ${
               value === "100.00%" ? "" : value
