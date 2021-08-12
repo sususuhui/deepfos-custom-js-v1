@@ -58,7 +58,7 @@ document.head.appendChild(style);
 
 $(async () => {
   const html = `
-  <div class="row globalPovRow">
+<div class="row globalPovRow">
   <div class="col-lg-12">
     <div class="card">
       <div class="card-header header-elements-inline pt-0 pb-0" id="dataHead">
@@ -128,7 +128,16 @@ $(async () => {
   <div class="row dataSheet mb-3" style="height: 600px">
     <div data-name="MapBlock" style="width: 100%" class="pr-2 pl-2 componentCard height100">
       <div class="card spreadCard mb-0" id="MapBlock">
-        <div class="card-header bg-white header-elements-inline">
+        <div
+          class="card-header bg-white header-elements-inline"
+          style="
+            justify-content: space-between;
+            font-size: 22px;
+            font-weight: 500;
+            font-family: 'Microsoft Yahei';
+          "
+        >
+          <div>Analysis Dashboard (HKAS Set)</div>
           <div class="header-elements">
             <div class="dataSheetCon sheetPovPart"></div>
           </div>
@@ -210,7 +219,7 @@ $(async () => {
     ChartBlock();
   });
 
-  $("[data-name=MapBlock]").find(".card-header").css({ "justify-content": "flex-end" });
+  // $("[data-name=MapBlock]").find(".card-header").css({ "justify-content": "space-between" });
   // 添加地图后退按钮
   const btn = `<button id="mapBack" type="button" class="btn btn-primary legitRipple btn-sm">MapBack</button>`;
   $("[data-name=MapBlock]").find(".header-elements").append(btn);
@@ -258,7 +267,7 @@ const MapBlock = async () => {
             <option value="PL02">Operating Expense</option>
             <option value="A0201">Net Interest Income</option>
             <option value="A0204">Non Net Interest Income</option>
-            <option value="A0106">Loan ending balance</option>
+            <option value="A0106">Loan ending balance</option>F
             <option value="A0108">Deposit ending balance</option>
           </select>
         </div>
@@ -1011,8 +1020,8 @@ const ChartBlock = () => {
       }
 
       renderTab1chart1(tab1chart1);
-      renderTab1chart21(tab1chart21);
-      renderTab1chart22(tab1chart22);
+      renderTab1chart21(tab1chart21.data, tab1chart21.extradata);
+      renderTab1chart22(tab1chart22.data, tab1chart21.extradata);
     } else if (id == "#tab2") {
       $("[data-name=ChartBlock] .card-body .tab-content").block({
         message: '<i class="icon-spinner4 spinner"></i>',
@@ -1060,7 +1069,7 @@ const ChartBlock = () => {
 
       renderTab3chart1(tab3chart1);
       renderTab3chart2(tab3chart2);
-      renderTab3chart3(tab3chart3);
+      renderTab3chart3(tab3chart3.data, tab3chart3.extradata);
     }
 
     $(window).on("resize", () => {
@@ -1085,8 +1094,25 @@ const ChartBlock = () => {
       tooltip: {
         trigger: "axis",
         axisPointer: {
-          // Use axis to trigger tooltip
-          type: "shadow", // 'shadow' as default; can also be 'line' or 'shadow'
+          type: "shadow",
+        },
+        formatter: (params) => {
+          let html = "";
+
+          params.forEach((val, i) => {
+            let value = val.value[val.encode.y[0]];
+
+            const { axisValueLabel, marker, seriesName, seriesType } = val;
+
+            if (i === 0) html += `${axisValueLabel} <br>`;
+            if (seriesType === "line") value = (value * 100).toFixed(2) + "%";
+            if (seriesType === "bar")
+              value = value.toLocaleString("zh", { maximumFractionDigits: 2 });
+
+            html += `${marker} ${seriesName}: ${value} <br>`;
+          });
+
+          return html;
         },
       },
       title: {
@@ -1103,9 +1129,19 @@ const ChartBlock = () => {
         top: "25%",
         containLabel: true,
       },
-      yAxis: {
-        type: "value",
-      },
+      yAxis: [
+        {
+          type: "value",
+        },
+        {
+          type: "value",
+          axisLabel: {
+            formatter: (value) => {
+              return (value * 100).toFixed(2) + "%";
+            },
+          },
+        },
+      ],
       xAxis: [
         {
           type: "category",
@@ -1117,6 +1153,24 @@ const ChartBlock = () => {
             show: true,
           },
           axisTick: {
+            show: false,
+          },
+        },
+        {
+          type: "category",
+          axisLine: {
+            show: false,
+          },
+          axisTick: {
+            show: false,
+          },
+          axisLabel: {
+            show: false,
+          },
+          splitArea: {
+            show: false,
+          },
+          splitLine: {
             show: false,
           },
         },
@@ -1150,6 +1204,10 @@ const ChartBlock = () => {
           stack: "total",
           label: {
             show: true,
+            formatter: function (params) {
+              const val = params.value[params.encode.y[0]];
+              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+            },
           },
           itemStyle: {
             color: "#893448",
@@ -1162,6 +1220,10 @@ const ChartBlock = () => {
           stack: "total",
           label: {
             show: true,
+            formatter: function (params) {
+              const val = params.value[params.encode.y[0]];
+              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+            },
           },
           itemStyle: {
             color: "#d95850",
@@ -1174,6 +1236,10 @@ const ChartBlock = () => {
           stack: "total",
           label: {
             show: true,
+            formatter: function (params) {
+              const val = params.value[params.encode.y[0]];
+              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+            },
           },
           itemStyle: {
             color: "#b5b0b0",
@@ -1187,6 +1253,10 @@ const ChartBlock = () => {
           stack: "total2",
           label: {
             show: true,
+            formatter: function (params) {
+              const val = params.value[params.encode.y[0]];
+              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+            },
           },
           itemStyle: {
             color: "#ffb248",
@@ -1200,6 +1270,10 @@ const ChartBlock = () => {
           stack: "total2",
           label: {
             show: true,
+            formatter: function (params) {
+              const val = params.value[params.encode.y[0]];
+              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+            },
           },
           itemStyle: {
             color: "#f2d643",
@@ -1213,9 +1287,26 @@ const ChartBlock = () => {
           stack: "total2",
           label: {
             show: true,
+            formatter: function (params) {
+              const val = params.value[params.encode.y[0]];
+              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+            },
           },
           itemStyle: {
             color: "#cccccc",
+          },
+        },
+        {
+          type: "line",
+          yAxisIndex: 1,
+          xAxisIndex: 2,
+          symbolSize: 12,
+          itemStyle: {
+            normal: {
+              lineStyle: {
+                width: 4,
+              },
+            },
           },
         },
         {
@@ -1240,12 +1331,28 @@ const ChartBlock = () => {
       toPage(1);
     });
   };
-  const renderTab1chart21 = (chartData) => {
+  const renderTab1chart21 = (chartData, extraData) => {
     tab1chart21 = echarts.init(document.getElementById("tab1chart2-1"));
 
     let option = {
       tooltip: {
         trigger: "axis",
+        formatter: (params) => {
+          let html = "";
+
+          params.forEach((val, i) => {
+            let value = val.value[val.encode.y[0]];
+
+            const { axisValueLabel, marker, seriesName, seriesType } = val;
+
+            if (i === 0) html += `${axisValueLabel} <br>`;
+            if (seriesType === "line") value = (value * 100).toFixed(2) + "%";
+
+            html += `${marker} ${seriesName}: ${value} <br>`;
+          });
+
+          return html;
+        },
       },
       title: {
         text: "NIM & NIS (Last 12 M)",
@@ -1265,7 +1372,33 @@ const ChartBlock = () => {
         axisTick: {
           show: false,
         },
+        axisLabel: {
+          formatter: (value) => {
+            return (value * 100).toFixed(2) + "%";
+          },
+        },
       },
+      graphic: [
+        {
+          type: "group",
+          right: "10%",
+          top: "3%",
+          silent: true,
+          children: [
+            {
+              type: "text",
+              z: 100,
+              left: "center",
+              top: "middle",
+              style: {
+                fill: "#333",
+                text: extraData,
+                font: "14px Microsoft YaHei",
+              },
+            },
+          ],
+        },
+      ],
       series: [
         {
           type: "line",
@@ -1301,12 +1434,28 @@ const ChartBlock = () => {
       ChartBlock();
     });
   };
-  const renderTab1chart22 = (chartData) => {
+  const renderTab1chart22 = (chartData, extraData) => {
     tab1chart22 = echarts.init(document.getElementById("tab1chart2-2"));
 
     let option = {
       tooltip: {
         trigger: "axis",
+        formatter: (params) => {
+          let html = "";
+
+          params.forEach((val, i) => {
+            let value = val.value[val.encode.y[0]];
+
+            const { axisValueLabel, marker, seriesName, seriesType } = val;
+
+            if (i === 0) html += `${axisValueLabel} <br>`;
+            if (seriesType === "line") value = (value * 100).toFixed(2) + "%";
+
+            html += `${marker} ${seriesName}: ${value} <br>`;
+          });
+
+          return html;
+        },
       },
       title: {
         text: "CIR (Last 12 M)",
@@ -1326,8 +1475,42 @@ const ChartBlock = () => {
         axisTick: {
           show: false,
         },
+        axisLabel: {
+          formatter: (value) => {
+            return (value * 100).toFixed(2) + "%";
+          },
+        },
       },
+      graphic: [
+        {
+          type: "group",
+          right: "10%",
+          top: "3%",
+          silent: true,
+          children: [
+            {
+              type: "text",
+              z: 100,
+              left: "center",
+              top: "middle",
+              style: {
+                fill: "#333",
+                text: extraData,
+                font: "14px Microsoft YaHei",
+              },
+            },
+          ],
+        },
+      ],
       series: [
+        {
+          type: "line",
+          smooth: true,
+          seriesLayoutBy: "row",
+          itemStyle: {
+            color: "#FBBE67",
+          },
+        },
         {
           type: "line",
           smooth: true,
@@ -1386,7 +1569,13 @@ const ChartBlock = () => {
               return val.value !== "-";
             })[0];
 
-          return params[0].name + "<br/>" + currentData.name + " : " + currentData.value;
+          return (
+            params[0].name +
+            "<br/>" +
+            currentData.name +
+            " : " +
+            currentData.value.toLocaleString("zh", { maximumFractionDigits: 2 })
+          );
         },
       },
       legend: {
@@ -1405,6 +1594,10 @@ const ChartBlock = () => {
         type: "category",
         splitLine: {
           show: false,
+        },
+        axisLabel: {
+          interval: 0,
+          rotate: 40,
         },
       },
       yAxis: {
@@ -1525,7 +1718,13 @@ const ChartBlock = () => {
               return val.value !== "-";
             })[0];
 
-          return params[0].name + "<br/>" + currentData.name + " : " + currentData.value;
+          return (
+            params[0].name +
+            "<br/>" +
+            currentData.name +
+            " : " +
+            currentData.value.toLocaleString("zh", { maximumFractionDigits: 2 })
+          );
         },
       },
       legend: {
@@ -1544,6 +1743,10 @@ const ChartBlock = () => {
         type: "category",
         splitLine: {
           show: false,
+        },
+        axisLabel: {
+          interval: 0,
+          rotate: 40,
         },
       },
       yAxis: {
@@ -1569,7 +1772,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#ff4d4f",
+            color: "#f2d643",
           },
           seriesLayoutBy: "row",
         },
@@ -1602,7 +1805,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#cf1322",
+            color: "#ffb248",
           },
           seriesLayoutBy: "row",
         },
@@ -1664,7 +1867,13 @@ const ChartBlock = () => {
               return val.value !== "-";
             })[0];
 
-          return params[0].name + "<br/>" + currentData.name + " : " + currentData.value;
+          return (
+            params[0].name +
+            "<br/>" +
+            currentData.name +
+            " : " +
+            currentData.value.toLocaleString("zh", { maximumFractionDigits: 2 })
+          );
         },
       },
       legend: {
@@ -1683,6 +1892,10 @@ const ChartBlock = () => {
         type: "category",
         splitLine: {
           show: false,
+        },
+        axisLabel: {
+          interval: 0,
+          rotate: 40,
         },
       },
       yAxis: {
@@ -1708,7 +1921,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#ff4d4f",
+            color: "#f2d643",
           },
           seriesLayoutBy: "row",
         },
@@ -1741,7 +1954,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#cf1322",
+            color: "#ffb248",
           },
           seriesLayoutBy: "row",
         },
@@ -1785,23 +1998,25 @@ const ChartBlock = () => {
         text: "OE by Item",
         left: "left",
       },
-      legend: {
-        orient: "vertical",
-        left: "left",
-        top: "bottom",
-      },
+      // legend: {
+      //   orient: "vertical",
+      //   left: "left",
+      //   top: "bottom",
+      // },
       color: ["#C34D53", "#CD6B62", "#DC9C7C", "#E6BB8B", "#EED498", "#F2E19E"],
       series: [
         {
           type: "pie",
-          radius: [20, 160],
+          radius: "85%",
+          // radius: [20, 160],
           center: ["50%", "50%"],
-          roseType: "radius",
-          itemStyle: {
-            borderRadius: 5,
-          },
+          // roseType: "radius",
+          // itemStyle: {
+          //   borderRadius: 5,
+          // },
           label: {
-            show: false,
+            show: true,
+            position: "inner",
           },
           emphasis: {
             label: {
@@ -1860,7 +2075,7 @@ const ChartBlock = () => {
 
     tab3chart2.setOption(option);
   };
-  const renderTab3chart3 = (chartData) => {
+  const renderTab3chart3 = (chartData, extraData) => {
     tab3chart3 = echarts.init(document.getElementById("tab3chart3"));
 
     let option = {
@@ -1868,6 +2083,26 @@ const ChartBlock = () => {
         trigger: "axis",
         axisPointer: {
           type: "shadow",
+        },
+        formatter: (params) => {
+          let html = "";
+
+          params.forEach((val, i) => {
+            let value = val.value[val.encode.x[0]];
+
+            const { axisValueLabel, marker, seriesName, seriesType } = val;
+
+            if (i === 0) html += `${axisValueLabel} <br>`;
+            value = (value * 100).toFixed(2) + "%";
+
+            let extraValue = extraData[seriesName][axisValueLabel];
+
+            html += `${marker} ${seriesName}: ${extraValue} ${
+              value === "100.00%" ? "" : value
+            } <br>`;
+          });
+
+          return html;
         },
       },
       legend: {
@@ -1884,7 +2119,7 @@ const ChartBlock = () => {
         top: "20%",
         containLabel: true,
       },
-      yAxis: {
+      xAxis: {
         type: "value",
         axisLine: {
           show: false,
@@ -1892,11 +2127,17 @@ const ChartBlock = () => {
         axisTick: {
           show: false,
         },
+        axisLabel: {
+          formatter: (value) => {
+            return (value * 100).toFixed(2) + "%";
+          },
+        },
       },
-      xAxis: [
+      yAxis: [
         {
           type: "category",
           boundaryGap: true,
+          inverse: true,
           axisLabel: {
             interval: 0,
           },
@@ -1909,6 +2150,7 @@ const ChartBlock = () => {
         },
         {
           type: "category",
+          inverse: true,
           axisLine: {
             show: false,
           },
@@ -1931,7 +2173,7 @@ const ChartBlock = () => {
       },
       series: [
         {
-          xAxisIndex: 0,
+          yAxisIndex: 0,
           type: "bar",
           barWidth: "40%",
           seriesLayoutBy: "row",
@@ -1939,9 +2181,8 @@ const ChartBlock = () => {
             color: "rgba(155, 155, 155, 0.5)",
           },
         },
-
         {
-          xAxisIndex: 1,
+          yAxisIndex: 1,
           type: "bar",
           barWidth: "30%",
           seriesLayoutBy: "row",
