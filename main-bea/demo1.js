@@ -973,7 +973,7 @@ const ChartBlock = () => {
         class="modal-body pl-0 pr-0 modal_scroll"
         style="height: 600px; width: 100%; overflow-y: auto; overflow-x: hidden; padding: 0"
       >
-        <div style="height: 100%; width: 100%" id="modalExtraChart"></div>
+        <div style="height: 100%; width: 100%;padding: 1rem;" id="modalExtraChart"></div>
       </div>
     </div>
   </div>
@@ -1043,9 +1043,9 @@ const ChartBlock = () => {
 
       $("[data-name=ChartBlock] .card-body .tab-content").unblock();
 
-      renderTab2chart1(tab2chart1);
-      renderTab2chart2(tab2chart2);
-      renderTab2chart3(tab2chart3);
+      renderTab2chart1(tab2chart1.data, tab2chart1.extradata);
+      renderTab2chart2(tab2chart2.data, tab2chart2.extradata);
+      renderTab2chart3(tab2chart3.data, tab2chart3.extradata);
     } else {
       $("[data-name=ChartBlock] .card-body .tab-content").block({
         message: '<i class="icon-spinner4 spinner"></i>',
@@ -1538,7 +1538,7 @@ const ChartBlock = () => {
     });
   };
 
-  const renderTab2chart1 = (chartData) => {
+  const renderTab2chart1 = (chartData, extraData) => {
     tab2chart1 = echarts.init(document.getElementById("tab2chart1"));
 
     let option = {
@@ -1563,19 +1563,18 @@ const ChartBlock = () => {
               return {
                 name: val.seriesName,
                 value: val.value[val.encode.y[0]],
+                dataIndex: val.dataIndex,
+                data: val.data,
               };
             })
             .filter((val) => {
               return val.value !== "-";
             })[0];
 
-          return (
-            params[0].name +
-            "<br/>" +
-            currentData.name +
-            " : " +
-            currentData.value.toLocaleString("zh", { maximumFractionDigits: 2 })
-          );
+          return `${params[0].name}<br/>${currentData.name}: ${currentData.value.toLocaleString(
+            "zh",
+            { maximumFractionDigits: 2 }
+          )} ${currentData.data.length - 1 === currentData.dataIndex ? extraData : ""}`;
         },
       },
       legend: {
@@ -1687,7 +1686,7 @@ const ChartBlock = () => {
       toPage(2);
     });
   };
-  const renderTab2chart2 = (chartData) => {
+  const renderTab2chart2 = (chartData, extraData) => {
     tab2chart2 = echarts.init(document.getElementById("tab2chart2"));
 
     let option = {
@@ -1712,19 +1711,18 @@ const ChartBlock = () => {
               return {
                 name: val.seriesName,
                 value: val.value[val.encode.y[0]],
+                dataIndex: val.dataIndex,
+                data: val.data,
               };
             })
             .filter((val) => {
               return val.value !== "-";
             })[0];
 
-          return (
-            params[0].name +
-            "<br/>" +
-            currentData.name +
-            " : " +
-            currentData.value.toLocaleString("zh", { maximumFractionDigits: 2 })
-          );
+          return `${params[0].name}<br/>${currentData.name}: ${currentData.value.toLocaleString(
+            "zh",
+            { maximumFractionDigits: 2 }
+          )} ${currentData.data.length - 1 === currentData.dataIndex ? extraData : ""}`;
         },
       },
       legend: {
@@ -1836,7 +1834,7 @@ const ChartBlock = () => {
       toPage(2);
     });
   };
-  const renderTab2chart3 = (chartData) => {
+  const renderTab2chart3 = (chartData, extraData) => {
     tab2chart3 = echarts.init(document.getElementById("tab2chart3"));
 
     let option = {
@@ -1861,19 +1859,18 @@ const ChartBlock = () => {
               return {
                 name: val.seriesName,
                 value: val.value[val.encode.y[0]],
+                dataIndex: val.dataIndex,
+                data: val.data,
               };
             })
             .filter((val) => {
               return val.value !== "-";
             })[0];
 
-          return (
-            params[0].name +
-            "<br/>" +
-            currentData.name +
-            " : " +
-            currentData.value.toLocaleString("zh", { maximumFractionDigits: 2 })
-          );
+          return `${params[0].name}<br/>${currentData.name}: ${currentData.value.toLocaleString(
+            "zh",
+            { maximumFractionDigits: 2 }
+          )} ${currentData.data.length - 1 === currentData.dataIndex ? extraData : ""}`;
         },
       },
       legend: {
@@ -2298,7 +2295,10 @@ const extraChartModal = async () => {
   $("#extra-chart-modal").modal("show");
 
   let modalExtraChart;
-  const { tab1chart1: modalExtraChartData } = await getChartData("BeaChina_map_Portofolio_rate");
+  const { tab1chart1: modalExtraChartData } = await getChartData("BeaChina_map_daily_portfolio");
+
+  const day = new Date();
+  day.setTime(day.getTime() - 24 * 60 * 60 * 1000);
 
   const renderModalExtraChart = (chartData) => {
     modalExtraChart = echarts.init(document.getElementById("modalExtraChart"));
@@ -2307,12 +2307,31 @@ const extraChartModal = async () => {
       tooltip: {
         trigger: "axis",
         axisPointer: {
-          // Use axis to trigger tooltip
-          type: "shadow", // 'shadow' as default; can also be 'line' or 'shadow'
+          type: "shadow",
+        },
+        formatter: (params) => {
+          let html = "";
+
+          params.forEach((val, i) => {
+            let value = val.value[val.encode.y[0]];
+
+            const { axisValueLabel, marker, seriesName, seriesType } = val;
+
+            if (i === 0) html += `${axisValueLabel} <br>`;
+            if (seriesType === "line") value = (value * 100).toFixed(2) + "%";
+            if (seriesType === "bar")
+              value = value.toLocaleString("zh", { maximumFractionDigits: 2 });
+
+            html += `${marker} ${seriesName}: ${value} <br>`;
+          });
+
+          return html;
         },
       },
       title: {
-        text: "Loan & Deposit(Ending)",
+        text: `Loan & Deposit(Ending) 数据截止于${day.getFullYear()}年${
+          day.getMonth() + 1
+        }月${day.getDate()}日`,
         left: "left",
       },
       legend: {
@@ -2322,12 +2341,22 @@ const extraChartModal = async () => {
         left: "3%",
         right: "4%",
         bottom: "3%",
-        top: "25%",
+        top: "20%",
         containLabel: true,
       },
-      yAxis: {
-        type: "value",
-      },
+      yAxis: [
+        {
+          type: "value",
+        },
+        {
+          type: "value",
+          axisLabel: {
+            formatter: (value) => {
+              return (value * 100).toFixed(2) + "%";
+            },
+          },
+        },
+      ],
       xAxis: [
         {
           type: "category",
@@ -2339,6 +2368,24 @@ const extraChartModal = async () => {
             show: true,
           },
           axisTick: {
+            show: false,
+          },
+        },
+        {
+          type: "category",
+          axisLine: {
+            show: false,
+          },
+          axisTick: {
+            show: false,
+          },
+          axisLabel: {
+            show: false,
+          },
+          splitArea: {
+            show: false,
+          },
+          splitLine: {
             show: false,
           },
         },
@@ -2372,6 +2419,10 @@ const extraChartModal = async () => {
           stack: "total",
           label: {
             show: true,
+            formatter: function (params) {
+              const val = params.value[params.encode.y[0]];
+              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+            },
           },
           itemStyle: {
             color: "#893448",
@@ -2384,6 +2435,10 @@ const extraChartModal = async () => {
           stack: "total",
           label: {
             show: true,
+            formatter: function (params) {
+              const val = params.value[params.encode.y[0]];
+              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+            },
           },
           itemStyle: {
             color: "#d95850",
@@ -2396,6 +2451,10 @@ const extraChartModal = async () => {
           stack: "total",
           label: {
             show: true,
+            formatter: function (params) {
+              const val = params.value[params.encode.y[0]];
+              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+            },
           },
           itemStyle: {
             color: "#b5b0b0",
@@ -2409,6 +2468,10 @@ const extraChartModal = async () => {
           stack: "total2",
           label: {
             show: true,
+            formatter: function (params) {
+              const val = params.value[params.encode.y[0]];
+              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+            },
           },
           itemStyle: {
             color: "#ffb248",
@@ -2422,6 +2485,10 @@ const extraChartModal = async () => {
           stack: "total2",
           label: {
             show: true,
+            formatter: function (params) {
+              const val = params.value[params.encode.y[0]];
+              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+            },
           },
           itemStyle: {
             color: "#f2d643",
@@ -2435,9 +2502,26 @@ const extraChartModal = async () => {
           stack: "total2",
           label: {
             show: true,
+            formatter: function (params) {
+              const val = params.value[params.encode.y[0]];
+              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+            },
           },
           itemStyle: {
             color: "#cccccc",
+          },
+        },
+        {
+          type: "line",
+          yAxisIndex: 1,
+          xAxisIndex: 2,
+          symbolSize: 8,
+          itemStyle: {
+            normal: {
+              lineStyle: {
+                width: 3,
+              },
+            },
           },
         },
         {
@@ -2454,7 +2538,6 @@ const extraChartModal = async () => {
         },
       ],
     };
-
     modalExtraChart.setOption(option);
   };
 
