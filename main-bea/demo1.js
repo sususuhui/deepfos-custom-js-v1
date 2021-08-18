@@ -53,6 +53,12 @@ style.innerHTML = `
 .anchorBL{
   display:none;
 }
+#select2-select2_pov_account-container{
+  font-size:14px;
+}
+.select2-selection--single{
+  padding:0
+}
 `;
 document.head.appendChild(style);
 
@@ -158,7 +164,70 @@ $(async () => {
     </div>
   </div>
 </div>
+<div
+  id="extra-chart-modal"
+  class="modal fade"
+  tabindex="-1"
+  aria-hidden="true"
+  style="z-index: 9999"
+>
+  <div class="modal-dialog modal-lg" style="margin-top: 5%">
+    <div class="modal-content">
+      <div class="modal-header bg-teal-400">
+        <h5 class="modal-title">Daily</h5>
+        <button type="button" class="close legitRipple" data-dismiss="modal">×</button>
+      </div>
+      <div
+        class="modal-body pl-0 pr-0 modal_scroll"
+        style="height: 600px; width: 100%; overflow-y: auto; overflow-x: hidden; padding: 0"
+      >
+        <div
+          style="height: 8%; width: 100%; padding: 1rem 1rem 0 1rem; display: flex; flex-wrap: wrap"
+          id="modalExtraChartHeader"
+        >
+          <div class="pr-4 d-flex searchSeleteStyle">
+            <span
+              class="
+                badge badge-light badge-striped badge-striped-left
+                border-left-primary
+                seachText
+              "
+              style="margin-top: 0"
+            >
+              Entity
+            </span>
+            <select id="select2_pov_Entity2"></select>
+          </div>
 
+          <div class="pr-2 d-flex searchSeleteStyle">
+            <span
+              class="
+                badge badge-light badge-striped badge-striped-left
+                border-left-primary
+                seachText
+              "
+              style="margin-top: 0"
+            >
+              Date
+            </span>
+            <input type="date" id="modalExtraChartHeader_date" style="
+            border: none;
+            border-bottom: 1px solid #ddd;
+        " name="modalExtraChartHeader_date" />
+          </div>
+
+          <div class="pr-2 d-flex searchSeleteStyle">
+            <span class="freshBS3" style="cursor: pointer">
+              <i class="icon-loop3 icon mr-2" style="font-size: 13px; margin-top: 10px"></i>
+              <span></span
+            ></span>
+          </div>
+        </div>
+        <div style="height: 92%; width: 100%; padding: 1rem" id="modalExtraChart">1</div>
+      </div>
+    </div>
+  </div>
+</div>
   `;
   $("#showDashBoard").html(html);
 
@@ -194,6 +263,9 @@ $(async () => {
     };
   });
 
+  $("#select2_pov_Entity2").select2({
+    data: EntityData,
+  });
   $("#select2_pov_Entity").select2({
     data: EntityData,
   });
@@ -257,7 +329,7 @@ const MapBlock = async () => {
     </div>
 
     <div class="col-lg-7" style="height: 100%">
-      <div style="display: flex;margin-bottom: 16px;">
+      <div style="display: flex;margin-bottom: 8px;font-size: 16px;">
         <label class="d-block mr-2">Account</label>
         <div style="width: 200px">
           <select id="select2_pov_account">
@@ -600,7 +672,7 @@ const MapBlock = async () => {
             formatter: function (params) {
               const { Name, Income } = params.data.value[2];
 
-              return Name + " : " + Income;
+              return Name + " : " + Income.toLocaleString("zh", { maximumFractionDigits: 2 });
             },
           },
           zlevel: 6,
@@ -889,8 +961,7 @@ const MapBlock = async () => {
 const ChartBlock = () => {
   const activeTab = $("[data-name=ChartBlock] .tabulDom li .active").attr("href");
 
-  const html = `
-<ul
+  const html = `<ul
   class="
     nav nav-tabs nav-tabs-solid nav-justified
     tabulDom
@@ -933,7 +1004,7 @@ const ChartBlock = () => {
 </ul>
 <div class="tab-content mt-4">
   <div class="tab-pane active fade show" id="tab1">
-    <div class="row" style="display: flex;justify-content: center;">
+    <div class="row" style="display: flex; justify-content: center">
       <div class="col-lg-6" style="width: 100%; height: 500px" id="tab1chart1"></div>
       <div class="col-lg-6" style="width: 100%; height: 500px" id="tab1chart2">
         <div class="row" style="width: 100%; height: 50%" id="tab1chart2-1"></div>
@@ -956,36 +1027,14 @@ const ChartBlock = () => {
     </div>
   </div>
 </div>
-<div
-  id="extra-chart-modal"
-  class="modal fade"
-  tabindex="-1"
-  aria-hidden="true"
-  style="z-index: 9999"
->
-  <div class="modal-dialog modal-lg" style="margin-top: 5%">
-    <div class="modal-content">
-      <div class="modal-header bg-teal-400">
-        <h5 class="modal-title">Daily</h5>
-        <button type="button" class="close legitRipple" data-dismiss="modal">×</button>
-      </div>
-      <div
-        class="modal-body pl-0 pr-0 modal_scroll"
-        style="height: 600px; width: 100%; overflow-y: auto; overflow-x: hidden; padding: 0"
-      >
-        <div style="height: 100%; width: 100%;padding: 1rem;" id="modalExtraChart"></div>
-      </div>
-    </div>
-  </div>
-</div>
-  `;
+`;
 
   $("[data-name=ChartBlock]").find(".echart").html(html);
 
   $(".tabulDom li").click(function () {
     const id = $(this).children().attr("href");
 
-    $(this).children().css("background-color", "#FF9800");
+    $(this).children().css("background-color", "#ED1E30");
     $(this).siblings().children().css("background-color", "#999");
     renderEcharts(id);
   });
@@ -1210,7 +1259,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#893448",
+            color: "#82032B",
           },
         },
         {
@@ -1226,7 +1275,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#d95850",
+            color: "#ED1D30",
           },
         },
         {
@@ -1242,7 +1291,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#b5b0b0",
+            color: "#FFDF02",
           },
         },
         {
@@ -1259,7 +1308,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#ffb248",
+            color: "#F7901D",
           },
         },
         {
@@ -1276,7 +1325,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#f2d643",
+            color: "#FFCF9F",
           },
         },
         {
@@ -1293,7 +1342,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#cccccc",
+            color: "#E5E5E5",
           },
         },
         {
@@ -1574,7 +1623,7 @@ const ChartBlock = () => {
           return `${params[0].name}<br/>${currentData.name}: ${currentData.value.toLocaleString(
             "zh",
             { maximumFractionDigits: 2 }
-          )} ${currentData.data.length - 1 === currentData.dataIndex ? extraData : ""}`;
+          )} ${currentData.data.length - 1 === currentData.dataIndex ? `(${extraData})` : ""}`;
         },
       },
       legend: {
@@ -1622,7 +1671,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#ff4d4f",
+            color: "#813841",
           },
           seriesLayoutBy: "row",
         },
@@ -1655,7 +1704,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#cf1322",
+            color: "#D1423B",
           },
           seriesLayoutBy: "row",
         },
@@ -1672,7 +1721,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#bfbfbf",
+            color: "#E6E6E6",
           },
           seriesLayoutBy: "row",
         },
@@ -1722,7 +1771,7 @@ const ChartBlock = () => {
           return `${params[0].name}<br/>${currentData.name}: ${currentData.value.toLocaleString(
             "zh",
             { maximumFractionDigits: 2 }
-          )} ${currentData.data.length - 1 === currentData.dataIndex ? extraData : ""}`;
+          )} ${currentData.data.length - 1 === currentData.dataIndex ? `(${extraData})` : ""}`;
         },
       },
       legend: {
@@ -1770,7 +1819,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#f2d643",
+            color: "#E6943E",
           },
           seriesLayoutBy: "row",
         },
@@ -1803,7 +1852,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#ffb248",
+            color: "#F4D2A5",
           },
           seriesLayoutBy: "row",
         },
@@ -1820,7 +1869,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#bfbfbf",
+            color: "#E6E6E6",
           },
           seriesLayoutBy: "row",
         },
@@ -1870,7 +1919,7 @@ const ChartBlock = () => {
           return `${params[0].name}<br/>${currentData.name}: ${currentData.value.toLocaleString(
             "zh",
             { maximumFractionDigits: 2 }
-          )} ${currentData.data.length - 1 === currentData.dataIndex ? extraData : ""}`;
+          )} ${currentData.data.length - 1 === currentData.dataIndex ? `(${extraData})` : ""}`;
         },
       },
       legend: {
@@ -1918,7 +1967,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#f2d643",
+            color: "#F9DF4F",
           },
           seriesLayoutBy: "row",
         },
@@ -1951,7 +2000,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#ffb248",
+            color: "#FBE9B7",
           },
           seriesLayoutBy: "row",
         },
@@ -1968,7 +2017,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#bfbfbf",
+            color: "#E6E6E6",
           },
           seriesLayoutBy: "row",
         },
@@ -2000,7 +2049,8 @@ const ChartBlock = () => {
       //   left: "left",
       //   top: "bottom",
       // },
-      color: ["#C34D53", "#CD6B62", "#DC9C7C", "#E6BB8B", "#EED498", "#F2E19E"],
+      // color: ["#C34D53", "#CD6B62", "#DC9C7C", "#E6BB8B", "#EED498", "#F2E19E"],
+      color: ["#FFDF02", "#E5E5E5", "#FFCF9F", "#82032B", "#ED1D30", "#F7901D"],
       series: [
         {
           type: "pie",
@@ -2105,7 +2155,7 @@ const ChartBlock = () => {
             });
 
             html += `${marker} ${seriesName}: ${extraValue} ${
-              value === "100.00%" ? "" : value
+              value === "100.00%" ? "" : `(${value})`
             } <br>`;
           });
 
@@ -2272,7 +2322,7 @@ const LoadBaiduMapScript = () => {
   });
 };
 
-const getChartData = async (py) => {
+const getChartData = async (py, extraParams) => {
   const pov = {
     Entity: $("#select2_pov_Entity").val(),
     Year: $("#select2_pov_Year").val(),
@@ -2285,6 +2335,7 @@ const getChartData = async (py) => {
     JSON.stringify({
       ...pov,
       // Entity: "BeaChina",
+      ...extraParams,
     }),
     "1"
   );
@@ -2294,8 +2345,35 @@ const getChartData = async (py) => {
 const extraChartModal = async () => {
   $("#extra-chart-modal").modal("show");
 
+  $("#select2_pov_Entity2").val($("#select2_pov_Entity").val()).select2();
+
+  const dateControl = document.getElementById("modalExtraChartHeader_date");
+  const toDay = new Date().format("yyyy-MM-dd");
+  dateControl.value = toDay;
+
   let modalExtraChart;
-  const { tab1chart1: modalExtraChartData } = await getChartData("BeaChina_map_daily_portfolio");
+
+  setTimeout(() => {
+    $("#modalExtraChart").block({
+      message: '<i class="icon-spinner4 spinner"></i>',
+      overlayCSS: {
+        backgroundColor: "#fff",
+        opacity: 1,
+        cursor: "wait",
+      },
+      css: {
+        border: 0,
+        padding: 0,
+        backgroundColor: "transparent",
+      },
+    });
+  }, 300);
+
+  const { tab1chart1: modalExtraChartData } = await getChartData("BeaChina_map_daily_portfolio", {
+    Date: toDay,
+  });
+
+  $("#modalExtraChart").unblock();
 
   const day = new Date();
   day.setTime(day.getTime() - 24 * 60 * 60 * 1000);
@@ -2425,7 +2503,7 @@ const extraChartModal = async () => {
             },
           },
           itemStyle: {
-            color: "#893448",
+            color: "#82032B",
           },
         },
         {
@@ -2441,7 +2519,7 @@ const extraChartModal = async () => {
             },
           },
           itemStyle: {
-            color: "#d95850",
+            color: "#ED1D30",
           },
         },
         {
@@ -2457,7 +2535,7 @@ const extraChartModal = async () => {
             },
           },
           itemStyle: {
-            color: "#b5b0b0",
+            color: "#FFDF02",
           },
         },
         {
@@ -2474,7 +2552,7 @@ const extraChartModal = async () => {
             },
           },
           itemStyle: {
-            color: "#ffb248",
+            color: "#F7901D",
           },
         },
         {
@@ -2491,7 +2569,7 @@ const extraChartModal = async () => {
             },
           },
           itemStyle: {
-            color: "#f2d643",
+            color: "#FFCF9F",
           },
         },
         {
@@ -2508,7 +2586,7 @@ const extraChartModal = async () => {
             },
           },
           itemStyle: {
-            color: "#cccccc",
+            color: "#E5E5E5",
           },
         },
         {
@@ -2539,9 +2617,44 @@ const extraChartModal = async () => {
       ],
     };
     modalExtraChart.setOption(option);
+
+    modalExtraChart.off("click");
+    modalExtraChart.on("click", async () => {
+      toPage(4);
+    });
   };
 
   renderModalExtraChart(modalExtraChartData);
+
+  $(".freshBS3")
+    .off("click")
+    .on("click", async () => {
+      $("#modalExtraChart").block({
+        message: '<i class="icon-spinner4 spinner"></i>',
+        overlayCSS: {
+          backgroundColor: "#fff",
+          opacity: 1,
+          cursor: "wait",
+        },
+        css: {
+          border: 0,
+          padding: 0,
+          backgroundColor: "transparent",
+        },
+      });
+
+      const { tab1chart1: modalExtraChartData } = await getChartData(
+        "BeaChina_map_daily_portfolio",
+        {
+          Date: dateControl.value,
+          Entity: $("#select2_pov_Entity2").val(),
+        }
+      );
+
+      $("#modalExtraChart").unblock();
+
+      renderModalExtraChart(modalExtraChartData);
+    });
 };
 
 const toPage = (sign) => {
@@ -2555,6 +2668,9 @@ const toPage = (sign) => {
   }
   if (sign === 3) {
     urls = `../dataSheet/dataSheet.html?appid=4&isLayer=true&param1=GRDEE2IM8NUVE2&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%2C%7B%22name%22%3A%22%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%20%20Dashboard%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%22%2C%22foldId%22%3A%228784544%22%2C%22elementId%22%3A%22DIREDVIL4DIPL1%22%7D%5D&elementType=GRD&elementId=GRDEE2IM8NUVE2&folderId=8784551&elementTitle=d_data_Expense&pageName=d_data_Expense`;
+  }
+  if (sign === 4) {
+    urls = `../dataSheet/dataSheet.html?appid=4&isLayer=true&param1=GRDEENU36PKSI2&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%5D&elementType=GRD&elementId=GRDEENU36PKSI2&folderId=8784619&elementTitle=daily_portfolio&pageName=daily_portfolio`;
   }
 
   parent.layer.open({
