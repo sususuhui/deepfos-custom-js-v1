@@ -196,7 +196,7 @@ $(async () => {
             >
               Entity
             </span>
-            <select id="select2_pov_Entity2"></select>
+            <span id="select2_pov_Entity_span"></span>
           </div>
 
           <div class="pr-2 d-flex searchSeleteStyle">
@@ -263,9 +263,6 @@ $(async () => {
     };
   });
 
-  $("#select2_pov_Entity2").select2({
-    data: EntityData,
-  });
   $("#select2_pov_Entity").select2({
     data: EntityData,
   });
@@ -2345,7 +2342,7 @@ const getChartData = async (py, extraParams) => {
 const extraChartModal = async () => {
   $("#extra-chart-modal").modal("show");
 
-  $("#select2_pov_Entity2").val($("#select2_pov_Entity").val()).select2();
+  $("#select2_pov_Entity_span").text($("#select2-select2_pov_Entity-container").text());
 
   const dateControl = document.getElementById("modalExtraChartHeader_date");
   const toDay = new Date().format("yyyy-MM-dd");
@@ -2647,7 +2644,6 @@ const extraChartModal = async () => {
         "BeaChina_map_daily_portfolio",
         {
           Date: dateControl.value,
-          Entity: $("#select2_pov_Entity2").val(),
         }
       );
 
