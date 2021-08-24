@@ -182,6 +182,13 @@ $(async () => {
         style="height: 600px; width: 100%; overflow-y: auto; overflow-x: hidden; padding: 0"
       >
         <div
+          style="height: 8%; width: 100%; padding: 1rem 1rem 0 1rem; display: flex; flex-wrap: wrap;font-size: 22px;font-weight: 600;"
+        >
+          <span> Loan & Deposit(Ending) </span>
+          <span id="modal-daily-date" class="ml-1"> </span>
+        </div>
+
+        <div
           style="height: 8%; width: 100%; padding: 1rem 1rem 0 1rem; display: flex; flex-wrap: wrap"
           id="modalExtraChartHeader"
         >
@@ -210,10 +217,12 @@ $(async () => {
             >
               Date
             </span>
-            <input type="date" id="modalExtraChartHeader_date" style="
-            border: none;
-            border-bottom: 1px solid #ddd;
-        " name="modalExtraChartHeader_date" />
+            <input
+              type="date"
+              id="modalExtraChartHeader_date"
+              style="border: none; border-bottom: 1px solid #ddd"
+              name="modalExtraChartHeader_date"
+            />
           </div>
 
           <div class="pr-2 d-flex searchSeleteStyle">
@@ -223,7 +232,7 @@ $(async () => {
             ></span>
           </div>
         </div>
-        <div style="height: 92%; width: 100%; padding: 1rem" id="modalExtraChart">1</div>
+        <div style="height: 84%; width: 100%; padding: 1rem" id="modalExtraChart">1</div>
       </div>
     </div>
   </div>
@@ -355,9 +364,9 @@ const MapBlock = async () => {
                   <td>Branch</td>
                   <td>Area</td>
                   <td>Ranking</td>
+                  <td>Actual</td>
                   <td>Actual_LY</td>
                   <td>Budget</td>
-                  <td>Actual</td>
                   <td>Diff</td>
                 </tr>
               </tbody>
@@ -517,9 +526,9 @@ const MapBlock = async () => {
         <td>${val.Branch}</td>
         <td>${val.Area}</td>
         <td>${val.Ranking}</td>
+        <td>${val.Actual}</td>
         <td>${val.Actual_LY}</td>
         <td>${val.Budget}</td>
-        <td>${val.Actual}</td>
         <td>${val.Diff}</td>
       </tr>
       `;
@@ -973,7 +982,7 @@ const ChartBlock = () => {
     <a
       href="#tab1"
       class="nav-link font-size-sm active"
-      style="background-color: #999; font-weight: bold; font-size: 16px"
+      style="font-weight: bold; font-size: 16px"
       data-toggle="tab"
       >Portofolio & Rate</a
     >
@@ -983,7 +992,7 @@ const ChartBlock = () => {
     <a
       href="#tab2"
       class="nav-link font-size-sm"
-      style="background-color: #999; font-weight: bold; font-size: 16px"
+      style="font-weight: bold; font-size: 16px"
       data-toggle="tab"
       >PPOP Analysis</a
     >
@@ -993,7 +1002,7 @@ const ChartBlock = () => {
     <a
       href="#tab3"
       class="nav-link font-size-sm"
-      style="background-color: #999; font-weight: bold; font-size: 16px"
+      style="font-weight: bold; font-size: 16px"
       data-toggle="tab"
       >Operating Expense</a
     >
@@ -1145,12 +1154,19 @@ const ChartBlock = () => {
         formatter: (params) => {
           let html = "";
 
+          html += `${params[0].axisValueLabel} <br>`;
+          html += `${params[0].dimensionNames[8]} : ${params[0].data[8].toLocaleString("zh", {
+            maximumFractionDigits: 2,
+          })} <br>`;
+          html += `${params[0].dimensionNames[9]} : ${params[0].data[9].toLocaleString("zh", {
+            maximumFractionDigits: 2,
+          })}<br>`;
+
           params.forEach((val, i) => {
             let value = val.value[val.encode.y[0]];
 
-            const { axisValueLabel, marker, seriesName, seriesType } = val;
+            const { marker, seriesName, seriesType } = val;
 
-            if (i === 0) html += `${axisValueLabel} <br>`;
             if (seriesType === "line") value = (value * 100).toFixed(2) + "%";
             if (seriesType === "bar")
               value = value.toLocaleString("zh", { maximumFractionDigits: 2 });
@@ -1248,13 +1264,13 @@ const ChartBlock = () => {
           type: "bar",
           barWidth: "30%",
           stack: "total",
-          label: {
-            show: true,
-            formatter: function (params) {
-              const val = params.value[params.encode.y[0]];
-              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
-            },
-          },
+          // label: {
+          //   show: true,
+          //   formatter: function (params) {
+          //     const val = params.value[params.encode.y[0]];
+          //     return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+          //   },
+          // },
           itemStyle: {
             color: "#82032B",
           },
@@ -1264,13 +1280,13 @@ const ChartBlock = () => {
           type: "bar",
           barWidth: "30%",
           stack: "total",
-          label: {
-            show: true,
-            formatter: function (params) {
-              const val = params.value[params.encode.y[0]];
-              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
-            },
-          },
+          // label: {
+          //   show: true,
+          //   formatter: function (params) {
+          //     const val = params.value[params.encode.y[0]];
+          //     return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+          //   },
+          // },
           itemStyle: {
             color: "#ED1D30",
           },
@@ -1280,13 +1296,13 @@ const ChartBlock = () => {
           type: "bar",
           barWidth: "30%",
           stack: "total",
-          label: {
-            show: true,
-            formatter: function (params) {
-              const val = params.value[params.encode.y[0]];
-              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
-            },
-          },
+          // label: {
+          //   show: true,
+          //   formatter: function (params) {
+          //     const val = params.value[params.encode.y[0]];
+          //     return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+          //   },
+          // },
           itemStyle: {
             color: "#FFDF02",
           },
@@ -1297,13 +1313,13 @@ const ChartBlock = () => {
           type: "bar",
           barWidth: "30%",
           stack: "total2",
-          label: {
-            show: true,
-            formatter: function (params) {
-              const val = params.value[params.encode.y[0]];
-              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
-            },
-          },
+          // label: {
+          //   show: true,
+          //   formatter: function (params) {
+          //     const val = params.value[params.encode.y[0]];
+          //     return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+          //   },
+          // },
           itemStyle: {
             color: "#F7901D",
           },
@@ -1314,13 +1330,13 @@ const ChartBlock = () => {
           type: "bar",
           barWidth: "30%",
           stack: "total2",
-          label: {
-            show: true,
-            formatter: function (params) {
-              const val = params.value[params.encode.y[0]];
-              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
-            },
-          },
+          // label: {
+          //   show: true,
+          //   formatter: function (params) {
+          //     const val = params.value[params.encode.y[0]];
+          //     return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+          //   },
+          // },
           itemStyle: {
             color: "#FFCF9F",
           },
@@ -1331,15 +1347,15 @@ const ChartBlock = () => {
           type: "bar",
           barWidth: "30%",
           stack: "total2",
-          label: {
-            show: true,
-            formatter: function (params) {
-              const val = params.value[params.encode.y[0]];
-              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
-            },
-          },
+          // label: {
+          //   show: true,
+          //   formatter: function (params) {
+          //     const val = params.value[params.encode.y[0]];
+          //     return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+          //   },
+          // },
           itemStyle: {
-            color: "#E5E5E5",
+            color: "#999",
           },
         },
         {
@@ -1620,7 +1636,7 @@ const ChartBlock = () => {
           return `${params[0].name}<br/>${currentData.name}: ${currentData.value.toLocaleString(
             "zh",
             { maximumFractionDigits: 2 }
-          )} ${currentData.data.length - 1 === currentData.dataIndex ? `(${extraData})` : ""}`;
+          )} ${chartData[0].length - 2 === currentData.dataIndex ? `(${extraData})` : ""}`;
         },
       },
       legend: {
@@ -1718,7 +1734,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#E6E6E6",
+            color: "#999",
           },
           seriesLayoutBy: "row",
         },
@@ -1768,7 +1784,7 @@ const ChartBlock = () => {
           return `${params[0].name}<br/>${currentData.name}: ${currentData.value.toLocaleString(
             "zh",
             { maximumFractionDigits: 2 }
-          )} ${currentData.data.length - 1 === currentData.dataIndex ? `(${extraData})` : ""}`;
+          )} ${chartData[0].length - 2 === currentData.dataIndex ? `(${extraData})` : ""}`;
         },
       },
       legend: {
@@ -1866,7 +1882,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#E6E6E6",
+            color: "#999",
           },
           seriesLayoutBy: "row",
         },
@@ -1916,7 +1932,7 @@ const ChartBlock = () => {
           return `${params[0].name}<br/>${currentData.name}: ${currentData.value.toLocaleString(
             "zh",
             { maximumFractionDigits: 2 }
-          )} ${currentData.data.length - 1 === currentData.dataIndex ? `(${extraData})` : ""}`;
+          )} ${chartData[0].length - 2 === currentData.dataIndex ? `(${extraData})` : ""}`;
         },
       },
       legend: {
@@ -1964,7 +1980,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#F9DF4F",
+            color: "#E6943E",
           },
           seriesLayoutBy: "row",
         },
@@ -1997,7 +2013,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#FBE9B7",
+            color: "#F4D2A5",
           },
           seriesLayoutBy: "row",
         },
@@ -2014,7 +2030,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#E6E6E6",
+            color: "#999",
           },
           seriesLayoutBy: "row",
         },
@@ -2106,7 +2122,7 @@ const ChartBlock = () => {
       //   "#ec8d94",
       //   "#f9e2e3",
       // ],
-      color: ["#C34D53", "#CD6B62", "#DC9C7C", "#E6BB8B", "#EED498", "#F2E19E"],
+      color: ["#8D0331", "#F89B20", "#FCD5A9", "#ED1D30", "#EED498", "#F2E19E"],
       // visualMap: {
       //   type: "continuous",
       //   min: 12000,
@@ -2375,6 +2391,10 @@ const extraChartModal = async () => {
   const day = new Date();
   day.setTime(day.getTime() - 24 * 60 * 60 * 1000);
 
+  $("#modal-daily-date").text(
+    `数据截止于${day.getFullYear()}年${day.getMonth() + 1}月${day.getDate()}日`
+  );
+
   const renderModalExtraChart = (chartData) => {
     modalExtraChart = echarts.init(document.getElementById("modalExtraChart"));
 
@@ -2403,20 +2423,20 @@ const extraChartModal = async () => {
           return html;
         },
       },
-      title: {
-        text: `Loan & Deposit(Ending) 数据截止于${day.getFullYear()}年${
-          day.getMonth() + 1
-        }月${day.getDate()}日`,
-        left: "left",
-      },
+      // title: {
+      //   text: `Loan & Deposit(Ending) 数据截止于${day.getFullYear()}年${
+      //     day.getMonth() + 1
+      //   }月${day.getDate()}日`,
+      //   left: "left",
+      // },
       legend: {
-        y: "10%",
+        y: "1%",
       },
       grid: {
         left: "3%",
         right: "4%",
         bottom: "3%",
-        top: "20%",
+        top: "10%",
         containLabel: true,
       },
       yAxis: [
@@ -2492,13 +2512,13 @@ const extraChartModal = async () => {
           type: "bar",
           barWidth: "30%",
           stack: "total",
-          label: {
-            show: true,
-            formatter: function (params) {
-              const val = params.value[params.encode.y[0]];
-              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
-            },
-          },
+          // label: {
+          //   show: true,
+          //   formatter: function (params) {
+          //     const val = params.value[params.encode.y[0]];
+          //     return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+          //   },
+          // },
           itemStyle: {
             color: "#82032B",
           },
@@ -2508,13 +2528,13 @@ const extraChartModal = async () => {
           type: "bar",
           barWidth: "30%",
           stack: "total",
-          label: {
-            show: true,
-            formatter: function (params) {
-              const val = params.value[params.encode.y[0]];
-              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
-            },
-          },
+          // label: {
+          //   show: true,
+          //   formatter: function (params) {
+          //     const val = params.value[params.encode.y[0]];
+          //     return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+          //   },
+          // },
           itemStyle: {
             color: "#ED1D30",
           },
@@ -2524,13 +2544,13 @@ const extraChartModal = async () => {
           type: "bar",
           barWidth: "30%",
           stack: "total",
-          label: {
-            show: true,
-            formatter: function (params) {
-              const val = params.value[params.encode.y[0]];
-              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
-            },
-          },
+          // label: {
+          //   show: true,
+          //   formatter: function (params) {
+          //     const val = params.value[params.encode.y[0]];
+          //     return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+          //   },
+          // },
           itemStyle: {
             color: "#FFDF02",
           },
@@ -2541,13 +2561,13 @@ const extraChartModal = async () => {
           type: "bar",
           barWidth: "30%",
           stack: "total2",
-          label: {
-            show: true,
-            formatter: function (params) {
-              const val = params.value[params.encode.y[0]];
-              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
-            },
-          },
+          // label: {
+          //   show: true,
+          //   formatter: function (params) {
+          //     const val = params.value[params.encode.y[0]];
+          //     return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+          //   },
+          // },
           itemStyle: {
             color: "#F7901D",
           },
@@ -2558,13 +2578,13 @@ const extraChartModal = async () => {
           type: "bar",
           barWidth: "30%",
           stack: "total2",
-          label: {
-            show: true,
-            formatter: function (params) {
-              const val = params.value[params.encode.y[0]];
-              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
-            },
-          },
+          // label: {
+          //   show: true,
+          //   formatter: function (params) {
+          //     const val = params.value[params.encode.y[0]];
+          //     return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+          //   },
+          // },
           itemStyle: {
             color: "#FFCF9F",
           },
@@ -2575,15 +2595,15 @@ const extraChartModal = async () => {
           type: "bar",
           barWidth: "30%",
           stack: "total2",
-          label: {
-            show: true,
-            formatter: function (params) {
-              const val = params.value[params.encode.y[0]];
-              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
-            },
-          },
+          // label: {
+          //   show: true,
+          //   formatter: function (params) {
+          //     const val = params.value[params.encode.y[0]];
+          //     return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+          //   },
+          // },
           itemStyle: {
-            color: "#E5E5E5",
+            color: "#999",
           },
         },
         {

@@ -64,7 +64,7 @@ document.head.appendChild(style);
 
 $(async () => {
   const html = `
-  <div class="row globalPovRow">
+<div class="row globalPovRow">
   <div class="col-lg-12">
     <div class="card">
       <div class="card-header header-elements-inline pt-0 pb-0" id="dataHead">
@@ -193,6 +193,13 @@ $(async () => {
         class="modal-body pl-0 pr-0 modal_scroll"
         style="height: 600px; width: 100%; overflow-y: auto; overflow-x: hidden; padding: 0"
       >
+      <div
+        style="height: 8%; width: 100%; padding: 1rem 1rem 0 1rem; display: flex; flex-wrap: wrap;font-size: 22px;font-weight: 600;"
+      >
+        <span> Loan & Deposit(Ending) </span>
+        <span id="modal-daily-date" class="ml-1"> </span>
+      </div>
+
         <div
           style="height: 8%; width: 100%; padding: 1rem 1rem 0 1rem; display: flex; flex-wrap: wrap"
           id="modalExtraChartHeader"
@@ -237,7 +244,7 @@ $(async () => {
             ></span>
           </div>
         </div>
-        <div style="height: 92%; width: 100%; padding: 1rem" id="modalExtraChart">1</div>
+        <div style="height: 84%; width: 100%; padding: 1rem" id="modalExtraChart">1</div>
       </div>
     </div>
   </div>
@@ -382,9 +389,9 @@ const MapBlock = async () => {
                   <td>Branch</td>
                   <td>Area</td>
                   <td>Ranking</td>
+                  <td>Actual</td>
                   <td>Actual_LY</td>
                   <td>Budget</td>
-                  <td>Actual</td>
                   <td>Diff</td>
                 </tr>
               </tbody>
@@ -446,6 +453,7 @@ const MapBlock = async () => {
       Year: $("#select2_pov_Year").val(),
       Period: $("#select2_pov_Period").val(),
       View: $("#select2_pov_View").val(),
+      LOB: $("#select2_pov_LOB").val(),
     };
     const tableAccount = $("#select2_pov_account").val();
 
@@ -544,9 +552,9 @@ const MapBlock = async () => {
         <td>${val.Branch}</td>
         <td>${val.Area}</td>
         <td>${val.Ranking}</td>
+        <td>${val.Actual}</td>
         <td>${val.Actual_LY}</td>
         <td>${val.Budget}</td>
-        <td>${val.Actual}</td>
         <td>${val.Diff}</td>
       </tr>
       `;
@@ -942,6 +950,7 @@ const MapBlock = async () => {
     Year: $("#select2_pov_Year").val(),
     Period: $("#select2_pov_Period").val(),
     View: $("#select2_pov_View").val(),
+    LOB: $("#select2_pov_LOB").val(),
   };
 
   $("[data-name=MapBlock] .card-body").block({
@@ -1048,8 +1057,8 @@ const ChartBlock = () => {
   <div class="tab-pane fade" id="tab3">
     <div class="row">
       <div class="col-lg-3" style="width: 100%; height: 500px" id="tab3chart1"></div>
-      <div class="col-lg-3" style="width: 100%; height: 500px" id="tab3chart2"></div>
-      <div class="col-lg-6" style="width: 100%; height: 500px" id="tab3chart3"></div>
+      <div class="col-lg-4" style="width: 100%; height: 500px" id="tab3chart2"></div>
+      <div class="col-lg-5" style="width: 100%; height: 500px" id="tab3chart3"></div>
     </div>
   </div>
 </div>
@@ -1085,7 +1094,7 @@ const ChartBlock = () => {
       });
 
       const { tab1chart1, tab1chart21, tab1chart22 } = await getChartData(
-        "BeaChina_map_Portofolio_rate"
+        "BeaChina_LOB_Portofolio_rate"
       );
 
       $("[data-name=ChartBlock] .card-body .tab-content").unblock();
@@ -1137,14 +1146,15 @@ const ChartBlock = () => {
       });
 
       const { tab3chart1, tab3chart2, tab3chart3 } = await getChartData(
-        "BeaChina_map_Operating_Expense"
+        "BeaChina_LOB_Operating_Expense"
       );
 
       $("[data-name=ChartBlock] .card-body .tab-content").unblock();
 
       renderTab3chart1(tab3chart1);
-      renderTab3chart2(tab3chart2);
-      renderTab3chart3(tab3chart3.data, tab3chart3.extradata);
+      // renderTab3chart2(tab3chart2);
+      renderTab3chart2(tab3chart2.data, tab3chart2.extraData);
+      renderTab3chart3(tab3chart3.data, tab3chart3.extraData);
     }
 
     $(window).on("resize", () => {
@@ -1174,12 +1184,19 @@ const ChartBlock = () => {
         formatter: (params) => {
           let html = "";
 
+          html += `${params[0].axisValueLabel} <br>`;
+          html += `${params[0].dimensionNames[8]} : ${params[0].data[8].toLocaleString("zh", {
+            maximumFractionDigits: 2,
+          })} <br>`;
+          html += `${params[0].dimensionNames[9]} : ${params[0].data[9].toLocaleString("zh", {
+            maximumFractionDigits: 2,
+          })}<br>`;
+
           params.forEach((val, i) => {
             let value = val.value[val.encode.y[0]];
 
-            const { axisValueLabel, marker, seriesName, seriesType } = val;
+            const { marker, seriesName, seriesType } = val;
 
-            if (i === 0) html += `${axisValueLabel} <br>`;
             if (seriesType === "line") value = (value * 100).toFixed(2) + "%";
             if (seriesType === "bar")
               value = value.toLocaleString("zh", { maximumFractionDigits: 2 });
@@ -1277,13 +1294,6 @@ const ChartBlock = () => {
           type: "bar",
           barWidth: "30%",
           stack: "total",
-          label: {
-            show: true,
-            formatter: function (params) {
-              const val = params.value[params.encode.y[0]];
-              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
-            },
-          },
           itemStyle: {
             color: "#82032B",
           },
@@ -1293,13 +1303,6 @@ const ChartBlock = () => {
           type: "bar",
           barWidth: "30%",
           stack: "total",
-          label: {
-            show: true,
-            formatter: function (params) {
-              const val = params.value[params.encode.y[0]];
-              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
-            },
-          },
           itemStyle: {
             color: "#ED1D30",
           },
@@ -1309,13 +1312,6 @@ const ChartBlock = () => {
           type: "bar",
           barWidth: "30%",
           stack: "total",
-          label: {
-            show: true,
-            formatter: function (params) {
-              const val = params.value[params.encode.y[0]];
-              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
-            },
-          },
           itemStyle: {
             color: "#FFDF02",
           },
@@ -1326,13 +1322,6 @@ const ChartBlock = () => {
           type: "bar",
           barWidth: "30%",
           stack: "total2",
-          label: {
-            show: true,
-            formatter: function (params) {
-              const val = params.value[params.encode.y[0]];
-              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
-            },
-          },
           itemStyle: {
             color: "#F7901D",
           },
@@ -1343,13 +1332,6 @@ const ChartBlock = () => {
           type: "bar",
           barWidth: "30%",
           stack: "total2",
-          label: {
-            show: true,
-            formatter: function (params) {
-              const val = params.value[params.encode.y[0]];
-              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
-            },
-          },
           itemStyle: {
             color: "#FFCF9F",
           },
@@ -1360,15 +1342,8 @@ const ChartBlock = () => {
           type: "bar",
           barWidth: "30%",
           stack: "total2",
-          label: {
-            show: true,
-            formatter: function (params) {
-              const val = params.value[params.encode.y[0]];
-              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
-            },
-          },
           itemStyle: {
-            color: "#E5E5E5",
+            color: "#999",
           },
         },
         {
@@ -1384,6 +1359,26 @@ const ChartBlock = () => {
             },
           },
         },
+        // {
+        //   xAxisIndex: 1,
+        //   barGap: "-200%",
+        //   type: "bar",
+        //   barWidth: "30%",
+        //   stack: "total2",
+        //   // itemStyle: {
+        //   //   color: "#999",
+        //   // },
+        // },
+        // {
+        //   xAxisIndex: 1,
+        //   barGap: "-200%",
+        //   type: "bar",
+        //   barWidth: "30%",
+        //   stack: "total2",
+        //   // itemStyle: {
+        //   //   color: "#999",
+        //   // },
+        // },
         {
           xAxisIndex: 0,
           type: "bar",
@@ -1649,7 +1644,7 @@ const ChartBlock = () => {
           return `${params[0].name}<br/>${currentData.name}: ${currentData.value.toLocaleString(
             "zh",
             { maximumFractionDigits: 2 }
-          )} ${currentData.data.length - 1 === currentData.dataIndex ? `(${extraData})` : ""}`;
+          )} ${chartData[0].length - 2 === currentData.dataIndex ? `(${extraData})` : ""}`;
         },
       },
       legend: {
@@ -1747,7 +1742,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#E6E6E6",
+            color: "#999",
           },
           seriesLayoutBy: "row",
         },
@@ -1797,7 +1792,7 @@ const ChartBlock = () => {
           return `${params[0].name}<br/>${currentData.name}: ${currentData.value.toLocaleString(
             "zh",
             { maximumFractionDigits: 2 }
-          )} ${currentData.data.length - 1 === currentData.dataIndex ? `(${extraData})` : ""}`;
+          )} ${chartData[0].length - 2 === currentData.dataIndex ? `(${extraData})` : ""}`;
         },
       },
       legend: {
@@ -1895,7 +1890,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#E6E6E6",
+            color: "#999",
           },
           seriesLayoutBy: "row",
         },
@@ -1945,7 +1940,7 @@ const ChartBlock = () => {
           return `${params[0].name}<br/>${currentData.name}: ${currentData.value.toLocaleString(
             "zh",
             { maximumFractionDigits: 2 }
-          )} ${currentData.data.length - 1 === currentData.dataIndex ? `(${extraData})` : ""}`;
+          )} ${chartData[0].length - 2 === currentData.dataIndex ? `(${extraData})` : ""}`;
         },
       },
       legend: {
@@ -1993,7 +1988,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#F9DF4F",
+            color: "#E6943E",
           },
           seriesLayoutBy: "row",
         },
@@ -2026,7 +2021,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#FBE9B7",
+            color: "#F4D2A5",
           },
           seriesLayoutBy: "row",
         },
@@ -2043,7 +2038,7 @@ const ChartBlock = () => {
             },
           },
           itemStyle: {
-            color: "#E6E6E6",
+            color: "#999",
           },
           seriesLayoutBy: "row",
         },
@@ -2108,54 +2103,180 @@ const ChartBlock = () => {
       toPage(3);
     });
   };
-  const renderTab3chart2 = (chartData) => {
+  // const renderTab3chart2 = (chartData) => {
+  //   tab3chart2 = echarts.init(document.getElementById("tab3chart2"));
+
+  //   let option = {
+  //     tooltip: {
+  //       formatter: (params) => {
+  //         const { marker, name, value } = params;
+
+  //         return `${marker} ${name}: ${value.toLocaleString("zh", {
+  //           maximumFractionDigits: 2,
+  //         })} `;
+  //       },
+  //     },
+  //     title: {
+  //       text: "OE by Segment",
+  //       left: "left",
+  //     },
+  //     // color: [
+  //     //   "#e4696d",
+  //     //   "#ec9c9c",
+  //     //   "#f4c8c8",
+  //     //   "#ec8d94",
+  //     //   "#f2b1b2",
+  //     //   "#e4767c",
+  //     //   "#ec8d94",
+  //     //   "#f9e2e3",
+  //     // ],
+  //     color: ["#8D0331", "#F89B20", "#FCD5A9", "#ED1D30", "#EED498", "#F2E19E"],
+  //     // visualMap: {
+  //     //   type: "continuous",
+  //     //   min: 12000,
+  //     //   max: 200000,
+  //     //   inRange: {
+  //     //     color: ["#F2E19E", "#EED498", "#E6BB8B", "#DC9C7C", "#CD6B62", "#C34D53"],
+  //     //   },
+  //     // },
+  //     series: {
+  //       type: "sunburst",
+  //       data: chartData,
+  //       radius: [0, "85%"],
+  //       label: {
+  //         rotate: "radial",
+  //       },
+  //     },
+  //   };
+
+  //   tab3chart2.setOption(option);
+  // };
+
+  const renderTab3chart2 = (chartData, extraData) => {
     tab3chart2 = echarts.init(document.getElementById("tab3chart2"));
 
     let option = {
       tooltip: {
-        formatter: (params) => {
-          const { marker, name, value } = params;
-
-          return `${marker} ${name}: ${value.toLocaleString("zh", {
-            maximumFractionDigits: 2,
-          })} `;
+        trigger: "axis",
+        axisPointer: {
+          type: "shadow",
         },
+        formatter: (params) => {
+          let html = "";
+
+          params.forEach((val, i) => {
+            let value = val.value[val.encode.x[0]];
+
+            const { axisValueLabel, marker, seriesName, seriesType } = val;
+
+            if (i === 0) html += `${axisValueLabel} <br>`;
+            value = (value * 100).toFixed(2) + "%";
+
+            let extraValue = extraData[seriesName][axisValueLabel].toLocaleString("zh", {
+              maximumFractionDigits: 2,
+            });
+
+            html += `${marker} ${seriesName}: ${extraValue} ${
+              value === "100.00%" ? "" : `(${value})`
+            } <br>`;
+          });
+
+          return html;
+        },
+      },
+      legend: {
+        y: "10%",
       },
       title: {
-        text: "OE by Segment",
+        text: "OE tracking",
         left: "left",
       },
-      // color: [
-      //   "#e4696d",
-      //   "#ec9c9c",
-      //   "#f4c8c8",
-      //   "#ec8d94",
-      //   "#f2b1b2",
-      //   "#e4767c",
-      //   "#ec8d94",
-      //   "#f9e2e3",
-      // ],
-      color: ["#C34D53", "#CD6B62", "#DC9C7C", "#E6BB8B", "#EED498", "#F2E19E"],
-      // visualMap: {
-      //   type: "continuous",
-      //   min: 12000,
-      //   max: 200000,
-      //   inRange: {
-      //     color: ["#F2E19E", "#EED498", "#E6BB8B", "#DC9C7C", "#CD6B62", "#C34D53"],
-      //   },
-      // },
-      series: {
-        type: "sunburst",
-        data: chartData,
-        radius: [0, "85%"],
-        label: {
-          rotate: "radial",
+      grid: {
+        left: "3%",
+        right: "4%",
+        bottom: "3%",
+        top: "20%",
+        containLabel: true,
+      },
+      xAxis: {
+        type: "value",
+        axisLine: {
+          show: false,
+        },
+        axisTick: {
+          show: false,
+        },
+        axisLabel: {
+          formatter: (value) => {
+            return (value * 100).toFixed(2) + "%";
+          },
         },
       },
+      yAxis: [
+        {
+          type: "category",
+          boundaryGap: true,
+          inverse: true,
+          axisLabel: {
+            interval: 0,
+          },
+          axisLine: {
+            show: true,
+          },
+          axisTick: {
+            show: false,
+          },
+        },
+        {
+          type: "category",
+          inverse: true,
+          axisLine: {
+            show: false,
+          },
+          axisTick: {
+            show: false,
+          },
+          axisLabel: {
+            show: false,
+          },
+          splitArea: {
+            show: false,
+          },
+          splitLine: {
+            show: false,
+          },
+        },
+      ],
+      dataset: {
+        source: chartData,
+      },
+      series: [
+        {
+          yAxisIndex: 0,
+          type: "bar",
+          barWidth: "40%",
+          seriesLayoutBy: "row",
+          itemStyle: {
+            color: "rgba(155, 155, 155, 0.5)",
+          },
+        },
+        {
+          yAxisIndex: 1,
+          type: "bar",
+          barWidth: "30%",
+          seriesLayoutBy: "row",
+        },
+      ],
     };
 
     tab3chart2.setOption(option);
+
+    tab3chart2.off("click");
+    tab3chart2.on("click", async (params) => {
+      toPage(3);
+    });
   };
+
   const renderTab3chart3 = (chartData, extraData) => {
     tab3chart3 = echarts.init(document.getElementById("tab3chart3"));
 
@@ -2405,6 +2526,10 @@ const extraChartModal = async () => {
   const day = new Date();
   day.setTime(day.getTime() - 24 * 60 * 60 * 1000);
 
+  $("#modal-daily-date").text(
+    `数据截止于${day.getFullYear()}年${day.getMonth() + 1}月${day.getDate()}日`
+  );
+
   const renderModalExtraChart = (chartData) => {
     modalExtraChart = echarts.init(document.getElementById("modalExtraChart"));
 
@@ -2433,20 +2558,20 @@ const extraChartModal = async () => {
           return html;
         },
       },
-      title: {
-        text: `Loan & Deposit(Ending) 数据截止于${day.getFullYear()}年${
-          day.getMonth() + 1
-        }月${day.getDate()}日`,
-        left: "left",
-      },
+      // title: {
+      //   text: `Loan & Deposit(Ending) 数据截止于${day.getFullYear()}年${
+      //     day.getMonth() + 1
+      //   }月${day.getDate()}日`,
+      //   left: "left",
+      // },
       legend: {
-        y: "10%",
+        y: "1%",
       },
       grid: {
         left: "3%",
         right: "4%",
         bottom: "3%",
-        top: "20%",
+        top: "10%",
         containLabel: true,
       },
       yAxis: [
@@ -2522,13 +2647,13 @@ const extraChartModal = async () => {
           type: "bar",
           barWidth: "30%",
           stack: "total",
-          label: {
-            show: true,
-            formatter: function (params) {
-              const val = params.value[params.encode.y[0]];
-              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
-            },
-          },
+          // label: {
+          //   show: true,
+          //   formatter: function (params) {
+          //     const val = params.value[params.encode.y[0]];
+          //     return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+          //   },
+          // },
           itemStyle: {
             color: "#82032B",
           },
@@ -2538,13 +2663,13 @@ const extraChartModal = async () => {
           type: "bar",
           barWidth: "30%",
           stack: "total",
-          label: {
-            show: true,
-            formatter: function (params) {
-              const val = params.value[params.encode.y[0]];
-              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
-            },
-          },
+          // label: {
+          //   show: true,
+          //   formatter: function (params) {
+          //     const val = params.value[params.encode.y[0]];
+          //     return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+          //   },
+          // },
           itemStyle: {
             color: "#ED1D30",
           },
@@ -2554,13 +2679,13 @@ const extraChartModal = async () => {
           type: "bar",
           barWidth: "30%",
           stack: "total",
-          label: {
-            show: true,
-            formatter: function (params) {
-              const val = params.value[params.encode.y[0]];
-              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
-            },
-          },
+          // label: {
+          //   show: true,
+          //   formatter: function (params) {
+          //     const val = params.value[params.encode.y[0]];
+          //     return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+          //   },
+          // },
           itemStyle: {
             color: "#FFDF02",
           },
@@ -2571,13 +2696,13 @@ const extraChartModal = async () => {
           type: "bar",
           barWidth: "30%",
           stack: "total2",
-          label: {
-            show: true,
-            formatter: function (params) {
-              const val = params.value[params.encode.y[0]];
-              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
-            },
-          },
+          // label: {
+          //   show: true,
+          //   formatter: function (params) {
+          //     const val = params.value[params.encode.y[0]];
+          //     return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+          //   },
+          // },
           itemStyle: {
             color: "#F7901D",
           },
@@ -2588,13 +2713,13 @@ const extraChartModal = async () => {
           type: "bar",
           barWidth: "30%",
           stack: "total2",
-          label: {
-            show: true,
-            formatter: function (params) {
-              const val = params.value[params.encode.y[0]];
-              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
-            },
-          },
+          // label: {
+          //   show: true,
+          //   formatter: function (params) {
+          //     const val = params.value[params.encode.y[0]];
+          //     return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+          //   },
+          // },
           itemStyle: {
             color: "#FFCF9F",
           },
@@ -2605,15 +2730,15 @@ const extraChartModal = async () => {
           type: "bar",
           barWidth: "30%",
           stack: "total2",
-          label: {
-            show: true,
-            formatter: function (params) {
-              const val = params.value[params.encode.y[0]];
-              return val.toLocaleString("zh", { maximumFractionDigits: 2 });
-            },
-          },
+          // label: {
+          //   show: true,
+          //   formatter: function (params) {
+          //     const val = params.value[params.encode.y[0]];
+          //     return val.toLocaleString("zh", { maximumFractionDigits: 2 });
+          //   },
+          // },
           itemStyle: {
-            color: "#E5E5E5",
+            color: "#999",
           },
         },
         {
