@@ -984,7 +984,7 @@ const ChartBlock = () => {
       class="nav-link font-size-sm active"
       style="font-weight: bold; font-size: 16px"
       data-toggle="tab"
-      >Portofolio & Rate</a
+      >Portfolio & Rate</a
     >
   </li>
 
@@ -2404,15 +2404,40 @@ const extraChartModal = async () => {
         axisPointer: {
           type: "shadow",
         },
+        // formatter: (params) => {
+        //   let html = "";
+
+        //   params.forEach((val, i) => {
+        //     let value = val.value[val.encode.y[0]];
+
+        //     const { axisValueLabel, marker, seriesName, seriesType } = val;
+
+        //     if (i === 0) html += `${axisValueLabel} <br>`;
+        //     if (seriesType === "line") value = (value * 100).toFixed(2) + "%";
+        //     if (seriesType === "bar")
+        //       value = value.toLocaleString("zh", { maximumFractionDigits: 2 });
+
+        //     html += `${marker} ${seriesName}: ${value} <br>`;
+        //   });
+
+        //   return html;
+        // },
         formatter: (params) => {
           let html = "";
+
+          html += `${params[0].axisValueLabel} <br>`;
+          html += `${params[0].dimensionNames[8]} : ${params[0].data[8].toLocaleString("zh", {
+            maximumFractionDigits: 2,
+          })} <br>`;
+          html += `${params[0].dimensionNames[9]} : ${params[0].data[9].toLocaleString("zh", {
+            maximumFractionDigits: 2,
+          })}<br>`;
 
           params.forEach((val, i) => {
             let value = val.value[val.encode.y[0]];
 
-            const { axisValueLabel, marker, seriesName, seriesType } = val;
+            const { marker, seriesName, seriesType } = val;
 
-            if (i === 0) html += `${axisValueLabel} <br>`;
             if (seriesType === "line") value = (value * 100).toFixed(2) + "%";
             if (seriesType === "bar")
               value = value.toLocaleString("zh", { maximumFractionDigits: 2 });

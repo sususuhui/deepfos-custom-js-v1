@@ -327,9 +327,9 @@ $(async () => {
   const btn = `<button id="mapBack" type="button" class="btn btn-primary legitRipple btn-sm">MapBack</button>`;
   $("[data-name=MapBlock]").find(".header-elements").append(btn);
 
-  // 添加地图后退按钮
-  const btn2 = `<button id="chart-modal-btn" type="button" class="btn btn-primary legitRipple btn-sm ml-4">Daily</button>`;
-  $("[data-name=MapBlock]").find(".header-elements").append(btn2);
+  // // 添加地图后退按钮
+  // const btn2 = `<button id="chart-modal-btn" type="button" class="btn btn-primary legitRipple btn-sm ml-4">Daily</button>`;
+  // $("[data-name=MapBlock]").find(".header-elements").append(btn2);
 
   $("#mapBack")
     .off("click")
@@ -1013,7 +1013,7 @@ const ChartBlock = () => {
       class="nav-link font-size-sm active"
       style="background-color: #999; font-weight: bold; font-size: 16px"
       data-toggle="tab"
-      >Portofolio & Rate</a
+      >Portfolio & Rate</a
     >
   </li>
 
@@ -1056,9 +1056,15 @@ const ChartBlock = () => {
   </div>
   <div class="tab-pane fade" id="tab3">
     <div class="row">
-      <div class="col-lg-3" style="width: 100%; height: 500px" id="tab3chart1"></div>
-      <div class="col-lg-4" style="width: 100%; height: 500px" id="tab3chart2"></div>
-      <div class="col-lg-5" style="width: 100%; height: 500px" id="tab3chart3"></div>
+      <div class="col-lg-3 ${
+        currentLOB === "FMKD" ? "col-lg-6" : ""
+      }" style="width: 100%; height: 500px" id="tab3chart1"></div>
+      <div class="col-lg-4" style="width: 100%; height: 500px ${
+        currentLOB === "FMKD" ? ";display:none" : ""
+      }" id="tab3chart2"></div>
+      <div class="col-lg-5 ${
+        currentLOB === "FMKD" ? "col-lg-6" : ""
+      }" style="width: 100%; height: 500px" id="tab3chart3"></div>
     </div>
   </div>
 </div>
@@ -2071,7 +2077,7 @@ const ChartBlock = () => {
       //   top: "bottom",
       // },
       // color: ["#C34D53", "#CD6B62", "#DC9C7C", "#E6BB8B", "#EED498", "#F2E19E"],
-      color: ["#FFDF02", "#E5E5E5", "#FFCF9F", "#82032B", "#ED1D30", "#F7901D"],
+      color: ["#ED1D30", "#E5E5E5", "#FFCF9F", "#82032B", "#FFDF02", "#F7901D"],
       series: [
         {
           type: "pie",
@@ -2103,54 +2109,6 @@ const ChartBlock = () => {
       toPage(3);
     });
   };
-  // const renderTab3chart2 = (chartData) => {
-  //   tab3chart2 = echarts.init(document.getElementById("tab3chart2"));
-
-  //   let option = {
-  //     tooltip: {
-  //       formatter: (params) => {
-  //         const { marker, name, value } = params;
-
-  //         return `${marker} ${name}: ${value.toLocaleString("zh", {
-  //           maximumFractionDigits: 2,
-  //         })} `;
-  //       },
-  //     },
-  //     title: {
-  //       text: "OE by Segment",
-  //       left: "left",
-  //     },
-  //     // color: [
-  //     //   "#e4696d",
-  //     //   "#ec9c9c",
-  //     //   "#f4c8c8",
-  //     //   "#ec8d94",
-  //     //   "#f2b1b2",
-  //     //   "#e4767c",
-  //     //   "#ec8d94",
-  //     //   "#f9e2e3",
-  //     // ],
-  //     color: ["#8D0331", "#F89B20", "#FCD5A9", "#ED1D30", "#EED498", "#F2E19E"],
-  //     // visualMap: {
-  //     //   type: "continuous",
-  //     //   min: 12000,
-  //     //   max: 200000,
-  //     //   inRange: {
-  //     //     color: ["#F2E19E", "#EED498", "#E6BB8B", "#DC9C7C", "#CD6B62", "#C34D53"],
-  //     //   },
-  //     // },
-  //     series: {
-  //       type: "sunburst",
-  //       data: chartData,
-  //       radius: [0, "85%"],
-  //       label: {
-  //         rotate: "radial",
-  //       },
-  //     },
-  //   };
-
-  //   tab3chart2.setOption(option);
-  // };
 
   const renderTab3chart2 = (chartData, extraData) => {
     tab3chart2 = echarts.init(document.getElementById("tab3chart2"));
@@ -2188,7 +2146,10 @@ const ChartBlock = () => {
         y: "10%",
       },
       title: {
-        text: "OE tracking",
+        // text: "OE tracking",
+        text: `OE tracking - by ${
+          currentLOB === "CB" ? "region" : currentLOB === "PB" ? "seg" : ""
+        }`,
         left: "left",
       },
       grid: {
@@ -2313,7 +2274,7 @@ const ChartBlock = () => {
         y: "10%",
       },
       title: {
-        text: "OE tracking",
+        text: "OE tracking - by item",
         left: "left",
       },
       grid: {
@@ -2812,13 +2773,13 @@ const toPage = (sign) => {
   let urls;
 
   if (sign === 1) {
-    urls = `../dataSheet/dataSheet.html?appid=4&isLayer=true&param1=GRDEE2HQI2L1F3&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%2C%7B%22name%22%3A%22%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%20%20Dashboard%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%22%2C%22foldId%22%3A%228784544%22%2C%22elementId%22%3A%22DIREDVIL4DIPL1%22%7D%5D&elementType=GRD&elementId=GRDEE2HQI2L1F3&folderId=8784549&elementTitle=d_data_portfolio&pageName=d_data_portfolio`;
+    urls = `../dataSheet/dataSheet.html?appid=4&isLayer=true&param1=GRDEEN4J9PN4KV&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%2C%7B%22name%22%3A%22%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%20%20Dashboard%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%22%2C%22foldId%22%3A%228784544%22%2C%22elementId%22%3A%22DIREDVIL4DIPL1%22%7D%5D&elementType=GRD&elementId=GRDEEN4J9PN4KV&folderId=8784615&elementTitle=d_data_portfolio_2&pageName=d_data_portfolio_2`;
   }
   if (sign === 2) {
-    urls = `../dataSheet/dataSheet.html?appid=4&isLayer=true&param1=GRDEE2IDQU3B8R&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%2C%7B%22name%22%3A%22%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%20%20Dashboard%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%22%2C%22foldId%22%3A%228784544%22%2C%22elementId%22%3A%22DIREDVIL4DIPL1%22%7D%5D&elementType=GRD&elementId=GRDEE2IDQU3B8R&folderId=8784550&elementTitle=d_data_PPOP&pageName=d_data_PPOP`;
+    urls = `../dataSheet/dataSheet.html?appid=4&isLayer=true&param1=GRDEEONILS099J&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%2C%7B%22name%22%3A%22%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%20%20Dashboard%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%22%2C%22foldId%22%3A%228784544%22%2C%22elementId%22%3A%22DIREDVIL4DIPL1%22%7D%5D&elementType=GRD&elementId=GRDEEONILS099J&folderId=8784623&elementTitle=d_data_PPOP_2&pageName=d_data_PPOP_2`;
   }
   if (sign === 3) {
-    urls = `../dataSheet/dataSheet.html?appid=4&isLayer=true&param1=GRDEE2IM8NUVE2&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%2C%7B%22name%22%3A%22%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%20%20Dashboard%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%22%2C%22foldId%22%3A%228784544%22%2C%22elementId%22%3A%22DIREDVIL4DIPL1%22%7D%5D&elementType=GRD&elementId=GRDEE2IM8NUVE2&folderId=8784551&elementTitle=d_data_Expense&pageName=d_data_Expense`;
+    urls = `../dataSheet/dataSheet.html?appid=4&isLayer=true&param1=GRDEEONIRPR025&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%2C%7B%22name%22%3A%22%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%20%20Dashboard%5Cn%20%20%20%20%20%20%5Cn%20%20%20%20%22%2C%22foldId%22%3A%228784544%22%2C%22elementId%22%3A%22DIREDVIL4DIPL1%22%7D%5D&elementType=GRD&elementId=GRDEEONIRPR025&folderId=8784624&elementTitle=d_data_Expense_2&pageName=d_data_Expense_2`;
   }
   if (sign === 4) {
     urls = `../dataSheet/dataSheet.html?appid=4&isLayer=true&param1=GRDEENU36PKSI2&routList=%5B%7B%22name%22%3A%22%u6839%u76EE%u5F55%22%2C%22foldId%22%3A%220%22%7D%5D&elementType=GRD&elementId=GRDEENU36PKSI2&folderId=8784619&elementTitle=daily_portfolio&pageName=daily_portfolio`;
