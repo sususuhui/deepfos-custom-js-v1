@@ -183,6 +183,11 @@ $(async () => {
           "
         >
           <div>Analysis Dashboard - Line of Business (HKAS Set)</div>
+          <div style="
+                font-weight: initial;
+                font-size: 17px;
+                margin-right: -48rem;
+            ">Data in K RMB</div>
           <div class="header-elements">
             <div class="dataSheetCon sheetPovPart"></div>
           </div>
@@ -433,9 +438,9 @@ const MapBlock = async () => {
         <div style="width: 200px">
           <select id="select2_pov_account">
             <option value="PL06">Net Profit</option>
-            <option value="PL03">Pre-provision Profit</option>
+            <option value="PPOP">Pre-provision Profit</option>
             <option value="PL01">Total operating income</option>
-            <option value="PL02">Operating Expense</option>
+            <option value="EXP">Operating Expense</option>
             <option value="A0201">Net Interest Income</option>
             <option value="A0204">Non Net Interest Income</option>
             <option value="A0106">Loan ending balance</option>F
@@ -449,7 +454,7 @@ const MapBlock = async () => {
         </div>
       </div>
       <div class="card tableHeight" style="font-family: 'Microsoft Yahei';font-size: 1rem;">
-        <div class="customAreaWrap">
+        <div class="customAreaWrap" style="width: 1000px;">
           <div class="customAreaHeaderBox">
             <table class="table customAreaHeader">
               <tbody>
@@ -460,7 +465,7 @@ const MapBlock = async () => {
                   <td>Actual</td>
                   <td>Actual_LY</td>
                   <td>Budget</td>
-                  <td>Diff</td>
+                  <td>Variance %</td>
                 </tr>
               </tbody>
             </table>
@@ -1161,100 +1166,16 @@ const ChartBlock = () => {
         },
       });
 
-      // const { tab3chart1, tab3chart2, tab3chart3 } = await getChartData(
-      //   "BeaChina_LOB_Operating_Expense"
-      // );
-      const { tab3chart1, tab3chart2, tab3chart3 } = {
-        tab3chart1: [
-          [
-            "Account",
-            "Staff cost",
-            "Premise and equipment ",
-            "IT Expense ",
-            "Card expense",
-            "Platform fee",
-            "Others",
-          ],
-          ["data", "223297.50", "306150.80", "366403.60", "374807.30", "229759.40", "286563.70"],
-        ],
-        tab3chart2: {
-          data: [
-            ["index", "PB", "零售产品", "财富管理", "Platform financing", "Card"],
-            ["2021_Budget", "-", "-", "-", "-", "-"],
-            ["Actual", "-", "-", "-", "-", "-"],
-          ],
-          extraData: {
-            Actual: {
-              零售产品: 3340977.5,
-              财富管理: 2004586.5,
-              "Platform financing": 4677368.5,
-              Card: 2672782,
-              PB: 12695714.5,
-            },
-            "2021_Budget": {
-              零售产品: 7500000,
-              财富管理: 4500000,
-              "Platform financing": 10500000,
-              Card: 6000000,
-              PB: 28500000,
-            },
-          },
-        },
-        tab3chart3: {
-          data: [
-            [
-              "index",
-              "Total",
-              "Staff cost",
-              "Premise and equipment ",
-              "IT Expense ",
-              "Card expense",
-              "Platform fee",
-              "Others",
-            ],
-            ["2021_Budget", 1, 1, 1, 1, 1, 1, 1],
-            [
-              "Actual",
-              0.44546366666666665,
-              0.5942,
-              0.5656365000000001,
-              0.4400196,
-              0.46102879999999996,
-              0.341521,
-              0.3616993333333333,
-            ],
-          ],
-          extraData: {
-            Actual: {
-              Total: 12695714.5,
-              "Staff cost": 2257960,
-              "Premise and equipment ": 2149418.7,
-              "IT Expense ": 2090093.1,
-              "Card expense": 2189886.8,
-              "Platform fee": 1946669.7,
-              Others: 2061686.2,
-            },
-            "2021_Budget": {
-              Total: 28500000,
-              "Staff cost": 3800000,
-              "Premise and equipment ": 3800000,
-              "IT Expense ": 4750000,
-              "Card expense": 4750000,
-              "Platform fee": 5700000,
-              Others: 5700000,
-            },
-          },
-        },
-      };
+      const { tab3chart1, tab3chart2, tab3chart3 } = await getChartData(
+        "BeaChina_LOB_Operating_Expense"
+      );
 
       $("[data-name=ChartBlock] .card-body .tab-content").unblock();
 
-      setTimeout(function () {
-        renderTab3chart1(tab3chart1);
-        // renderTab3chart2(tab3chart2);
-        renderTab3chart2(tab3chart2.data, tab3chart2.extraData);
-        renderTab3chart3(tab3chart3.data, tab3chart3.extraData);
-      }, 1000);
+      renderTab3chart1(tab3chart1);
+      // renderTab3chart2(tab3chart2);
+      renderTab3chart2(tab3chart2.data, tab3chart2.extraData);
+      renderTab3chart3(tab3chart3.data, tab3chart3.extraData);
     }
 
     $(window).on("resize", () => {
@@ -2165,17 +2086,17 @@ const ChartBlock = () => {
         text: "OE by Item",
         left: "left",
       },
-      legend: {
-        orient: "horizontal",
-        left: "left",
-        top: "bottom",
-      },
+       legend: {
+         orient: 'horizontal',
+         left: "left",
+         top: "bottom",
+       },
       // color: ["#C34D53", "#CD6B62", "#DC9C7C", "#E6BB8B", "#EED498", "#F2E19E"],
       color: ["#C7081F", "#FEC565", "#D8B988", "#E63F1F", "#D9D9D9", "#7186A0"],
       series: [
         {
           type: "pie",
-          radius: ["20%", "80%"],
+          radius: ['20%', '80%'],
           // radius: [20, 160],
           center: ["50%", "50%"],
           // roseType: "radius",
@@ -2305,27 +2226,6 @@ const ChartBlock = () => {
       dataset: {
         source: chartData,
       },
-      graphic: [
-        {
-          type: "group",
-          right: "10%",
-          top: "3%",
-          silent: true,
-          children: [
-            {
-              type: "text",
-              z: 100,
-              left: "center",
-              top: "middle",
-              style: {
-                fill: "#333",
-                text: "缺少数据时不显示图形",
-                font: "14px Microsoft YaHei",
-              },
-            },
-          ],
-        },
-      ],
       series: [
         {
           yAxisIndex: 0,

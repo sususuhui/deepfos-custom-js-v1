@@ -11,6 +11,7 @@ var sheetInfo = [
     floatingTableName: "GDZC",
     sheetID: "EEBVOG2KGQ6S",
     sheetName: "固定资产_处级",
+    ignoredColumn: [5, 7, 20],
   },
 ];
 
@@ -253,12 +254,12 @@ function initGlobalEvent() {
     const activeColumnIndex = sheet.getActiveColumnIndex();
     const activeRowIndex = sheet.getActiveRowIndex();
 
-    if (sheet.getCell(activeRowIndex, activeColumnIndex).locked()) {
-      $.jGrowl("不可编辑列无法查看审计情况", {
-        theme: "alert-styled-left bg-danger",
-      });
-      return;
-    }
+    // if (sheet.getCell(activeRowIndex, activeColumnIndex).locked()) {
+    //   $.jGrowl("不可编辑列无法查看审计情况", {
+    //     theme: "alert-styled-left bg-danger",
+    //   });
+    //   return;
+    // }
 
     const colNum = sheet.getColumnCount();
     const colSelectedName = sheet.getArray(0, 0, 1, colNum)[0][activeColumnIndex];
@@ -284,6 +285,13 @@ function initGlobalEvent() {
       rowData,
       pov_page,
     };
+
+    if (activeSheetInfo.ignoredColumn.includes(activeColumnIndex)) {
+      $.jGrowl("不可编辑列无法查看审计情况", {
+        theme: "alert-styled-left bg-danger",
+      });
+      return;
+    }
 
     showLogModal(params);
   });
