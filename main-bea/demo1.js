@@ -2793,26 +2793,26 @@ const displayOrNot = async () => {
     "1"
   );
 
-  // if (result === true) {
-  //   $(".dashBoardContent").css({ display: "none" });
-  //   $(".dashBoardContent_notion").css({ display: "" });
-
-  //   return true;
-  // } else {
-  //   $(".dashBoardContent").css({ display: "" });
-  //   $(".dashBoardContent_notion").css({ display: "none" });
-
-  //   return false;
-  // }
-
   if (result === true) {
     $(".dashBoardContent").css({ display: "" });
     $(".dashBoardContent_notion").css({ display: "none" });
+
+    // 设置中间滚动table得最大高度
+    $(".scrollTable").css({
+      "max-height": `${$("#MapBlock").height() - 200}px`,
+      "min-height": `${$("#MapBlock").height() - 200}px`,
+    });
 
     return false;
   } else {
     $(".dashBoardContent").css({ display: "none" });
     $(".dashBoardContent_notion").css({ display: "" });
+
+    // 设置中间滚动table得最大高度
+    $(".scrollTable").css({
+      "max-height": `${$("#MapBlock").height() - 200}px`,
+      "min-height": `${$("#MapBlock").height() - 200}px`,
+    });
 
     return true;
   }

@@ -2086,17 +2086,17 @@ const ChartBlock = () => {
         text: "OE by Item",
         left: "left",
       },
-       legend: {
-         orient: 'horizontal',
-         left: "left",
-         top: "bottom",
-       },
+      legend: {
+        orient: "horizontal",
+        left: "left",
+        top: "bottom",
+      },
       // color: ["#C34D53", "#CD6B62", "#DC9C7C", "#E6BB8B", "#EED498", "#F2E19E"],
       color: ["#C7081F", "#FEC565", "#D8B988", "#E63F1F", "#D9D9D9", "#7186A0"],
       series: [
         {
           type: "pie",
-          radius: ['20%', '80%'],
+          radius: ["20%", "80%"],
           // radius: [20, 160],
           center: ["50%", "50%"],
           // roseType: "radius",
@@ -2843,26 +2843,26 @@ const displayOrNot = async () => {
     "1"
   );
 
-  // if (result === true) {
-  //   $(".dashBoardContent").css({ display: "none" });
-  //   $(".dashBoardContent_notion").css({ display: "" });
-
-  //   return true;
-  // } else {
-  //   $(".dashBoardContent").css({ display: "" });
-  //   $(".dashBoardContent_notion").css({ display: "none" });
-
-  //   return false;
-  // }
-
   if (result === true) {
     $(".dashBoardContent").css({ display: "" });
     $(".dashBoardContent_notion").css({ display: "none" });
+
+    // 设置中间滚动table得最大高度
+    $(".scrollTable").css({
+      "max-height": `${$("#MapBlock").height() - 200}px`,
+      "min-height": `${$("#MapBlock").height() - 200}px`,
+    });
 
     return false;
   } else {
     $(".dashBoardContent").css({ display: "none" });
     $(".dashBoardContent_notion").css({ display: "" });
+
+    // 设置中间滚动table得最大高度
+    $(".scrollTable").css({
+      "max-height": `${$("#MapBlock").height() - 200}px`,
+      "min-height": `${$("#MapBlock").height() - 200}px`,
+    });
 
     return true;
   }
